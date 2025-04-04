@@ -1,0 +1,22 @@
+[package]
+name = "hooq"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+log = "0.4.26"
+proc-macro2 = { version = "1.0.94", features = ["span-locations"] }
+quote = "1.0.40"
+syn = { version = "2.0.100", features = ["full", "extra-traits"] }
+
+[dev-dependencies]
+env_logger = "0.11.7"
+
+[build-dependencies]
+rustc_version = "0.4.1"
+
+[features]
+nightly = []

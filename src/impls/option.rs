@@ -1,5 +1,5 @@
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
-use syn::{Attribute, Meta, MetaList, Path, Token, parse::Parse, parse_quote};
+use syn::{Attribute, Expr, Meta, MetaList, Path, Token, parse::Parse, parse_quote};
 
 use crate::impls::utils::strip_attr;
 
@@ -48,14 +48,42 @@ impl HooqOption {
         Ok(option)
     }
 
-    pub fn generate_method(&self, q_span: Span) -> TokenStream {
+    pub fn generate_method(&self, q_span: Span, context: &ReplaceContext) -> TokenStream {
         let mut res = TokenStream::new();
-        expand_special_vars(self.method.clone(), &mut res, q_span);
+        expand_special_vars(self.method.clone(), &mut res, q_span, context);
         res
     }
 }
 
-fn expand_special_vars(ts: TokenStream, res: &mut TokenStream, q_span: Span) {
+#[derive(Clone, Copy, Debug)]
+pub struct FunctionInfo<'a> {
+    pub pos: usize,
+    pub name: &'a str,
+    pub sig: &'a str,
+    pub path: &'a str,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum ReplaceKind {
+    Question,
+    Return,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct ReplaceContext<'a> {
+    pub expr: &'a Expr,
+    pub count: usize,
+    pub kind: ReplaceKind,
+    pub tag: Option<&'a str>,
+    pub info: &'a FunctionInfo<'a>,
+}
+
+fn expand_special_vars(
+    ts: TokenStream,
+    res: &mut TokenStream,
+    q_span: Span,
+    context: &ReplaceContext,
+) {
     let mut next_is_replace_target = false;
     for tt in ts.into_iter() {
         match tt {
@@ -78,7 +106,7 @@ fn expand_special_vars(ts: TokenStream, res: &mut TokenStream, q_span: Span) {
             }
             TokenTree::Group(group) => {
                 let mut res_for_group = TokenStream::new();
-                expand_special_vars(group.stream(), &mut res_for_group, q_span);
+                expand_special_vars(group.stream(), &mut res_for_group, q_span, context);
 
                 let new_group = Group::new(group.delimiter(), res_for_group);
 

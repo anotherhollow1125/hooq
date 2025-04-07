@@ -1,3 +1,4 @@
+use option::ReplaceContext;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{
@@ -170,8 +171,13 @@ fn handle_item(item: &mut Item, option: &HooqOption) {
     }
 }
 
-fn replace_expr(expr_field: &mut Expr, q_span: Span, option: &HooqOption) {
-    let method = option.generate_method(q_span);
+fn replace_expr(expr_field: &mut Expr, q_span: Span, option: &HooqOption, context: &ReplaceContext) {
+    let context = &ReplaceContext {
+        expr: expr_field,
+        ..*context
+    };
+
+    let method = option.generate_method(q_span, context);
     let original_expr = expr_field.clone();
 
     *expr_field = parse_quote! {

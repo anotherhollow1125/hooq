@@ -1,5 +1,6 @@
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
-use syn::{Attribute, Expr, Meta, MetaList, Path, Token, parse::Parse, parse_quote};
+use quote::ToTokens;
+use syn::{Attribute, Meta, MetaList, Path, Token, parse::Parse, parse_quote};
 
 use crate::impls::utils::strip_attr;
 
@@ -10,9 +11,18 @@ pub struct HooqOption {
 }
 
 fn default_method() -> TokenStream {
+    #[cfg(feature = "nightly")]
     parse_quote! {
         .map_err(|e| {
             ::log::error!("{:?} @ file: {}, line: {}", e, $file, $line);
+            e
+        })
+    }
+
+    #[cfg(not(feature = "nightly"))]
+    parse_quote! {
+        .map_err(|e| {
+            ::log::error!("{:?} @ file: {}", e, file!());
             e
         })
     }
@@ -48,34 +58,94 @@ impl HooqOption {
         Ok(option)
     }
 
-    pub fn generate_method(&self, q_span: Span, context: &ReplaceContext) -> TokenStream {
+    pub fn generate_method(
+        &self,
+        q_span: Span,
+        context: &ReplaceContext,
+    ) -> syn::Result<TokenStream> {
         let mut res = TokenStream::new();
-        expand_special_vars(self.method.clone(), &mut res, q_span, context);
-        res
+        expand_special_vars(self.method.clone(), &mut res, q_span, context)?;
+        Ok(res)
     }
 }
 
-#[derive(Clone, Copy, Debug)]
-pub struct FunctionInfo<'a> {
-    pub pos: usize,
-    pub name: &'a str,
-    pub sig: &'a str,
-    pub path: &'a str,
+#[derive(Clone, Debug)]
+pub struct FunctionInfo {
+    pub name: String,
+    pub sig: String,
+}
+
+pub trait ExtractFunctionInfo {
+    fn extract_function_info(&self) -> syn::Result<FunctionInfo>;
+}
+
+impl ExtractFunctionInfo for syn::ItemFn {
+    fn extract_function_info(&self) -> syn::Result<FunctionInfo> {
+        let sig = self.sig.to_token_stream().to_string();
+        let name = self.sig.ident.to_string();
+
+        Ok(FunctionInfo { name, sig })
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
 pub enum ReplaceKind {
     Question,
     Return,
+    TailExpr,
 }
 
-#[derive(Clone, Copy, Debug)]
+impl std::fmt::Display for ReplaceKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ReplaceKind::Question => write!(f, "?"),
+            ReplaceKind::Return => write!(f, "return"),
+            ReplaceKind::TailExpr => write!(f, "tail expr"),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct Counter {
+    question: usize,
+    return_: usize,
+    tail_expr: usize,
+}
+
+impl Counter {
+    pub fn new() -> Self {
+        Self {
+            question: 0,
+            return_: 0,
+            tail_expr: 0,
+        }
+    }
+
+    pub fn count_up(&mut self, kind: ReplaceKind) {
+        match kind {
+            ReplaceKind::Question => self.question += 1,
+            ReplaceKind::Return => self.return_ += 1,
+            ReplaceKind::TailExpr => self.tail_expr += 1,
+        }
+    }
+
+    pub fn get_count(&self, kind: ReplaceKind) -> usize {
+        match kind {
+            ReplaceKind::Question => self.question,
+            ReplaceKind::Return => self.return_,
+            ReplaceKind::TailExpr => self.tail_expr,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct ReplaceContext<'a> {
-    pub expr: &'a Expr,
-    pub count: usize,
+    pub expr: String,
     pub kind: ReplaceKind,
-    pub tag: Option<&'a str>,
-    pub info: &'a FunctionInfo<'a>,
+    pub tag: Option<String>,
+
+    pub counter: &'a mut Counter,
+    pub fn_info: &'a FunctionInfo,
 }
 
 fn expand_special_vars(
@@ -83,11 +153,15 @@ fn expand_special_vars(
     res: &mut TokenStream,
     q_span: Span,
     context: &ReplaceContext,
-) {
+) -> syn::Result<()> {
     let mut next_is_replace_target = false;
     for tt in ts.into_iter() {
         match tt {
             TokenTree::Punct(punct) => {
+                if next_is_replace_target {
+                    return Err(syn::Error::new(punct.span(), "Unexpected token after `$`"));
+                }
+
                 if punct.as_char() == '$' {
                     next_is_replace_target = true;
                 } else {
@@ -102,24 +176,41 @@ fn expand_special_vars(
 
                 next_is_replace_target = false;
 
-                res.extend([special_vars2token_stream(&ident, q_span)]);
+                res.extend([special_vars2token_stream(&ident, q_span, context)?]);
             }
             TokenTree::Group(group) => {
+                if next_is_replace_target {
+                    return Err(syn::Error::new(group.span(), "Unexpected token after `$`"));
+                }
+
                 let mut res_for_group = TokenStream::new();
-                expand_special_vars(group.stream(), &mut res_for_group, q_span, context);
+                expand_special_vars(group.stream(), &mut res_for_group, q_span, context)?;
 
                 let new_group = Group::new(group.delimiter(), res_for_group);
 
                 res.extend([TokenTree::Group(new_group)]);
             }
             TokenTree::Literal(literal) => {
+                if next_is_replace_target {
+                    return Err(syn::Error::new(
+                        literal.span(),
+                        "Unexpected token after `$`",
+                    ));
+                }
+
                 res.extend([TokenTree::Literal(literal)]);
             }
         }
     }
+
+    Ok(())
 }
 
-fn special_vars2token_stream(var_ident: &Ident, #[allow(unused)] q_span: Span) -> TokenStream {
+fn special_vars2token_stream(
+    var_ident: &Ident,
+    #[allow(unused)] q_span: Span,
+    context: &ReplaceContext,
+) -> syn::Result<TokenStream> {
     match var_ident.to_string().as_str() {
         "line" => {
             #[cfg(feature = "nightly")]
@@ -134,18 +225,69 @@ fn special_vars2token_stream(var_ident: &Ident, #[allow(unused)] q_span: Span) -
             #[cfg(not(feature = "nightly"))]
             let line: TokenStream = {
                 parse_quote! {
-                    line!()
+                    {
+                        #[deprecated(note = "`$line` requires the `nightly` feature to return the precise line number.")]
+                        const NIGHTLY_NEEDS: () = ();
+
+                        let _ = NIGHTLY_NEEDS;
+
+                        line!()
+                    }
                 }
             };
 
-            line
+            Ok(line)
         }
-        "file" => {
-            parse_quote! {
-                file!()
-            }
+        "file" => Ok(parse_quote! {
+            file!()
+        }),
+        "expr" => {
+            let expr = context.expr.clone();
+
+            Ok(parse_quote! {
+                #expr
+            })
         }
-        _ => parse_quote!(#var_ident),
+        "nth" | "count" => {
+            let kind = context.kind;
+            let count = context.counter.get_count(kind);
+            let val = format!("{}th {}", count, kind);
+
+            Ok(parse_quote! {
+                #val
+            })
+        }
+        "tag" => {
+            let res = if let Some(tag) = &context.tag {
+                parse_quote! {
+                    #tag
+                }
+            } else {
+                parse_quote! {
+                    "(no tag)"
+                }
+            };
+
+            Ok(res)
+        }
+        "fn_name" => {
+            let fn_name = &context.fn_info.name;
+
+            Ok(parse_quote! {
+                #fn_name
+            })
+        }
+        "fn_sig" => {
+            let fn_sig = &context.fn_info.sig;
+
+            Ok(parse_quote! {
+                #fn_sig
+            })
+        }
+        _ => Err(syn::Error::new(
+            var_ident.span(),
+            format!("Unknown special variable: {}", var_ident),
+        )),
     }
 }
 

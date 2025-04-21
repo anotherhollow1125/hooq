@@ -2,7 +2,7 @@ use hooq::hooq;
 
 #[hooq]
 #[hooq::method(.map_err(|e| {
-    eprintln!("[] {}@{} {:?}", $line, $file, e);
+    eprintln!("[{}@{}] {:?}", $line, $file, e);
     e
 }))]
 fn hogehoge() -> Result<(), String> {

@@ -13,7 +13,7 @@ pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
     let hooq_option = HooqOption::new_from_attrs(&mut f.attrs)?;
 
     let fn_info = f.extract_function_info()?;
-    let mut context = walker::PartialReplaceContext::new(fn_info);
+    let mut context = option::PartialReplaceContext::new(fn_info);
     let stmts_len = f.block.stmts.len();
     f.block
         .stmts

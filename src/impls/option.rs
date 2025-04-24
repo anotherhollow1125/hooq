@@ -64,7 +64,12 @@ impl HooqOption {
         context: &ReplaceContext,
     ) -> syn::Result<TokenStream> {
         let mut res = TokenStream::new();
-        expand_special_vars(self.method.clone(), &mut res, q_span, context)?;
+
+        let method = match context.override_method() {
+            Some(override_method) => override_method.clone(),
+            None => self.method.clone(),
+        };
+        expand_special_vars(method, &mut res, q_span, context)?;
         Ok(res)
     }
 }
@@ -142,10 +147,54 @@ impl Counter {
 pub struct ReplaceContext<'a> {
     pub expr: String,
     pub kind: ReplaceKind,
-    pub tag: Option<String>,
 
-    pub counter: &'a mut Counter,
-    pub fn_info: &'a FunctionInfo,
+    pub partial_replace_context: &'a mut PartialReplaceContext,
+}
+
+#[derive(Debug)]
+pub struct PartialReplaceContext {
+    pub counter: Counter,
+    pub fn_info: FunctionInfo,
+    pub tag: Option<String>,
+    pub override_method: Option<TokenStream>,
+}
+
+impl PartialReplaceContext {
+    pub fn new(fn_info: FunctionInfo) -> Self {
+        Self {
+            counter: Counter::new(),
+            fn_info,
+            tag: None,
+            override_method: None,
+        }
+    }
+
+    pub fn as_replace_context(&mut self, expr: String, kind: ReplaceKind) -> ReplaceContext<'_> {
+        ReplaceContext {
+            expr,
+            kind,
+
+            partial_replace_context: self,
+        }
+    }
+}
+
+impl ReplaceContext<'_> {
+    pub fn counter(&self) -> &Counter {
+        &self.partial_replace_context.counter
+    }
+
+    pub fn fn_info(&self) -> &FunctionInfo {
+        &self.partial_replace_context.fn_info
+    }
+
+    pub fn tag(&self) -> Option<&String> {
+        self.partial_replace_context.tag.as_ref()
+    }
+
+    pub fn override_method(&self) -> Option<&TokenStream> {
+        self.partial_replace_context.override_method.as_ref()
+    }
 }
 
 fn expand_special_vars(
@@ -250,7 +299,7 @@ fn special_vars2token_stream(
         }
         "nth" | "count" => {
             let kind = context.kind;
-            let count = context.counter.get_count(kind);
+            let count = context.counter().get_count(kind);
             let val = format!("{}th {}", count, kind);
 
             Ok(parse_quote! {
@@ -258,7 +307,7 @@ fn special_vars2token_stream(
             })
         }
         "tag" => {
-            let res = if let Some(tag) = &context.tag {
+            let res = if let Some(tag) = context.tag() {
                 parse_quote! {
                     #tag
                 }
@@ -271,14 +320,14 @@ fn special_vars2token_stream(
             Ok(res)
         }
         "fn_name" => {
-            let fn_name = &context.fn_info.name;
+            let fn_name = &context.fn_info().name;
 
             Ok(parse_quote! {
                 #fn_name
             })
         }
         "fn_sig" => {
-            let fn_sig = &context.fn_info.sig;
+            let fn_sig = &context.fn_info().sig;
 
             Ok(parse_quote! {
                 #fn_sig

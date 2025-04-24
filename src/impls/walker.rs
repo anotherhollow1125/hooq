@@ -1,43 +1,15 @@
-use crate::impls::option::{Counter, FunctionInfo, ReplaceContext, ReplaceKind};
-use proc_macro2::Span;
+use crate::impls::option::{PartialReplaceContext, ReplaceKind};
+use proc_macro2::{Span, TokenStream};
 use quote::ToTokens;
+use syn::parse::Parse;
 use syn::spanned::Spanned;
 use syn::{
-    Attribute, Expr, ExprCall, ExprPath, Item, ItemMod, Local, LocalInit, Meta, Stmt, parse_quote,
+    Attribute, Expr, ExprCall, ExprPath, Item, ItemMod, Local, LocalInit, Meta, MetaList, Stmt,
+    parse_quote,
 };
 
 pub use crate::impls::option::HooqOption;
 use crate::impls::utils::{get_attrs_from_expr, strip_attr};
-
-pub struct PartialReplaceContext {
-    pub counter: Counter,
-    pub fn_info: FunctionInfo,
-}
-
-impl PartialReplaceContext {
-    pub fn new(fn_info: FunctionInfo) -> Self {
-        Self {
-            counter: Counter::new(),
-            fn_info,
-        }
-    }
-
-    fn as_replace_context(
-        &mut self,
-        expr: String,
-        kind: ReplaceKind,
-        tag: Option<String>,
-    ) -> ReplaceContext<'_> {
-        ReplaceContext {
-            expr,
-            kind,
-            tag,
-
-            counter: &mut self.counter,
-            fn_info: &self.fn_info,
-        }
-    }
-}
 
 pub fn walk_stmt(
     stmt: &mut Stmt,
@@ -52,7 +24,7 @@ pub fn walk_stmt(
             init: Some(LocalInit { expr, diverge, .. }),
             ..
         }) => {
-            if check_skip(attrs) {
+            if handle_inert_attrs(attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -73,7 +45,7 @@ pub fn walk_stmt(
             let Some(attrs) = get_attrs_from_expr(expr) else {
                 return Ok(());
             };
-            if check_skip(attrs) {
+            if handle_inert_attrs(attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -84,7 +56,7 @@ pub fn walk_stmt(
                 let q_span = expr.span();
 
                 // TODO: tag の None を適切なものに
-                replace_expr(expr, ReplaceKind::TailExpr, None, q_span, option, context)?;
+                replace_expr(expr, ReplaceKind::TailExpr, q_span, option, context)?;
 
                 return Ok(());
             }
@@ -102,7 +74,7 @@ pub fn walk_stmt(
                 let q_span = path.span();
 
                 // TODO: tag の None を適切なものに
-                replace_expr(expr, ReplaceKind::TailExpr, None, q_span, option, context)?;
+                replace_expr(expr, ReplaceKind::TailExpr, q_span, option, context)?;
 
                 return Ok(());
             }
@@ -116,22 +88,73 @@ pub fn walk_stmt(
     }
 }
 
-fn check_skip(attrs: &mut [Attribute]) -> bool {
+struct InertAttrOption {
+    is_skiped: bool,
+    tag: Option<String>,
+    method: Option<TokenStream>,
+}
+
+fn extract_hooq_info_from_attrs(attrs: &mut [Attribute]) -> syn::Result<InertAttrOption> {
     let hooq_skip = parse_quote!(hooq::skip);
+    let hooq_tag = parse_quote!(hooq::tag);
+    let hooq_method = parse_quote!(hooq::method);
+
+    let mut is_skiped = false;
+    let mut tag: Option<String> = None;
+    let mut method: Option<TokenStream> = None;
 
     for attr in attrs.iter_mut() {
-        let Meta::Path(path) = &attr.meta else {
-            continue;
-        };
+        match &attr.meta {
+            Meta::Path(p) if p == &hooq_skip => {
+                strip_attr(attr);
+                is_skiped = true;
+            }
+            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_tag => {
+                method = Some(tokens.clone());
+                strip_attr(attr);
+            }
+            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_method => {
+                struct Tag(String);
 
-        if path == &hooq_skip {
-            strip_attr(attr);
+                impl Parse for Tag {
+                    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+                        let tag = input.parse::<syn::LitStr>()?;
+                        Ok(Self(tag.value()))
+                    }
+                }
 
-            return true;
+                let t = syn::parse2::<Tag>(tokens.clone())?;
+                tag = Some(t.0);
+                strip_attr(attr);
+            }
+            _ => {}
         }
     }
 
-    false
+    Ok(InertAttrOption {
+        is_skiped,
+        tag,
+        method,
+    })
+}
+
+struct HandleInertAttrsResult {
+    is_skiped: bool,
+}
+
+fn handle_inert_attrs(
+    attrs: &mut [Attribute],
+    context: &mut PartialReplaceContext,
+) -> syn::Result<HandleInertAttrsResult> {
+    let InertAttrOption {
+        is_skiped,
+        tag,
+        method,
+    } = extract_hooq_info_from_attrs(attrs)?;
+    context.tag = tag;
+    context.override_method = method;
+
+    Ok(HandleInertAttrsResult { is_skiped })
 }
 
 // 以降、本来的にはVisitやFoldで実装するべきかもしれないが、
@@ -145,7 +168,7 @@ fn walk_item(
 ) -> syn::Result<()> {
     match item {
         Item::Fn(item_fn) => {
-            if check_skip(&mut item_fn.attrs) {
+            if handle_inert_attrs(&mut item_fn.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -161,7 +184,7 @@ fn walk_item(
             Ok(())
         }
         Item::Impl(item_impl) => {
-            if check_skip(&mut item_impl.attrs) {
+            if handle_inert_attrs(&mut item_impl.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -202,7 +225,7 @@ fn walk_item(
             content: Some((_, items)),
             ..
         }) => {
-            if check_skip(attrs) {
+            if handle_inert_attrs(attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -237,13 +260,12 @@ fn walk_item(
 fn replace_expr(
     expr_field: &mut Expr,
     kind: ReplaceKind,
-    tag: Option<String>,
     q_span: Span,
     option: &HooqOption,
     context: &mut PartialReplaceContext,
 ) -> syn::Result<()> {
     context.counter.count_up(kind);
-    let context = context.as_replace_context(expr_field.to_token_stream().to_string(), kind, tag);
+    let context = context.as_replace_context(expr_field.to_token_stream().to_string(), kind);
 
     let method = option.generate_method(q_span, &context)?;
     let original_expr = expr_field.clone();
@@ -263,7 +285,7 @@ fn walk_expr(
     match expr {
         // 置換対象となるバリアント
         Expr::Try(expr_try) => {
-            if check_skip(&mut expr_try.attrs) {
+            if handle_inert_attrs(&mut expr_try.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -275,7 +297,6 @@ fn walk_expr(
             replace_expr(
                 &mut expr_try.expr,
                 ReplaceKind::Question,
-                None,
                 q_span,
                 option,
                 context,
@@ -284,7 +305,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::Return(expr_return) => {
-            if check_skip(&mut expr_return.attrs) {
+            if handle_inert_attrs(&mut expr_return.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -294,7 +315,7 @@ fn walk_expr(
                 let q_span = expr_return.return_token.span();
 
                 // TODO: tag の None を適切なものに
-                replace_expr(expr, ReplaceKind::Return, None, q_span, option, context)?;
+                replace_expr(expr, ReplaceKind::Return, q_span, option, context)?;
             }
 
             Ok(())
@@ -302,7 +323,7 @@ fn walk_expr(
 
         // ネストの中身を見る必要があるバリアント
         Expr::Array(expr_array) => {
-            if check_skip(&mut expr_array.attrs) {
+            if handle_inert_attrs(&mut expr_array.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -315,14 +336,14 @@ fn walk_expr(
             Ok(())
         }
         Expr::Assign(expr_assign) => {
-            if check_skip(&mut expr_assign.attrs) {
+            if handle_inert_attrs(&mut expr_assign.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_assign.right, option, context)
         }
         Expr::Async(expr_async) => {
-            if check_skip(&mut expr_async.attrs) {
+            if handle_inert_attrs(&mut expr_async.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -338,14 +359,14 @@ fn walk_expr(
             Ok(())
         }
         Expr::Await(expr_await) => {
-            if check_skip(&mut expr_await.attrs) {
+            if handle_inert_attrs(&mut expr_await.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_await.base, option, context)
         }
         Expr::Binary(expr_binary) => {
-            if check_skip(&mut expr_binary.attrs) {
+            if handle_inert_attrs(&mut expr_binary.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -353,7 +374,7 @@ fn walk_expr(
             walk_expr(&mut expr_binary.right, option, context)
         }
         Expr::Block(expr_block) => {
-            if check_skip(&mut expr_block.attrs) {
+            if handle_inert_attrs(&mut expr_block.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -369,7 +390,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::Break(expr_break) => {
-            if check_skip(&mut expr_break.attrs) {
+            if handle_inert_attrs(&mut expr_break.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -380,7 +401,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::Call(expr_call) => {
-            if check_skip(&mut expr_call.attrs) {
+            if handle_inert_attrs(&mut expr_call.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -394,21 +415,21 @@ fn walk_expr(
             Ok(())
         }
         Expr::Cast(expr_cast) => {
-            if check_skip(&mut expr_cast.attrs) {
+            if handle_inert_attrs(&mut expr_cast.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_cast.expr, option, context)
         }
         Expr::Closure(expr_closure) => {
-            if check_skip(&mut expr_closure.attrs) {
+            if handle_inert_attrs(&mut expr_closure.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_closure.body, option, context)
         }
         Expr::Const(expr_const) => {
-            if check_skip(&mut expr_const.attrs) {
+            if handle_inert_attrs(&mut expr_const.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -424,14 +445,14 @@ fn walk_expr(
             Ok(())
         }
         Expr::Field(expr_field) => {
-            if check_skip(&mut expr_field.attrs) {
+            if handle_inert_attrs(&mut expr_field.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_field.base, option, context)
         }
         Expr::ForLoop(expr_for_loop) => {
-            if check_skip(&mut expr_for_loop.attrs) {
+            if handle_inert_attrs(&mut expr_for_loop.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -448,14 +469,14 @@ fn walk_expr(
             Ok(())
         }
         Expr::Group(expr_group) => {
-            if check_skip(&mut expr_group.attrs) {
+            if handle_inert_attrs(&mut expr_group.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_group.expr, option, context)
         }
         Expr::If(expr_if) => {
-            if check_skip(&mut expr_if.attrs) {
+            if handle_inert_attrs(&mut expr_if.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -476,7 +497,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::Index(expr_index) => {
-            if check_skip(&mut expr_index.attrs) {
+            if handle_inert_attrs(&mut expr_index.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -484,7 +505,7 @@ fn walk_expr(
             walk_expr(&mut expr_index.index, option, context)
         }
         Expr::Let(expr_let) => {
-            if check_skip(&mut expr_let.attrs) {
+            if handle_inert_attrs(&mut expr_let.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -492,7 +513,7 @@ fn walk_expr(
             walk_expr(&mut expr_let.expr, option, context)
         }
         Expr::Loop(expr_loop) => {
-            if check_skip(&mut expr_loop.attrs) {
+            if handle_inert_attrs(&mut expr_loop.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -508,7 +529,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::Match(expr_match) => {
-            if check_skip(&mut expr_match.attrs) {
+            if handle_inert_attrs(&mut expr_match.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -529,7 +550,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::MethodCall(expr_method_call) => {
-            if check_skip(&mut expr_method_call.attrs) {
+            if handle_inert_attrs(&mut expr_method_call.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -543,14 +564,14 @@ fn walk_expr(
             Ok(())
         }
         Expr::Paren(expr_paren) => {
-            if check_skip(&mut expr_paren.attrs) {
+            if handle_inert_attrs(&mut expr_paren.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_paren.expr, option, context)
         }
         Expr::Range(expr_range) => {
-            if check_skip(&mut expr_range.attrs) {
+            if handle_inert_attrs(&mut expr_range.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -564,21 +585,21 @@ fn walk_expr(
             Ok(())
         }
         Expr::RawAddr(expr_raw_addr) => {
-            if check_skip(&mut expr_raw_addr.attrs) {
+            if handle_inert_attrs(&mut expr_raw_addr.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_raw_addr.expr, option, context)
         }
         Expr::Reference(expr_reference) => {
-            if check_skip(&mut expr_reference.attrs) {
+            if handle_inert_attrs(&mut expr_reference.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_reference.expr, option, context)
         }
         Expr::Repeat(expr_repeat) => {
-            if check_skip(&mut expr_repeat.attrs) {
+            if handle_inert_attrs(&mut expr_repeat.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -586,7 +607,7 @@ fn walk_expr(
             walk_expr(&mut expr_repeat.len, option, context)
         }
         Expr::Struct(expr_struct) => {
-            if check_skip(&mut expr_struct.attrs) {
+            if handle_inert_attrs(&mut expr_struct.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -606,7 +627,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::TryBlock(expr_try_block) => {
-            if check_skip(&mut expr_try_block.attrs) {
+            if handle_inert_attrs(&mut expr_try_block.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -622,7 +643,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::Tuple(expr_tuple) => {
-            if check_skip(&mut expr_tuple.attrs) {
+            if handle_inert_attrs(&mut expr_tuple.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -635,14 +656,14 @@ fn walk_expr(
             Ok(())
         }
         Expr::Unary(expr_unary) => {
-            if check_skip(&mut expr_unary.attrs) {
+            if handle_inert_attrs(&mut expr_unary.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
             walk_expr(&mut expr_unary.expr, option, context)
         }
         Expr::Unsafe(expr_unsafe) => {
-            if check_skip(&mut expr_unsafe.attrs) {
+            if handle_inert_attrs(&mut expr_unsafe.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -658,7 +679,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::While(expr_while) => {
-            if check_skip(&mut expr_while.attrs) {
+            if handle_inert_attrs(&mut expr_while.attrs, context)?.is_skiped {
                 return Ok(());
             }
 
@@ -675,7 +696,7 @@ fn walk_expr(
             Ok(())
         }
         Expr::Yield(expr_yield) => {
-            if check_skip(&mut expr_yield.attrs) {
+            if handle_inert_attrs(&mut expr_yield.attrs, context)?.is_skiped {
                 return Ok(());
             }
 

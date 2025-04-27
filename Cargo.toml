@@ -14,6 +14,7 @@ syn = { version = "2.0.100", features = ["full", "extra-traits"] }
 
 [dev-dependencies]
 env_logger = "0.11.7"
+clap = { version = "4.5.37", features = ["derive"] }
 
 [build-dependencies]
 rustc_version = "0.4.1"

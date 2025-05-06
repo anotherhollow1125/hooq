@@ -1,8 +1,9 @@
+use crate::impls::utils::strip_attr;
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
-use quote::ToTokens;
 use syn::{Attribute, Meta, MetaList, Path, Token, parse::Parse, parse_quote};
 
-use crate::impls::utils::strip_attr;
+pub mod context;
+use context::ReplaceContext;
 
 #[derive(Debug)]
 pub struct HooqOption {
@@ -71,129 +72,6 @@ impl HooqOption {
         };
         expand_special_vars(method, &mut res, q_span, context)?;
         Ok(res)
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct FunctionInfo {
-    pub name: String,
-    pub sig: String,
-}
-
-pub trait ExtractFunctionInfo {
-    fn extract_function_info(&self) -> syn::Result<FunctionInfo>;
-}
-
-impl ExtractFunctionInfo for syn::ItemFn {
-    fn extract_function_info(&self) -> syn::Result<FunctionInfo> {
-        let sig = self.sig.to_token_stream().to_string();
-        let name = self.sig.ident.to_string();
-
-        Ok(FunctionInfo { name, sig })
-    }
-}
-
-#[derive(Clone, Copy, Debug)]
-pub enum ReplaceKind {
-    Question,
-    Return,
-    TailExpr,
-}
-
-impl std::fmt::Display for ReplaceKind {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            ReplaceKind::Question => write!(f, "?"),
-            ReplaceKind::Return => write!(f, "return"),
-            ReplaceKind::TailExpr => write!(f, "tail expr"),
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct Counter {
-    question: usize,
-    return_: usize,
-    tail_expr: usize,
-}
-
-impl Counter {
-    pub fn new() -> Self {
-        Self {
-            question: 0,
-            return_: 0,
-            tail_expr: 0,
-        }
-    }
-
-    pub fn count_up(&mut self, kind: ReplaceKind) {
-        match kind {
-            ReplaceKind::Question => self.question += 1,
-            ReplaceKind::Return => self.return_ += 1,
-            ReplaceKind::TailExpr => self.tail_expr += 1,
-        }
-    }
-
-    pub fn get_count(&self, kind: ReplaceKind) -> usize {
-        match kind {
-            ReplaceKind::Question => self.question,
-            ReplaceKind::Return => self.return_,
-            ReplaceKind::TailExpr => self.tail_expr,
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct ReplaceContext<'a> {
-    pub expr: String,
-    pub kind: ReplaceKind,
-
-    pub partial_replace_context: &'a mut PartialReplaceContext,
-}
-
-#[derive(Debug)]
-pub struct PartialReplaceContext {
-    pub counter: Counter,
-    pub fn_info: FunctionInfo,
-    pub tag: Option<String>,
-    pub override_method: Option<TokenStream>,
-}
-
-impl PartialReplaceContext {
-    pub fn new(fn_info: FunctionInfo) -> Self {
-        Self {
-            counter: Counter::new(),
-            fn_info,
-            tag: None,
-            override_method: None,
-        }
-    }
-
-    pub fn as_replace_context(&mut self, expr: String, kind: ReplaceKind) -> ReplaceContext<'_> {
-        ReplaceContext {
-            expr,
-            kind,
-
-            partial_replace_context: self,
-        }
-    }
-}
-
-impl ReplaceContext<'_> {
-    pub fn counter(&self) -> &Counter {
-        &self.partial_replace_context.counter
-    }
-
-    pub fn fn_info(&self) -> &FunctionInfo {
-        &self.partial_replace_context.fn_info
-    }
-
-    pub fn tag(&self) -> Option<&String> {
-        self.partial_replace_context.tag.as_ref()
-    }
-
-    pub fn override_method(&self) -> Option<&TokenStream> {
-        self.partial_replace_context.override_method.as_ref()
     }
 }
 
@@ -299,7 +177,7 @@ fn special_vars2token_stream(
         }
         "nth" | "count" => {
             let kind = context.kind;
-            let count = context.counter().get_count(kind);
+            let count = context.counter().borrow().get_count(kind);
             let val = format!("{}th {}", count, kind);
 
             Ok(parse_quote! {

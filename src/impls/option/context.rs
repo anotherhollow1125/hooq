@@ -82,21 +82,21 @@ pub enum LocalContextField<'a, T> {
 impl<'a, 'b: 'a, T> LocalContextField<'a, T> {
     fn new(val: Option<T>, parent: &'b LocalContextField<'b, T>) -> Self {
         if let Some(val) = val {
-            return LocalContextField::Override(val);
+            return Self::Override(val);
         }
 
         match parent {
-            LocalContextField::None => LocalContextField::None,
-            LocalContextField::Inherit(original) => LocalContextField::Inherit(original),
-            LocalContextField::Override(val) => LocalContextField::Inherit(val),
+            Self::None => Self::None,
+            Self::Inherit(original) => Self::Inherit(original),
+            Self::Override(val) => Self::Inherit(val),
         }
     }
 
     fn as_ref(&self) -> Option<&T> {
         match self {
-            LocalContextField::None => None,
-            LocalContextField::Inherit(local_context_kind) => Some(local_context_kind),
-            LocalContextField::Override(val) => Some(val),
+            Self::None => None,
+            Self::Inherit(local_context_kind) => Some(local_context_kind),
+            Self::Override(val) => Some(val),
         }
     }
 }

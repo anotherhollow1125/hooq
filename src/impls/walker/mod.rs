@@ -10,9 +10,14 @@ use crate::impls::inert_attr::{InertAttrOption, extract_hooq_info_from_attrs};
 pub use crate::impls::option::HooqOption;
 use crate::impls::utils::get_attrs_from_expr;
 
+use super::utils::return_type_is_result;
+
+#[cfg(test)]
+mod test;
+
 pub fn walk_stmt(
     stmt: &mut Stmt,
-    is_top_level: bool,
+    hook_for_tail: bool,
     is_tail: bool,
     option: &HooqOption,
     context: &PartialReplaceContext,
@@ -42,7 +47,7 @@ pub fn walk_stmt(
 
         // 以下は返り値となる Expr
         // 次の場合にフックすることにしたい
-        // - #[hooq] をつけた関数のトップレベルの時: 常にフック
+        // - 返り値型がResultな関数内部の時: 常にフック
         // - 上記以外: `Ok` | `Err` の時にフック
         Stmt::Expr(expr, None) if is_tail => {
             let Some(attrs) = get_attrs_from_expr(expr) else {
@@ -59,7 +64,7 @@ pub fn walk_stmt(
             walk_expr(expr, option, &context)?;
 
             // トップレベルは常にフック
-            if is_top_level {
+            if hook_for_tail {
                 let q_span = expr.span();
 
                 // TODO: tag の None を適切なものに
@@ -137,13 +142,17 @@ fn walk_item(
                 return Ok(());
             }
 
+            let hook_for_tail = return_type_is_result(item_fn);
+
             let stmts_len = item_fn.block.stmts.len();
             item_fn
                 .block
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| {
+                    walk_stmt(stmt, hook_for_tail, i == stmts_len - 1, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -212,6 +221,7 @@ fn walk_item(
 
         // 以下では何もしない
         // Item::TraitAlias は将来のために予約された要素
+        // TODO: Macro に関しては関与したい...
         Item::Const(_)
         | Item::Enum(_)
         | Item::ExternCrate(_)

@@ -1,6 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::ItemFn;
+use utils::return_type_is_result;
 
 mod inert_attr;
 pub mod option;
@@ -19,11 +20,21 @@ pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
     let context = PartialReplaceContext::new_root(&fn_info, None, None);
     let stmts_len = f.block.stmts.len();
 
+    let hook_for_tail = return_type_is_result(&f);
+
     f.block
         .stmts
         .iter_mut()
         .enumerate()
-        .map(|(i, stmt)| walker::walk_stmt(stmt, true, i == stmts_len - 1, &hooq_option, &context))
+        .map(|(i, stmt)| {
+            walker::walk_stmt(
+                stmt,
+                hook_for_tail,
+                i == stmts_len - 1,
+                &hooq_option,
+                &context,
+            )
+        })
         .collect::<syn::Result<Vec<()>>>()?;
 
     Ok(quote! {

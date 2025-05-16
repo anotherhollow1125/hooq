@@ -1,9 +1,12 @@
+use std::ops::Deref;
+
 use syn::{
     Attribute, Expr, ExprArray, ExprAssign, ExprAsync, ExprAwait, ExprBinary, ExprBlock, ExprBreak,
     ExprCall, ExprCast, ExprClosure, ExprConst, ExprContinue, ExprField, ExprForLoop, ExprGroup,
     ExprIf, ExprIndex, ExprInfer, ExprLet, ExprLit, ExprLoop, ExprMacro, ExprMatch, ExprMethodCall,
     ExprParen, ExprPath, ExprRange, ExprRawAddr, ExprReference, ExprRepeat, ExprReturn, ExprStruct,
-    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, parse_quote,
+    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, ItemFn,
+    ReturnType, Type, TypePath, parse_quote,
 };
 
 pub fn strip_attr(attr: &mut Attribute) {
@@ -52,5 +55,51 @@ pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut [Attribute]> {
         | Expr::While(ExprWhile { attrs, .. })
         | Expr::Yield(ExprYield { attrs, .. }) => Some(attrs),
         Expr::Verbatim(_) | _ => None,
+    }
+}
+
+pub fn return_type_is_result(item_fn: &ItemFn) -> bool {
+    if let ReturnType::Type(_, t) = &item_fn.sig.output {
+        if let Type::Path(TypePath { path, .. }) = t.deref() {
+            path.segments
+                .iter()
+                .next_back()
+                .is_some_and(|segment| segment.ident == "Result")
+        } else {
+            false
+        }
+    } else {
+        false
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use syn::{ItemFn, parse_quote};
+
+    use super::return_type_is_result;
+
+    #[test]
+    fn test_return_type_is_result() {
+        let item_fn: ItemFn = parse_quote! {
+            fn foo() -> Result<(), ()> {
+                Ok(())
+            }
+        };
+        assert!(return_type_is_result(&item_fn));
+
+        let item_fn: ItemFn = parse_quote! {
+            fn bar() -> ::std::result::Result<(), ()> {
+                Ok(())
+            }
+        };
+        assert!(return_type_is_result(&item_fn));
+
+        let item_fn: ItemFn = parse_quote! {
+            fn baz() -> i32 {
+                42
+            }
+        };
+        assert!(!return_type_is_result(&item_fn));
     }
 }

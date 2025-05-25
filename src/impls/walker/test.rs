@@ -8,4 +8,12 @@ fn test_walk_stmt() {
 #[test]
 fn test_walk_item() {
     macrotest::expand("tests/walker/item/fn.rs");
+    macrotest::expand("tests/walker/item/impl.rs");
+    macrotest::expand("tests/walker/item/mod_.rs");
+}
+
+#[test]
+fn test_walk_expr() {
+    macrotest::expand("tests/walker/expr/try.rs");
+    macrotest::expand("tests/walker/expr/return.rs");
 }

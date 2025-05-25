@@ -20,7 +20,7 @@ pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
     let context = PartialReplaceContext::new_root(&fn_info, None, None);
     let stmts_len = f.block.stmts.len();
 
-    let hook_for_tail = return_type_is_result(&f);
+    let hook_for_tail = return_type_is_result(&f.sig.output);
 
     f.block
         .stmts

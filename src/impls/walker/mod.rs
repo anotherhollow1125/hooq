@@ -142,7 +142,7 @@ fn walk_item(
                 return Ok(());
             }
 
-            let hook_for_tail = return_type_is_result(item_fn);
+            let hook_for_tail = return_type_is_result(&item_fn.sig.output);
 
             let stmts_len = item_fn.block.stmts.len();
             item_fn
@@ -172,6 +172,8 @@ fn walk_item(
                 .map(|impl_item| {
                     match impl_item {
                         syn::ImplItem::Fn(impl_item_fn) => {
+                            let hook_for_tail = return_type_is_result(&impl_item_fn.sig.output);
+
                             let stmts_len = impl_item_fn.block.stmts.len();
                             impl_item_fn
                                 .block
@@ -179,7 +181,13 @@ fn walk_item(
                                 .iter_mut()
                                 .enumerate()
                                 .map(|(i, stmt)| {
-                                    walk_stmt(stmt, false, i == stmts_len - 1, option, &context)
+                                    walk_stmt(
+                                        stmt,
+                                        hook_for_tail,
+                                        i == stmts_len - 1,
+                                        option,
+                                        &context,
+                                    )
                                 })
                                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -187,6 +195,7 @@ fn walk_item(
                         }
 
                         // 以下の場合何もしない
+                        // TODO: Macro に関しては関与する...？
                         syn::ImplItem::Const(_)
                         | syn::ImplItem::Type(_)
                         | syn::ImplItem::Macro(_)
@@ -457,6 +466,15 @@ fn walk_expr(
                 return Ok(());
             }
 
+            // ここで現在のように雑にwalk_exprとすると、次の場合にうまくフックされない
+            // || Ok(_)
+            // || Err(_)
+            // しかしブロックではなく式が直接指定されている場合で、わざわざフックを入れたいという状況も考えにくいものがある。
+            // - もし普通の関数が渡されている場合: それが Result 型であるかは(返り値シグネチャを書けばわかるものの)不明
+            // - もし Ok(_) / Err(_) が渡されている場合:
+            //   - そのクロージャの呼び出し先で ? がついていたり Result 型の関数の最後の評価値になっている可能性が高い
+            //   - そのため、ここでフックする必要はない
+            // 以上より、これがフックされないのは仕様とする
             walk_expr(&mut expr_closure.body, option, &context)
         }
         Expr::Const(expr_const) => {

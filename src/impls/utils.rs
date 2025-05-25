@@ -5,8 +5,8 @@ use syn::{
     ExprCall, ExprCast, ExprClosure, ExprConst, ExprContinue, ExprField, ExprForLoop, ExprGroup,
     ExprIf, ExprIndex, ExprInfer, ExprLet, ExprLit, ExprLoop, ExprMacro, ExprMatch, ExprMethodCall,
     ExprParen, ExprPath, ExprRange, ExprRawAddr, ExprReference, ExprRepeat, ExprReturn, ExprStruct,
-    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, ItemFn,
-    ReturnType, Type, TypePath, parse_quote,
+    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, ReturnType,
+    Type, TypePath, parse_quote,
 };
 
 pub fn strip_attr(attr: &mut Attribute) {
@@ -58,8 +58,8 @@ pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut [Attribute]> {
     }
 }
 
-pub fn return_type_is_result(item_fn: &ItemFn) -> bool {
-    if let ReturnType::Type(_, t) = &item_fn.sig.output {
+pub fn return_type_is_result(rt: &ReturnType) -> bool {
+    if let ReturnType::Type(_, t) = rt {
         if let Type::Path(TypePath { path, .. }) = t.deref() {
             path.segments
                 .iter()
@@ -86,20 +86,20 @@ mod tests {
                 Ok(())
             }
         };
-        assert!(return_type_is_result(&item_fn));
+        assert!(return_type_is_result(&item_fn.sig.output));
 
         let item_fn: ItemFn = parse_quote! {
             fn bar() -> ::std::result::Result<(), ()> {
                 Ok(())
             }
         };
-        assert!(return_type_is_result(&item_fn));
+        assert!(return_type_is_result(&item_fn.sig.output));
 
         let item_fn: ItemFn = parse_quote! {
             fn baz() -> i32 {
                 42
             }
         };
-        assert!(!return_type_is_result(&item_fn));
+        assert!(!return_type_is_result(&item_fn.sig.output));
     }
 }

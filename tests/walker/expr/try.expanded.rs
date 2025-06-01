@@ -1,8 +1,14 @@
 use hooq::hooq;
 fn func() -> Result<(), ()> {
     #[allow(clippy::redundant_closure_call)]
-    let _ = (|| {
-        Ok(true)
+    (|| {
+        (|| Ok(()))()
+            .inspect(|_| {
+                {
+                    ::std::io::_print(format_args!("tag: {0:?}\n", "inner"));
+                };
+            })?;
+        Ok(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0:?}\n", "inner"));
@@ -11,18 +17,9 @@ fn func() -> Result<(), ()> {
     })()
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "outer"));
+                ::std::io::_print(format_args!("tag: {0:?}\n", "try"));
             };
         })?;
-    let n = 1;
-    let 1 = n else {
-        return Err(())
-            .inspect(|_| {
-                {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "else"));
-                };
-            });
-    };
     Ok(())
         .inspect(|_| {
             {

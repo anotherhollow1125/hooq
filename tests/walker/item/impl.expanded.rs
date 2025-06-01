@@ -1,46 +1,41 @@
 use hooq::hooq;
-#[cfg(all())]
 fn func() -> Result<(), ()> {
+    #[allow(unused)]
     struct S;
-    #[cfg(all())]
     impl S {
-        #[hooq::tag("impl related function")]
+        #[allow(unused)]
         fn g() -> Result<(), ()> {
             Ok(())
-                .map(|v| {
+                .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "impl"));
+                        ::std::io::_print(
+                            format_args!("tag: {0:?}\n", "impl related function"),
+                        );
                     };
-                    v
                 })
         }
-        #[hooq::tag("impl related function 2 (not Result)")]
+        #[allow(unused)]
         fn h() -> bool {
             true
         }
-        #[hooq::tag("impl method")]
+        #[allow(unused)]
         fn i(&self) -> Result<(), ()> {
             let res = Ok(());
-            res.map(|v| {
+            res.inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "impl"));
+                    ::std::io::_print(format_args!("tag: {0:?}\n", "impl method"));
                 };
-                v
             })
         }
-        #[hooq::tag("impl method 2 (not Result)")]
+        #[allow(unused)]
         fn j(&self) -> bool {
             true
         }
     }
     Ok(())
-        .map(|v| {
+        .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
             };
-            v
         })
-}
-fn main() {
-    func().unwrap();
 }

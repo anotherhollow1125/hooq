@@ -1,9 +1,8 @@
 use hooq::hooq;
 
 #[hooq]
-#[hooq::method(.map(|v| {
+#[hooq::method(.inspect(|_| {
     println!("tag: {:?}", $tag);
-    v
 }))]
 fn func() -> Result<(), ()> {
     #[hooq::tag("try")]

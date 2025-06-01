@@ -9,9 +9,8 @@ fn b() -> Result<bool, ()> {
 }
 
 #[hooq]
-#[hooq::method(.map(|v| {
+#[hooq::method(.inspect(|_| {
     println!("tag: {:?}", $tag);
-    v
 }))]
 fn func() -> Result<(), ()> {
     #[hooq::tag("closure")]

@@ -3,10 +3,13 @@ use std::{cell::RefCell, rc::Rc};
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 
+use crate::impls::utils::return_type_is_result;
+
 #[derive(Clone, Debug)]
 pub struct FunctionInfo {
     pub name: String,
     pub sig: String,
+    pub return_type_is_result: bool,
 }
 
 pub trait ExtractFunctionInfo {
@@ -17,8 +20,13 @@ impl ExtractFunctionInfo for syn::ItemFn {
     fn extract_function_info(&self) -> syn::Result<FunctionInfo> {
         let sig = self.sig.to_token_stream().to_string();
         let name = self.sig.ident.to_string();
+        let return_type_is_result = return_type_is_result(&self.sig.output);
 
-        Ok(FunctionInfo { name, sig })
+        Ok(FunctionInfo {
+            name,
+            sig,
+            return_type_is_result,
+        })
     }
 }
 
@@ -105,6 +113,7 @@ impl<'a, 'b: 'a, T> LocalContextField<'a, T> {
 pub struct LocalContext<'a> {
     pub tag: LocalContextField<'a, String>,
     pub override_method: LocalContextField<'a, TokenStream>,
+    pub return_type_is_result: LocalContextField<'a, bool>,
 }
 
 #[derive(Debug)]
@@ -132,6 +141,7 @@ impl<'a> PartialReplaceContext<'a> {
                     Some(override_method) => LocalContextField::Override(override_method),
                     None => LocalContextField::None,
                 },
+                return_type_is_result: LocalContextField::Override(fn_info.return_type_is_result),
             },
         }
     }
@@ -140,11 +150,16 @@ impl<'a> PartialReplaceContext<'a> {
         parent_context: &'b PartialReplaceContext<'b>,
         tag: Option<String>,
         override_method: Option<TokenStream>,
+        return_type_is_result: Option<bool>,
     ) -> Self {
         let tag = LocalContextField::new(tag, &parent_context.local_context.tag);
         let override_method = LocalContextField::new(
             override_method,
             &parent_context.local_context.override_method,
+        );
+        let return_type_is_result = LocalContextField::new(
+            return_type_is_result,
+            &parent_context.local_context.return_type_is_result,
         );
 
         Self {
@@ -153,6 +168,7 @@ impl<'a> PartialReplaceContext<'a> {
             local_context: LocalContext {
                 tag,
                 override_method,
+                return_type_is_result,
             },
         }
     }
@@ -164,6 +180,42 @@ impl<'a> PartialReplaceContext<'a> {
 
             partial_replace_context: self,
         }
+    }
+
+    /*
+    pub fn update_tag(&mut self, tag: String) {
+        self.local_context.tag = LocalContextField::Override(tag);
+    }
+    */
+
+    /*
+    pub fn update_override_method(&mut self, override_method: TokenStream) {
+        self.local_context.override_method = LocalContextField::Override(override_method);
+    }
+    */
+
+    pub fn update_return_type_is_result(&mut self, is_result: bool) {
+        self.local_context.return_type_is_result = LocalContextField::Override(is_result);
+    }
+
+    /*
+    pub fn tag(&self) -> Option<&String> {
+        self.local_context.tag.as_ref()
+    }
+    */
+
+    /*
+    pub fn override_method(&self) -> Option<&TokenStream> {
+        self.local_context.override_method.as_ref()
+    }
+    */
+
+    pub fn return_type_is_result(&self) -> bool {
+        *self
+            .local_context
+            .return_type_is_result
+            .as_ref()
+            .unwrap_or(&false)
     }
 }
 
@@ -194,4 +246,15 @@ impl ReplaceContext<'_> {
             .override_method
             .as_ref()
     }
+
+    /*
+    pub fn return_type_is_result(&self) -> bool {
+        *self
+            .partial_replace_context
+            .local_context
+            .return_type_is_result
+            .as_ref()
+            .unwrap_or(&false)
+    }
+    */
 }

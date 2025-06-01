@@ -17,7 +17,6 @@ mod test;
 
 pub fn walk_stmt(
     stmt: &mut Stmt,
-    hook_for_tail: bool,
     is_tail: bool,
     option: &HooqOption,
     context: &PartialReplaceContext,
@@ -47,7 +46,7 @@ pub fn walk_stmt(
 
         // 以下は返り値となる Expr
         // 次の場合にフックすることにしたい
-        // - 返り値型がResultな関数内部の時: 常にフック
+        // - 返り値型がResultな関数・クロージャ内部の時: 常にフック
         // - 上記以外: `Ok` | `Err` の時にフック
         Stmt::Expr(expr, None) if is_tail => {
             let Some(attrs) = get_attrs_from_expr(expr) else {
@@ -63,11 +62,10 @@ pub fn walk_stmt(
 
             walk_expr(expr, option, &context)?;
 
-            // トップレベルは常にフック
-            if hook_for_tail {
+            // 返り値型がResultの時は常にフック
+            if context.return_type_is_result() {
                 let q_span = expr.span();
 
-                // TODO: tag の None を適切なものに
                 replace_expr(expr, ReplaceKind::TailExpr, q_span, option, &context)?;
 
                 return Ok(());
@@ -85,7 +83,6 @@ pub fn walk_stmt(
             if path.is_ident("Ok") || path.is_ident("Err") {
                 let q_span = path.span();
 
-                // TODO: tag の None を適切なものに
                 replace_expr(expr, ReplaceKind::TailExpr, q_span, option, &context)?;
 
                 return Ok(());
@@ -117,7 +114,7 @@ fn handle_inert_attrs<'a>(
 
     Ok(HandleInertAttrsResult {
         is_skiped,
-        new_context: PartialReplaceContext::new(context, tag, method),
+        new_context: PartialReplaceContext::new(context, tag, method, None),
     })
 }
 
@@ -136,13 +133,13 @@ fn walk_item(
         Item::Fn(item_fn) => {
             let HandleInertAttrsResult {
                 is_skiped,
-                new_context: context,
+                new_context: mut context,
             } = handle_inert_attrs(&mut item_fn.attrs, context)?;
             if is_skiped {
                 return Ok(());
             }
 
-            let hook_for_tail = return_type_is_result(&item_fn.sig.output);
+            context.update_return_type_is_result(return_type_is_result(&item_fn.sig.output));
 
             let stmts_len = item_fn.block.stmts.len();
             item_fn
@@ -150,9 +147,7 @@ fn walk_item(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| {
-                    walk_stmt(stmt, hook_for_tail, i == stmts_len - 1, option, &context)
-                })
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -172,7 +167,17 @@ fn walk_item(
                 .map(|impl_item| {
                     match impl_item {
                         syn::ImplItem::Fn(impl_item_fn) => {
-                            let hook_for_tail = return_type_is_result(&impl_item_fn.sig.output);
+                            let HandleInertAttrsResult {
+                                is_skiped,
+                                new_context: mut context,
+                            } = handle_inert_attrs(&mut impl_item_fn.attrs, &context)?;
+                            if is_skiped {
+                                return Ok(());
+                            }
+
+                            context.update_return_type_is_result(return_type_is_result(
+                                &impl_item_fn.sig.output,
+                            ));
 
                             let stmts_len = impl_item_fn.block.stmts.len();
                             impl_item_fn
@@ -181,13 +186,7 @@ fn walk_item(
                                 .iter_mut()
                                 .enumerate()
                                 .map(|(i, stmt)| {
-                                    walk_stmt(
-                                        stmt,
-                                        hook_for_tail,
-                                        i == stmts_len - 1,
-                                        option,
-                                        &context,
-                                    )
+                                    walk_stmt(stmt, i == stmts_len - 1, option, &context)
                                 })
                                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -289,7 +288,6 @@ fn walk_expr(
 
             let q_span = expr_try.question_token.span();
 
-            // TODO: tag の None を適切なものに
             replace_expr(
                 &mut expr_try.expr,
                 ReplaceKind::Question,
@@ -314,8 +312,10 @@ fn walk_expr(
 
                 let q_span = expr_return.return_token.span();
 
-                // TODO: tag の None を適切なものに
-                replace_expr(expr, ReplaceKind::Return, q_span, option, &context)?;
+                if context.return_type_is_result() {
+                    // 返り値型がResultの時のみフック
+                    replace_expr(expr, ReplaceKind::Return, q_span, option, &context)?;
+                }
             }
 
             Ok(())
@@ -365,7 +365,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -408,7 +408,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -460,11 +460,13 @@ fn walk_expr(
         Expr::Closure(expr_closure) => {
             let HandleInertAttrsResult {
                 is_skiped,
-                new_context: context,
+                new_context: mut context,
             } = handle_inert_attrs(&mut expr_closure.attrs, context)?;
             if is_skiped {
                 return Ok(());
             }
+
+            context.update_return_type_is_result(return_type_is_result(&expr_closure.output));
 
             // ここで現在のように雑にwalk_exprとすると、次の場合にうまくフックされない
             // || Ok(_)
@@ -492,7 +494,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -524,7 +526,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -556,7 +558,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             if let Some((_, else_branch)) = expr_if.else_branch.as_mut() {
@@ -604,7 +606,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -754,7 +756,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -802,7 +804,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -823,7 +825,7 @@ fn walk_expr(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, false, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())

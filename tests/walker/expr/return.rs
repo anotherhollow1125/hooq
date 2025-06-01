@@ -19,6 +19,8 @@ fn func(flag: bool) -> Result<(), ()> {
         0
     }
 
+    let _ = hoge(flag);
+
     Ok(())
 }
 

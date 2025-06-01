@@ -39,6 +39,7 @@ fn func() -> Result<(), ()> {
     f()
 }
 
-fn main() {
+#[test]
+fn test() {
     func().unwrap();
 }

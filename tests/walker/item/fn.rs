@@ -30,6 +30,7 @@ fn func() -> Result<(), ()> {
     Ok(())
 }
 
-fn main() {
+#[test]
+fn test() {
     func().unwrap();
 }

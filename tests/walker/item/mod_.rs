@@ -8,6 +8,7 @@ use hooq::hooq;
 fn func() -> Result<(), ()> {
     #[hooq::tag("mod")]
     mod tmp {
+        #[allow(unused)]
         fn func() -> Result<(), ()> {
             Ok(())
         }
@@ -16,6 +17,7 @@ fn func() -> Result<(), ()> {
     Ok(())
 }
 
-fn main() {
+#[test]
+fn test() {
     func().unwrap();
 }

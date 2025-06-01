@@ -1,4 +1,3 @@
-use crate::impls::utils::strip_attr;
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
 use syn::{Attribute, Meta, MetaList, Path, Token, parse::Parse, parse_quote};
 
@@ -39,22 +38,29 @@ impl Default for HooqOption {
 }
 
 impl HooqOption {
-    pub fn new_from_attrs(attrs: &mut [Attribute]) -> Result<HooqOption, syn::Error> {
+    pub fn new_from_attrs(attrs: &mut Vec<Attribute>) -> Result<HooqOption, syn::Error> {
         let mut option = HooqOption::default();
 
+        let mut keeps = Vec::with_capacity(attrs.len());
         for attr in attrs.iter_mut() {
             if let Some(paths) = pickup_use(attr)? {
                 option.use_.extend(paths);
-                strip_attr(attr);
+                keeps.push(false);
                 continue;
             }
 
             if let Some(method) = pickup_method(attr) {
                 option.method = method;
-                strip_attr(attr);
+                keeps.push(false);
                 continue;
             }
+
+            keeps.push(true);
         }
+
+        // ref: https://doc.rust-lang.org/alloc/vec/struct.Vec.html#method.retain
+        let mut keeps_iter = keeps.iter();
+        attrs.retain(|_| *keeps_iter.next().unwrap());
 
         Ok(option)
     }

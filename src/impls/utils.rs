@@ -6,14 +6,10 @@ use syn::{
     ExprIf, ExprIndex, ExprInfer, ExprLet, ExprLit, ExprLoop, ExprMacro, ExprMatch, ExprMethodCall,
     ExprParen, ExprPath, ExprRange, ExprRawAddr, ExprReference, ExprRepeat, ExprReturn, ExprStruct,
     ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, ReturnType,
-    Type, TypePath, parse_quote,
+    Type, TypePath,
 };
 
-pub fn strip_attr(attr: &mut Attribute) {
-    *attr = parse_quote! { #[cfg(all())] };
-}
-
-pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut [Attribute]> {
+pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut Vec<Attribute>> {
     match expr {
         Expr::Array(ExprArray { attrs, .. })
         | Expr::Assign(ExprAssign { attrs, .. })

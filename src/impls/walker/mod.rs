@@ -103,7 +103,7 @@ struct HandleInertAttrsResult<'a> {
 }
 
 fn handle_inert_attrs<'a>(
-    attrs: &mut [Attribute],
+    attrs: &mut Vec<Attribute>,
     context: &'a PartialReplaceContext,
 ) -> syn::Result<HandleInertAttrsResult<'a>> {
     let InertAttrOption {

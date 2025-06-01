@@ -7,6 +7,7 @@ use hooq::hooq;
 }))]
 fn func() -> Result<(), ()> {
     #[hooq::tag("try")]
+    #[allow(clippy::redundant_closure_call)]
     (#[hooq::tag("inner")]
     || {
         (#[hooq::tag("inner inner")]
@@ -18,6 +19,7 @@ fn func() -> Result<(), ()> {
     Ok(())
 }
 
-fn main() {
+#[test]
+fn test() {
     func().unwrap();
 }

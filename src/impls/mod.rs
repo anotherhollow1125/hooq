@@ -16,8 +16,13 @@ pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
     let hooq_option = HooqOption::new_from_attrs(&mut f.attrs)?;
 
     let fn_info = f.extract_function_info()?;
-    // TODO: 関数についているtag (や今後の機能追加によっては override_method も？) も受け取れるように改修
-    let mut context = PartialReplaceContext::new_root(&fn_info, None, None);
+    // TODO: HooqOption の Context への統合
+    let mut context = PartialReplaceContext::new_root(
+        &fn_info,
+        hooq_option.is_skiped_all,
+        hooq_option.tag.clone(),
+        None,
+    );
     let stmts_len = f.block.stmts.len();
 
     context.update_return_type_is_result(return_type_is_result(&f.sig.output));

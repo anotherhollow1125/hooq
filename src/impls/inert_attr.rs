@@ -3,16 +3,19 @@ use syn::{Attribute, Meta, MetaList, parse::Parse, parse_quote};
 
 pub struct InertAttrOption {
     pub is_skiped: bool,
+    pub is_skiped_all: bool,
     pub tag: Option<String>,
     pub method: Option<TokenStream>,
 }
 
 pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttrOption> {
     let hooq_skip = parse_quote!(hooq::skip);
+    let hooq_skip_all = parse_quote!(hooq::skip_all);
     let hooq_tag = parse_quote!(hooq::tag);
     let hooq_method = parse_quote!(hooq::method);
 
     let mut is_skiped = false;
+    let mut is_skiped_all = false;
     let mut tag: Option<String> = None;
     let mut method: Option<TokenStream> = None;
 
@@ -20,8 +23,12 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     for attr in attrs.iter_mut() {
         match &attr.meta {
             Meta::Path(p) if p == &hooq_skip => {
-                keeps.push(false);
                 is_skiped = true;
+                keeps.push(false);
+            }
+            Meta::Path(p) if p == &hooq_skip_all => {
+                is_skiped_all = true;
+                keeps.push(false);
             }
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_method => {
                 method = Some(tokens.clone());
@@ -53,6 +60,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
 
     Ok(InertAttrOption {
         is_skiped,
+        is_skiped_all,
         tag,
         method,
     })

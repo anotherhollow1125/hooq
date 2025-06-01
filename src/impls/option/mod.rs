@@ -6,6 +6,8 @@ use context::ReplaceContext;
 
 #[derive(Debug)]
 pub struct HooqOption {
+    pub is_skiped_all: bool,
+    pub tag: Option<String>,
     pub use_: Vec<Path>,
     pub method: TokenStream,
 }
@@ -31,6 +33,8 @@ fn default_method() -> TokenStream {
 impl Default for HooqOption {
     fn default() -> Self {
         Self {
+            is_skiped_all: false,
+            tag: None,
             use_: vec![],
             method: default_method(),
         }
@@ -41,21 +45,55 @@ impl HooqOption {
     pub fn new_from_attrs(attrs: &mut Vec<Attribute>) -> Result<HooqOption, syn::Error> {
         let mut option = HooqOption::default();
 
+        let hooq_skip_all = parse_quote!(hooq::skip_all);
+        let hooq_tag = parse_quote!(hooq::tag);
+        let hooq_use = parse_quote!(hooq::use_);
+        let hooq_method = parse_quote!(hooq::method);
+
         let mut keeps = Vec::with_capacity(attrs.len());
         for attr in attrs.iter_mut() {
-            if let Some(paths) = pickup_use(attr)? {
-                option.use_.extend(paths);
-                keeps.push(false);
-                continue;
-            }
+            match &attr.meta {
+                Meta::Path(p) if p == &hooq_skip_all => {
+                    option.is_skiped_all = true;
+                    keeps.push(false);
+                }
+                Meta::List(MetaList { path, tokens, .. }) if path == &hooq_tag => {
+                    struct Tag(String);
 
-            if let Some(method) = pickup_method(attr) {
-                option.method = method;
-                keeps.push(false);
-                continue;
-            }
+                    impl Parse for Tag {
+                        fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+                            let tag = input.parse::<syn::LitStr>()?;
+                            Ok(Self(tag.value()))
+                        }
+                    }
 
-            keeps.push(true);
+                    let t = syn::parse2::<Tag>(tokens.clone())?;
+                    option.tag = Some(t.0);
+                    keeps.push(false);
+                }
+                Meta::List(MetaList { path, tokens, .. }) if path == &hooq_use => {
+                    struct Paths(Vec<Path>);
+
+                    impl Parse for Paths {
+                        fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+                            let paths = input.parse_terminated(Path::parse, Token![,])?;
+                            Ok(Self(paths.into_iter().collect()))
+                        }
+                    }
+
+                    let paths = syn::parse2::<Paths>(tokens.clone())?.0;
+
+                    option.use_.extend(paths.clone());
+                    keeps.push(false);
+                }
+                Meta::List(MetaList { path, tokens, .. }) if path == &hooq_method => {
+                    option.method = tokens.clone();
+                    keeps.push(false);
+                }
+                _ => {
+                    keeps.push(true);
+                }
+            }
         }
 
         // ref: https://doc.rust-lang.org/alloc/vec/struct.Vec.html#method.retain
@@ -222,43 +260,4 @@ fn special_vars2token_stream(
             format!("Unknown special variable: {}", var_ident),
         )),
     }
-}
-
-fn pickup_use(attr: &Attribute) -> Result<Option<Vec<Path>>, syn::Error> {
-    let Meta::List(MetaList { path, tokens, .. }) = &attr.meta else {
-        return Ok(None);
-    };
-
-    let hooq_use = parse_quote!(hooq::use_);
-
-    if path != &hooq_use {
-        return Ok(None);
-    }
-
-    struct Paths(Vec<Path>);
-
-    impl Parse for Paths {
-        fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-            let paths = input.parse_terminated(Path::parse, Token![,])?;
-            Ok(Self(paths.into_iter().collect()))
-        }
-    }
-
-    let paths = syn::parse2::<Paths>(tokens.clone())?.0;
-
-    Ok(Some(paths))
-}
-
-fn pickup_method(attr: &Attribute) -> Option<TokenStream> {
-    let Meta::List(MetaList { path, tokens, .. }) = &attr.meta else {
-        return None;
-    };
-
-    let hooq_method = parse_quote!(hooq::method);
-
-    if path != &hooq_method {
-        return None;
-    }
-
-    Some(tokens.clone())
 }

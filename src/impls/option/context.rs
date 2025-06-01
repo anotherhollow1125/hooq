@@ -111,6 +111,7 @@ impl<'a, 'b: 'a, T> LocalContextField<'a, T> {
 
 #[derive(Debug)]
 pub struct LocalContext<'a> {
+    pub is_skiped_all: LocalContextField<'a, bool>,
     pub tag: LocalContextField<'a, String>,
     pub override_method: LocalContextField<'a, TokenStream>,
     pub return_type_is_result: LocalContextField<'a, bool>,
@@ -126,6 +127,7 @@ pub struct PartialReplaceContext<'a> {
 impl<'a> PartialReplaceContext<'a> {
     pub fn new_root<'b: 'a>(
         fn_info: &'b FunctionInfo,
+        is_skiped_all: bool,
         tag: Option<String>,
         override_method: Option<TokenStream>,
     ) -> Self {
@@ -133,6 +135,11 @@ impl<'a> PartialReplaceContext<'a> {
             counter: Rc::new(RefCell::new(Counter::new())),
             fn_info,
             local_context: LocalContext {
+                is_skiped_all: if is_skiped_all {
+                    LocalContextField::Override(true)
+                } else {
+                    LocalContextField::None
+                },
                 tag: match tag {
                     Some(tag) => LocalContextField::Override(tag),
                     None => LocalContextField::None,
@@ -151,6 +158,7 @@ impl<'a> PartialReplaceContext<'a> {
         tag: Option<String>,
         override_method: Option<TokenStream>,
         return_type_is_result: Option<bool>,
+        is_skiped_all: bool,
     ) -> Self {
         let tag = LocalContextField::new(tag, &parent_context.local_context.tag);
         let override_method = LocalContextField::new(
@@ -161,11 +169,16 @@ impl<'a> PartialReplaceContext<'a> {
             return_type_is_result,
             &parent_context.local_context.return_type_is_result,
         );
+        let is_skiped_all = LocalContextField::new(
+            if is_skiped_all { Some(true) } else { None },
+            &parent_context.local_context.is_skiped_all,
+        );
 
         Self {
             counter: Rc::clone(&parent_context.counter),
             fn_info: parent_context.fn_info,
             local_context: LocalContext {
+                is_skiped_all,
                 tag,
                 override_method,
                 return_type_is_result,
@@ -181,6 +194,13 @@ impl<'a> PartialReplaceContext<'a> {
             partial_replace_context: self,
         }
     }
+
+    /*
+    pub fn update_is_skiped_all(&mut self, is_skiped_all: bool) {
+        self.local_context.is_skiped_all =
+            LocalContextField::Override(is_skiped_all);
+    }
+    */
 
     /*
     pub fn update_tag(&mut self, tag: String) {
@@ -209,6 +229,10 @@ impl<'a> PartialReplaceContext<'a> {
         self.local_context.override_method.as_ref()
     }
     */
+
+    pub fn is_skiped_all(&self) -> bool {
+        *self.local_context.is_skiped_all.as_ref().unwrap_or(&false)
+    }
 
     pub fn return_type_is_result(&self) -> bool {
         *self

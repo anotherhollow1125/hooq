@@ -15,17 +15,15 @@ pub struct HooqOption {
 fn default_method() -> TokenStream {
     #[cfg(feature = "nightly")]
     parse_quote! {
-        .map_err(|e| {
-            ::log::error!("{:?} @ file: {}, line: {}", e, $file, $line);
-            e
+        .inspect_err(|e| {
+            ::std::eprintln!("{:?} @ file: {}, line: {}", e, $file, $line);
         })
     }
 
     #[cfg(not(feature = "nightly"))]
     parse_quote! {
-        .map_err(|e| {
-            ::log::error!("{:?} @ file: {}", e, file!());
-            e
+        .inspect_err(|e| {
+            ::std::eprintln!("{:?} @ file: {}", e, file!());
         })
     }
 }
@@ -115,6 +113,15 @@ impl HooqOption {
             None => self.method.clone(),
         };
         expand_special_vars(method, &mut res, q_span, context)?;
+
+        let res = res
+            .into_iter()
+            .map(|mut tt| {
+                tt.set_span(q_span);
+                tt
+            })
+            .collect();
+
         Ok(res)
     }
 }

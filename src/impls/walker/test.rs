@@ -16,4 +16,5 @@ fn test_walk_item() {
 fn test_walk_expr() {
     macrotest::expand("tests/walker/expr/try.rs");
     macrotest::expand("tests/walker/expr/return.rs");
+    macrotest::expand("tests/walker/expr/array.rs");
 }

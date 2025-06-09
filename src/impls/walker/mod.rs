@@ -15,9 +15,67 @@ use super::utils::return_type_is_result;
 #[cfg(test)]
 mod test;
 
+fn handle_tail_expr(
+    expr: &mut Expr,
+    option: &HooqOption,
+    context: &PartialReplaceContext,
+) -> syn::Result<()> {
+    let Some(attrs) = get_attrs_from_expr(expr) else {
+        return Ok(());
+    };
+    let HandleInertAttrsResult {
+        is_skiped,
+        new_context: context,
+    } = handle_inert_attrs(attrs, context)?;
+
+    walk_expr(expr, option, &context)?;
+
+    // 返り値型がResultの時は常にフック
+    if context.return_type_is_result() {
+        let q_span = expr.span();
+
+        replace_expr(
+            !is_skiped,
+            expr,
+            ReplaceKind::TailExpr,
+            q_span,
+            option,
+            &context,
+        )?;
+
+        return Ok(());
+    }
+
+    // Ok or Err の時にフック
+    let Expr::Call(ExprCall { func, .. }) = expr else {
+        return Ok(());
+    };
+
+    let Expr::Path(ExprPath { path, .. }) = *func.clone() else {
+        return Ok(());
+    };
+
+    if path.is_ident("Ok") || path.is_ident("Err") {
+        let q_span = path.span();
+
+        replace_expr(
+            !is_skiped,
+            expr,
+            ReplaceKind::TailExpr,
+            q_span,
+            option,
+            &context,
+        )?;
+
+        return Ok(());
+    }
+
+    Ok(())
+}
+
 pub fn walk_stmt(
     stmt: &mut Stmt,
-    is_tail: bool,
+    hook_target: bool,
     option: &HooqOption,
     context: &PartialReplaceContext,
 ) -> syn::Result<()> {
@@ -45,59 +103,7 @@ pub fn walk_stmt(
         // 次の場合にフックすることにしたい
         // - 返り値型がResultな関数・クロージャ内部の時: 常にフック
         // - 上記以外: `Ok` | `Err` の時にフック
-        Stmt::Expr(expr, None) if is_tail => {
-            let Some(attrs) = get_attrs_from_expr(expr) else {
-                return Ok(());
-            };
-            let HandleInertAttrsResult {
-                is_skiped,
-                new_context: context,
-            } = handle_inert_attrs(attrs, context)?;
-
-            walk_expr(expr, option, &context)?;
-
-            // 返り値型がResultの時は常にフック
-            if context.return_type_is_result() {
-                let q_span = expr.span();
-
-                replace_expr(
-                    !is_skiped,
-                    expr,
-                    ReplaceKind::TailExpr,
-                    q_span,
-                    option,
-                    &context,
-                )?;
-
-                return Ok(());
-            }
-
-            // Ok or Err の時にフック
-            let Expr::Call(ExprCall { func, .. }) = expr else {
-                return Ok(());
-            };
-
-            let Expr::Path(ExprPath { path, .. }) = *func.clone() else {
-                return Ok(());
-            };
-
-            if path.is_ident("Ok") || path.is_ident("Err") {
-                let q_span = path.span();
-
-                replace_expr(
-                    !is_skiped,
-                    expr,
-                    ReplaceKind::TailExpr,
-                    q_span,
-                    option,
-                    &context,
-                )?;
-
-                return Ok(());
-            }
-
-            Ok(())
-        }
+        Stmt::Expr(expr, None) if hook_target => handle_tail_expr(expr, option, context),
         Stmt::Expr(expr, _) => walk_expr(expr, option, context),
 
         // 以下では何もしない
@@ -354,13 +360,11 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_async.attrs, context)?;
 
-            let stmts_len = expr_async.block.stmts.len();
             expr_async
                 .block
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -388,13 +392,11 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_block.attrs, context)?;
 
-            let stmts_len = expr_block.block.stmts.len();
             expr_block
                 .block
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -442,16 +444,26 @@ fn walk_expr(
 
             context.update_return_type_is_result(return_type_is_result(&expr_closure.output));
 
-            // ここで現在のように雑にwalk_exprとすると、次の場合にうまくフックされない
-            // || Ok(_)
-            // || Err(_)
-            // しかしブロックではなく式が直接指定されている場合で、わざわざフックを入れたいという状況も考えにくいものがある。
-            // - もし普通の関数が渡されている場合: それが Result 型であるかは(返り値シグネチャを書けばわかるものの)不明
-            // - もし Ok(_) / Err(_) が渡されている場合:
-            //   - そのクロージャの呼び出し先で ? がついていたり Result 型の関数の最後の評価値になっている可能性が高い
-            //   - そのため、ここでフックする必要はない
-            // 以上より、これがフックされないのは仕様とする
-            walk_expr(&mut expr_closure.body, option, &context)
+            match &mut *expr_closure.body {
+                Expr::Block(expr_block) => {
+                    let HandleInertAttrsResult {
+                        is_skiped: _,
+                        new_context: context,
+                    } = handle_inert_attrs(&mut expr_block.attrs, &context)?;
+
+                    let stmts_len = expr_block.block.stmts.len();
+                    expr_block
+                        .block
+                        .stmts
+                        .iter_mut()
+                        .enumerate()
+                        .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                        .collect::<syn::Result<Vec<()>>>()?;
+                }
+                e => handle_tail_expr(e, option, &context)?,
+            }
+
+            Ok(())
         }
         Expr::Const(expr_const) => {
             let HandleInertAttrsResult {
@@ -459,13 +471,11 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_const.attrs, context)?;
 
-            let stmts_len = expr_const.block.stmts.len();
             expr_const
                 .block
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -485,13 +495,12 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_for_loop.attrs, context)?;
 
             walk_expr(&mut expr_for_loop.expr, option, &context)?;
-            let stmts_len = expr_for_loop.body.stmts.len();
+
             expr_for_loop
                 .body
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -511,13 +520,12 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_if.attrs, context)?;
 
             walk_expr(&mut expr_if.cond, option, &context)?;
-            let stmts_len = expr_if.then_branch.stmts.len();
+
             expr_if
                 .then_branch
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             if let Some((_, else_branch)) = expr_if.else_branch.as_mut() {
@@ -550,13 +558,11 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_loop.attrs, context)?;
 
-            let stmts_len = expr_loop.body.stmts.len();
             expr_loop
                 .body
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -673,13 +679,11 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_try_block.attrs, context)?;
 
-            let stmts_len = expr_try_block.block.stmts.len();
             expr_try_block
                 .block
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -712,13 +716,11 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_unsafe.attrs, context)?;
 
-            let stmts_len = expr_unsafe.block.stmts.len();
             expr_unsafe
                 .block
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -730,13 +732,12 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_while.attrs, context)?;
 
             walk_expr(&mut expr_while.cond, option, &context)?;
-            let stmts_len = expr_while.body.stmts.len();
+
             expr_while
                 .body
                 .stmts
                 .iter_mut()
-                .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|stmt| walk_stmt(stmt, false, option, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())

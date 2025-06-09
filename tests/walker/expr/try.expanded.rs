@@ -2,7 +2,14 @@ use hooq::hooq;
 fn func() -> Result<(), ()> {
     #[allow(clippy::redundant_closure_call)]
     (|| {
-        (|| Ok(()))()
+        (|| {
+            Ok(())
+                .inspect(|_| {
+                    {
+                        ::std::io::_print(format_args!("tag: {0:?}\n", "inner inner"));
+                    };
+                })
+        })()
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0:?}\n", "inner"));

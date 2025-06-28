@@ -15,10 +15,27 @@ use super::utils::return_type_is_result;
 #[cfg(test)]
 mod test;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TailExprTargetKind {
+    FnBlockTailExpr,
+    BlockTailExpr,
+    NotTarget,
+}
+
+impl TailExprTargetKind {
+    fn is_target(&self) -> bool {
+        matches!(
+            self,
+            TailExprTargetKind::FnBlockTailExpr | TailExprTargetKind::BlockTailExpr
+        )
+    }
+}
+
 fn handle_tail_expr(
     expr: &mut Expr,
     option: &HooqOption,
     context: &PartialReplaceContext,
+    tail_expr_target_kind: TailExprTargetKind,
 ) -> syn::Result<()> {
     let Some(attrs) = get_attrs_from_expr(expr) else {
         return Ok(());
@@ -30,8 +47,15 @@ fn handle_tail_expr(
 
     walk_expr(expr, option, &context)?;
 
-    // 返り値型がResultの時は常にフック
-    if context.return_type_is_result() {
+    // 念のためここでもターゲットであることを確認
+    if !tail_expr_target_kind.is_target() {
+        return Ok(());
+    }
+
+    // 関数orクロージャで返り値型がResultの時は常にフック
+    if context.return_type_is_result()
+        && tail_expr_target_kind == TailExprTargetKind::FnBlockTailExpr
+    {
         let q_span = expr.span();
 
         replace_expr(
@@ -75,7 +99,7 @@ fn handle_tail_expr(
 
 pub fn walk_stmt(
     stmt: &mut Stmt,
-    hook_target: bool,
+    tail_expr_target_kind: TailExprTargetKind,
     option: &HooqOption,
     context: &PartialReplaceContext,
 ) -> syn::Result<()> {
@@ -103,7 +127,9 @@ pub fn walk_stmt(
         // 次の場合にフックすることにしたい
         // - 返り値型がResultな関数・クロージャ内部の時: 常にフック
         // - 上記以外: `Ok` | `Err` の時にフック
-        Stmt::Expr(expr, None) if hook_target => handle_tail_expr(expr, option, context),
+        Stmt::Expr(expr, None) if tail_expr_target_kind.is_target() => {
+            handle_tail_expr(expr, option, context, tail_expr_target_kind)
+        }
         Stmt::Expr(expr, _) => walk_expr(expr, option, context),
 
         // 以下では何もしない
@@ -159,7 +185,15 @@ fn walk_item(
                 .stmts
                 .iter_mut()
                 .enumerate()
-                .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::FnBlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -192,7 +226,13 @@ fn walk_item(
                                 .iter_mut()
                                 .enumerate()
                                 .map(|(i, stmt)| {
-                                    walk_stmt(stmt, i == stmts_len - 1, option, &context)
+                                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                                        TailExprTargetKind::FnBlockTailExpr
+                                    } else {
+                                        TailExprTargetKind::NotTarget
+                                    };
+
+                                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
                                 })
                                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -360,11 +400,22 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_async.attrs, context)?;
 
+            let stmts_len = expr_async.block.stmts.len();
+
             expr_async
                 .block
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -392,11 +443,22 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_block.attrs, context)?;
 
+            let stmts_len = expr_block.block.stmts.len();
+
             expr_block
                 .block
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -457,10 +519,18 @@ fn walk_expr(
                         .stmts
                         .iter_mut()
                         .enumerate()
-                        .map(|(i, stmt)| walk_stmt(stmt, i == stmts_len - 1, option, &context))
+                        .map(|(i, stmt)| {
+                            let tail_expr_target_kind = if i == stmts_len - 1 {
+                                TailExprTargetKind::FnBlockTailExpr
+                            } else {
+                                TailExprTargetKind::NotTarget
+                            };
+
+                            walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                        })
                         .collect::<syn::Result<Vec<()>>>()?;
                 }
-                e => handle_tail_expr(e, option, &context)?,
+                e => handle_tail_expr(e, option, &context, TailExprTargetKind::FnBlockTailExpr)?,
             }
 
             Ok(())
@@ -471,11 +541,22 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_const.attrs, context)?;
 
+            let stmts_len = expr_const.block.stmts.len();
+
             expr_const
                 .block
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -496,11 +577,22 @@ fn walk_expr(
 
             walk_expr(&mut expr_for_loop.expr, option, &context)?;
 
+            let stmts_len = expr_for_loop.body.stmts.len();
+
             expr_for_loop
                 .body
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -521,11 +613,22 @@ fn walk_expr(
 
             walk_expr(&mut expr_if.cond, option, &context)?;
 
+            let stmts_len = expr_if.then_branch.stmts.len();
+
             expr_if
                 .then_branch
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             if let Some((_, else_branch)) = expr_if.else_branch.as_mut() {
@@ -558,11 +661,22 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_loop.attrs, context)?;
 
+            let stmts_len = expr_loop.body.stmts.len();
+
             expr_loop
                 .body
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -679,11 +793,22 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_try_block.attrs, context)?;
 
+            let stmts_len = expr_try_block.block.stmts.len();
+
             expr_try_block
                 .block
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -716,11 +841,22 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_unsafe.attrs, context)?;
 
+            let stmts_len = expr_unsafe.block.stmts.len();
+
             expr_unsafe
                 .block
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -733,11 +869,22 @@ fn walk_expr(
 
             walk_expr(&mut expr_while.cond, option, &context)?;
 
+            let stmts_len = expr_while.body.stmts.len();
+
             expr_while
                 .body
                 .stmts
                 .iter_mut()
-                .map(|stmt| walk_stmt(stmt, false, option, &context))
+                .enumerate()
+                .map(|(i, stmt)| {
+                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                        TailExprTargetKind::BlockTailExpr
+                    } else {
+                        TailExprTargetKind::NotTarget
+                    };
+
+                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())

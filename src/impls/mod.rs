@@ -10,6 +10,7 @@ mod walker;
 
 use crate::impls::option::context::ExtractFunctionInfo;
 use crate::impls::option::context::PartialReplaceContext;
+use crate::impls::walker::TailExprTargetKind;
 pub use option::HooqOption;
 
 pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
@@ -31,7 +32,15 @@ pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
         .stmts
         .iter_mut()
         .enumerate()
-        .map(|(i, stmt)| walker::walk_stmt(stmt, i == stmts_len - 1, &hooq_option, &context))
+        .map(|(i, stmt)| {
+            let tail_expr_target_kind = if i == stmts_len - 1 {
+                TailExprTargetKind::FnBlockTailExpr
+            } else {
+                TailExprTargetKind::NotTarget
+            };
+
+            walker::walk_stmt(stmt, tail_expr_target_kind, &hooq_option, &context)
+        })
         .collect::<syn::Result<Vec<()>>>()?;
 
     Ok(quote! {

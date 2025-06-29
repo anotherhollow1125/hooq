@@ -2,6 +2,12 @@ use hooq::hooq;
 use tokio::time::Duration;
 use tokio::time::sleep;
 
+async fn hoge() -> Result<usize, ()> {
+    sleep(Duration::from_millis(10)).await;
+
+    Ok(10)
+}
+
 #[hooq]
 #[hooq::tag("async function")]
 #[hooq::method(.inspect(|_| {
@@ -12,6 +18,8 @@ async fn func(n: usize) -> Result<(), ()> {
         .map(|i| {
             #[hooq::tag("async block")]
             tokio::spawn(async move {
+                let _n = hoge().await?;
+
                 sleep(Duration::from_millis(100 * (i + 1) as u64)).await;
                 println!("Task {i} completed");
 

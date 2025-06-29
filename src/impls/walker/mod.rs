@@ -3,28 +3,17 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{
-    Attribute, Expr, ExprCall, ExprPath, Item, ItemMod, Local, LocalInit, Path, Stmt, parse_quote,
+    Attribute, Expr, ExprCall, ExprPath, Item, ItemMod, Local, LocalInit, Stmt, parse_quote,
 };
 
 use crate::impls::inert_attr::{InertAttrOption, extract_hooq_info_from_attrs};
 pub use crate::impls::option::HooqOption;
-use crate::impls::utils::get_attrs_from_expr;
+use crate::impls::utils::{get_attrs_from_expr, path_is_special_call_like_err};
 
 use super::utils::return_type_is_result;
 
 #[cfg(test)]
 mod test;
-
-fn path_is_special_call_like_err(path: &Path) -> bool {
-    #[cfg(not(feature = "err-only"))]
-    {
-        path.is_ident("Err") || path.is_ident("Ok")
-    }
-    #[cfg(feature = "err-only")]
-    {
-        path.is_ident("Err")
-    }
-}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TailExprTargetKind {

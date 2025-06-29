@@ -1,6 +1,6 @@
 use hooq::hooq;
-fn hoge() -> Result<usize, ()> {
-    Ok(10)
+fn hoge(v: usize) -> Result<usize, ()> {
+    Ok(v * 2)
         .inspect_err(|e| {
             {
                 ::std::io::_eprint(
@@ -13,10 +13,30 @@ fn hoge() -> Result<usize, ()> {
         })
 }
 fn func() -> Result<(), ()> {
-    let x;
+    let mut x;
+    x = hoge(1)
+        .inspect(|_| {
+            {
+                ::std::io::_print(format_args!("{0}\n", "(no tag)"));
+            };
+        })?;
+    match x {
+        tmp => {
+            {
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3} = {4:#?}\n",
+                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs", 17u32,
+                        5u32, "x", & tmp,
+                    ),
+                );
+            };
+            tmp
+        }
+    };
     #[allow(clippy::let_unit_value)]
     let _ = {
-        x = hoge()
+        x = hoge(2)
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("{0}\n", "inner"));
@@ -29,7 +49,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "[{0}:{1}:{2}] {3} = {4:#?}\n",
-                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs", 22u32,
+                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs", 26u32,
                         5u32, "x", & tmp,
                     ),
                 );

@@ -10,7 +10,6 @@ fn func() -> Result<(), ()> {
     (#[hooq::tag("inner")]
     || {
         (#[hooq::tag("inner inner")]
-        // このクロージャのOk(())にフックが掛からないのは仕様
         || Ok(()))()?;
         Ok(())
     })()?;

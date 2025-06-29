@@ -5,8 +5,8 @@ use syn::{
     ExprCall, ExprCast, ExprClosure, ExprConst, ExprContinue, ExprField, ExprForLoop, ExprGroup,
     ExprIf, ExprIndex, ExprInfer, ExprLet, ExprLit, ExprLoop, ExprMacro, ExprMatch, ExprMethodCall,
     ExprParen, ExprPath, ExprRange, ExprRawAddr, ExprReference, ExprRepeat, ExprReturn, ExprStruct,
-    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, ReturnType,
-    Type, TypePath,
+    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, Path,
+    ReturnType, Type, TypePath,
 };
 
 pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut Vec<Attribute>> {
@@ -54,18 +54,33 @@ pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut Vec<Attribute>> {
     }
 }
 
+fn path_is_end_of(path: &Path, target: &str) -> bool {
+    path.segments
+        .iter()
+        .next_back()
+        .is_some_and(|segment| segment.ident == target)
+}
+
 pub fn return_type_is_result(rt: &ReturnType) -> bool {
     if let ReturnType::Type(_, t) = rt {
         if let Type::Path(TypePath { path, .. }) = t.deref() {
-            path.segments
-                .iter()
-                .next_back()
-                .is_some_and(|segment| segment.ident == "Result")
+            path_is_end_of(path, "Result")
         } else {
             false
         }
     } else {
         false
+    }
+}
+
+pub fn path_is_special_call_like_err(path: &Path) -> bool {
+    #[cfg(not(feature = "err-only"))]
+    {
+        path_is_end_of(path, "Err") || path_is_end_of(path, "Ok")
+    }
+    #[cfg(feature = "err-only")]
+    {
+        path_is_end_of(path, "Err")
     }
 }
 

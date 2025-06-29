@@ -1,8 +1,8 @@
 use hooq::hooq;
 
 #[hooq]
-fn hoge() -> Result<usize, ()> {
-    Ok(10)
+fn hoge(v: usize) -> Result<usize, ()> {
+    Ok(v * 2)
 }
 
 #[hooq]
@@ -10,13 +10,17 @@ fn hoge() -> Result<usize, ()> {
     println!("{}", $tag);
 }))]
 fn func() -> Result<(), ()> {
-    let x;
+    let mut x;
+
+    x = hoge(1)?;
+
+    dbg!(x);
 
     #[hooq::tag("outer")]
     #[allow(clippy::let_unit_value)]
     let _ = {
         x = #[hooq::tag("inner")]
-        hoge()?
+        hoge(2)?
     };
 
     dbg!(x);

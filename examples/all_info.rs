@@ -1,5 +1,3 @@
-#![allow(deprecated)]
-
 use clap::Parser;
 use hooq::hooq;
 

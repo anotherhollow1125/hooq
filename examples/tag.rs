@@ -1,5 +1,3 @@
-#![allow(deprecated)]
-
 use hooq::hooq;
 
 enum Tag {

@@ -5,8 +5,8 @@ fn hoge() -> Result<usize, ()> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "{0:?} @ file: {1}\n", e,
-                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs",
+                        "{0:?} @ file: {1}, line: {2}\n", e,
+                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs", 5usize,
                     ),
                 );
             };

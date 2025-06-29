@@ -13,17 +13,9 @@ pub struct HooqOption {
 }
 
 fn default_method() -> TokenStream {
-    #[cfg(feature = "nightly")]
     parse_quote! {
         .inspect_err(|e| {
             ::std::eprintln!("{:?} @ file: {}, line: {}", e, $file, $line);
-        })
-    }
-
-    #[cfg(not(feature = "nightly"))]
-    parse_quote! {
-        .inspect_err(|e| {
-            ::std::eprintln!("{:?} @ file: {}", e, file!());
         })
     }
 }
@@ -191,30 +183,26 @@ fn special_vars2token_stream(
 ) -> syn::Result<TokenStream> {
     match var_ident.to_string().as_str() {
         "line" => {
-            #[cfg(feature = "nightly")]
             let line: TokenStream = {
-                let line = q_span.start().line;
+                let line = q_span.unwrap().line();
 
                 parse_quote! {
                     #line
                 }
             };
 
-            #[cfg(not(feature = "nightly"))]
-            let line: TokenStream = {
+            Ok(line)
+        }
+        "column" | "col" => {
+            let col: TokenStream = {
+                let col = q_span.unwrap().column();
+
                 parse_quote! {
-                    {
-                        #[deprecated(note = "`$line` requires the `nightly` feature to return the precise line number.")]
-                        const NIGHTLY_NEEDS: () = ();
-
-                        let _ = NIGHTLY_NEEDS;
-
-                        line!()
-                    }
+                    #col
                 }
             };
 
-            Ok(line)
+            Ok(col)
         }
         "file" => Ok(parse_quote! {
             file!()

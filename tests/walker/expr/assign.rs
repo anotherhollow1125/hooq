@@ -19,7 +19,7 @@ fn func() -> Result<(), ()> {
         hoge()?
     };
 
-    println!("x: {}", x);
+    dbg!(x);
 
     Ok(())
 }

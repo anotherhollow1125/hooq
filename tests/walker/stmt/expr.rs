@@ -29,7 +29,7 @@ fn func() -> Result<(), ()> {
     #[hooq::tag("in eq binary ops exprs")]
     {
         let res = a()? == b()?;
-        println!("{:?}", res);
+        dbg!(res);
     }
 
     let _ = g();

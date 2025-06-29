@@ -229,7 +229,7 @@ fn special_vars2token_stream(
         "nth" | "count" => {
             let kind = context.kind;
             let count = context.counter().borrow().get_count(kind);
-            let val = format!("{}th {}", count, kind);
+            let val = format!("{count}th {kind}");
 
             Ok(parse_quote! {
                 #val
@@ -264,7 +264,7 @@ fn special_vars2token_stream(
         }
         _ => Err(syn::Error::new(
             var_ident.span(),
-            format!("Unknown special variable: {}", var_ident),
+            format!("Unknown special variable: {var_ident}"),
         )),
     }
 }

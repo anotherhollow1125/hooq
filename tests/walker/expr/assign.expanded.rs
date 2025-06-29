@@ -23,8 +23,19 @@ fn func() -> Result<(), ()> {
                 };
             })?
     };
-    {
-        ::std::io::_print(format_args!("x: {0}\n", x));
+    match x {
+        tmp => {
+            {
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3} = {4:#?}\n",
+                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs", 22u32,
+                        5u32, "x", & tmp,
+                    ),
+                );
+            };
+            tmp
+        }
     };
     Ok(())
         .inspect(|_| {

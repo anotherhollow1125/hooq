@@ -46,7 +46,7 @@ $fn_sig: {}
     e
 }))]
 fn func(n: usize) -> Result<&'static str, &'static str> {
-    println!("called func({})\n", n);
+    println!("called func({n})\n");
 
     fn check_four(n: usize) -> Result<(), &'static str> {
         if n == 4 {

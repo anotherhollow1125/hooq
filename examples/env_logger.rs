@@ -43,7 +43,7 @@ fn c() -> Result<(), String> {
 fn main() -> Result<(), std::io::Error> {
     env_logger::init();
 
-    c().map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+    c().map_err(std::io::Error::other)?;
 
     Ok(())
 }

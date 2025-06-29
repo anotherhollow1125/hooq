@@ -18,4 +18,5 @@ fn test_walk_expr() {
     macrotest::expand("tests/walker/expr/return.rs");
     macrotest::expand("tests/walker/expr/array.rs");
     macrotest::expand("tests/walker/expr/assign.rs");
+    macrotest::expand("tests/walker/expr/async.rs");
 }

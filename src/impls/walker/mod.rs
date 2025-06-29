@@ -3,7 +3,7 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{
-    Attribute, Expr, ExprCall, ExprPath, Item, ItemMod, Local, LocalInit, Stmt, parse_quote,
+    Attribute, Expr, ExprCall, ExprPath, Item, ItemMod, Local, LocalInit, Path, Stmt, parse_quote,
 };
 
 use crate::impls::inert_attr::{InertAttrOption, extract_hooq_info_from_attrs};
@@ -14,6 +14,17 @@ use super::utils::return_type_is_result;
 
 #[cfg(test)]
 mod test;
+
+fn path_is_special_call_like_err(path: &Path) -> bool {
+    #[cfg(not(feature = "err-only"))]
+    {
+        path.is_ident("Err") || path.is_ident("Ok")
+    }
+    #[cfg(feature = "err-only")]
+    {
+        path.is_ident("Err")
+    }
+}
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TailExprTargetKind {
@@ -71,15 +82,10 @@ fn handle_tail_expr(
     }
 
     // Ok or Err の時にフック
-    let Expr::Call(ExprCall { func, .. }) = expr else {
-        return Ok(());
-    };
-
-    let Expr::Path(ExprPath { path, .. }) = *func.clone() else {
-        return Ok(());
-    };
-
-    if path.is_ident("Ok") || path.is_ident("Err") {
+    if let Expr::Call(ExprCall { func, .. }) = expr
+        && let Expr::Path(ExprPath { path, .. }) = *func.clone()
+        && path_is_special_call_like_err(&path)
+    {
         let q_span = path.span();
 
         replace_expr(
@@ -355,8 +361,17 @@ fn walk_expr(
 
                 let q_span = expr_return.return_token.span();
 
-                if context.return_type_is_result() {
-                    // 返り値型がResultの時のみフック
+                let is_ok_or_err = if let Expr::Call(ExprCall { func, .. }) = &**expr
+                    && let Expr::Path(ExprPath { path, .. }) = *func.clone()
+                    && path_is_special_call_like_err(&path)
+                {
+                    true
+                } else {
+                    false
+                };
+
+                // 返り値型がResultの時 or OkやErrの時フック
+                if is_ok_or_err || context.return_type_is_result() {
                     replace_expr(
                         !is_skiped,
                         expr,

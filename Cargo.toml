@@ -7,6 +7,7 @@ edition = "2024"
 proc-macro = true
 
 [features]
+err-only = []
 nightly = []
 
 [dependencies]
@@ -22,3 +23,5 @@ clap = { version = "4.5.39", features = ["derive"] }
 env_logger = "0.11.8"
 log = "0.4.27"
 macrotest = "1.1.0"
+tokio = { version = "1.45.1", features = ["full"] }
+futures = "0.3.31"

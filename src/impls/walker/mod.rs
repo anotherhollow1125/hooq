@@ -3,7 +3,8 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{
-    Attribute, Expr, ExprCall, ExprPath, Item, ItemMod, Local, LocalInit, Stmt, parse_quote,
+    Attribute, Expr, ExprCall, ExprPath, Item, ItemConst, ItemMod, ItemStatic, Local, LocalInit,
+    Stmt, TraitItem, TraitItemConst, TraitItemFn, parse_quote,
 };
 
 use crate::impls::inert_attr::{InertAttrOption, extract_hooq_info_from_attrs};
@@ -265,18 +266,97 @@ fn walk_item(
             Ok(())
         }
 
+        Item::Const(ItemConst { attrs, expr, .. })
+        | Item::Static(ItemStatic { attrs, expr, .. }) => {
+            let HandleInertAttrsResult {
+                is_skiped: _,
+                new_context: context,
+            } = handle_inert_attrs(attrs, context)?;
+
+            walk_expr(expr, option, &context)
+        }
+
+        Item::Trait(item_trait) => {
+            let HandleInertAttrsResult {
+                is_skiped: _,
+                new_context: context,
+            } = handle_inert_attrs(&mut item_trait.attrs, context)?;
+
+            item_trait
+                .items
+                .iter_mut()
+                .map(|trait_item| {
+                    match trait_item {
+                        TraitItem::Const(TraitItemConst {
+                            attrs,
+                            default: Some((_, expr)),
+                            ..
+                        }) => {
+                            let HandleInertAttrsResult {
+                                is_skiped: _,
+                                new_context: context,
+                            } = handle_inert_attrs(attrs, &context)?;
+
+                            walk_expr(expr, option, &context)
+                        }
+                        TraitItem::Fn(TraitItemFn {
+                            attrs,
+                            sig,
+                            default: Some(block),
+                            ..
+                        }) => {
+                            let HandleInertAttrsResult {
+                                is_skiped: _,
+                                new_context: mut context,
+                            } = handle_inert_attrs(attrs, &context)?;
+
+                            context
+                                .update_return_type_is_result(return_type_is_result(&sig.output));
+
+                            let stmts_len = block.stmts.len();
+                            block
+                                .stmts
+                                .iter_mut()
+                                .enumerate()
+                                .map(|(i, stmt)| {
+                                    let tail_expr_target_kind = if i == stmts_len - 1 {
+                                        TailExprTargetKind::FnBlockTailExpr
+                                    } else {
+                                        TailExprTargetKind::NotTarget
+                                    };
+
+                                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                                })
+                                .collect::<syn::Result<Vec<()>>>()?;
+
+                            Ok(())
+                        }
+
+                        // TODO
+                        TraitItem::Macro(_) => Ok(()),
+
+                        // 以下の場合何もしない
+                        TraitItem::Const(TraitItemConst { default: None, .. })
+                        | TraitItem::Fn(TraitItemFn { default: None, .. })
+                        | TraitItem::Type(_)
+                        | TraitItem::Verbatim(_)
+                        | _ => Ok(()),
+                    }
+                })
+                .collect::<syn::Result<Vec<()>>>()?;
+
+            Ok(())
+        }
+        // TODO
+        Item::Macro(_) => Ok(()),
+
         // 以下では何もしない
         // Item::TraitAlias は将来のために予約された要素
-        // TODO: Macro に関しては関与したい...
-        Item::Const(_)
-        | Item::Enum(_)
+        Item::Enum(_)
         | Item::ExternCrate(_)
         | Item::ForeignMod(_)
-        | Item::Macro(_)
         | Item::Mod(ItemMod { content: None, .. })
-        | Item::Static(_)
         | Item::Struct(_)
-        | Item::Trait(_)
         | Item::TraitAlias(_)
         | Item::Type(_)
         | Item::Union(_)
@@ -656,7 +736,6 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_let.attrs, context)?;
 
-            // ↑おそらく将来のために予約...？
             walk_expr(&mut expr_let.expr, option, &context)
         }
         Expr::Loop(expr_loop) => {
@@ -799,6 +878,8 @@ fn walk_expr(
 
             let stmts_len = expr_try_block.block.stmts.len();
 
+            // nightly な機能と考えられるためテストしない
+
             expr_try_block
                 .block
                 .stmts
@@ -898,6 +979,8 @@ fn walk_expr(
                 is_skiped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_yield.attrs, context)?;
+
+            // nightly な機能と考えられるためテストしない
 
             if let Some(expr) = expr_yield.expr.as_mut() {
                 walk_expr(expr, option, &context)?;

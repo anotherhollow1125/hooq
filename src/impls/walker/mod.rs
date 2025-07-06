@@ -3,8 +3,8 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{
-    Attribute, Expr, ExprCall, ExprPath, Item, ItemConst, ItemMod, ItemStatic, Local, LocalInit,
-    Stmt, TraitItem, TraitItemConst, TraitItemFn, parse_quote,
+    Attribute, Expr, ExprCall, ExprPath, ImplItem, ImplItemConst, Item, ItemConst, ItemMod,
+    ItemStatic, Local, LocalInit, Stmt, TraitItem, TraitItemConst, TraitItemFn, parse_quote,
 };
 
 use crate::impls::inert_attr::{InertAttrOption, extract_hooq_info_from_attrs};
@@ -205,7 +205,7 @@ fn walk_item(
                 .iter_mut()
                 .map(|impl_item| {
                     match impl_item {
-                        syn::ImplItem::Fn(impl_item_fn) => {
+                        ImplItem::Fn(impl_item_fn) => {
                             let HandleInertAttrsResult {
                                 is_skiped: _,
                                 new_context: mut context,
@@ -235,13 +235,20 @@ fn walk_item(
                             Ok(())
                         }
 
+                        ImplItem::Const(ImplItemConst { attrs, expr, .. }) => {
+                            let HandleInertAttrsResult {
+                                is_skiped: _,
+                                new_context: context,
+                            } = handle_inert_attrs(attrs, &context)?;
+
+                            walk_expr(expr, option, &context)
+                        }
+
+                        // TODO
+                        ImplItem::Macro(_) => Ok(()),
+
                         // 以下の場合何もしない
-                        // TODO: Macro に関しては関与する...？
-                        syn::ImplItem::Const(_)
-                        | syn::ImplItem::Type(_)
-                        | syn::ImplItem::Macro(_)
-                        | syn::ImplItem::Verbatim(_)
-                        | _ => Ok(()),
+                        ImplItem::Type(_) | ImplItem::Verbatim(_) | _ => Ok(()),
                     }
                 })
                 .collect::<syn::Result<Vec<()>>>()?;

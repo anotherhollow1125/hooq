@@ -1,5 +1,7 @@
 use hooq::hooq;
 
+// 確認内容は impl.rs と同じ
+
 #[hooq]
 #[allow(unused)]
 fn hoge() -> Result<(), ()> {
@@ -11,11 +13,7 @@ fn hoge() -> Result<(), ()> {
     println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
-    #[allow(unused)]
-    struct S;
-
-    #[hooq::tag("impl")]
-    impl S {
+    trait Trit {
         #[hooq::tag("const")]
         const _CONST_VAL: usize = {
             #[hooq::tag("inner func")]
@@ -29,21 +27,21 @@ fn func() -> Result<(), ()> {
         };
 
         #[allow(unused)]
-        #[hooq::tag("impl related function")]
+        #[hooq::tag("related function")]
         fn g() -> Result<(), ()> {
             hoge()?;
 
             Ok(())
         }
 
-        #[hooq::tag("impl related function 2 (not Result)")]
+        #[hooq::tag("related function 2 (not Result)")]
         #[allow(unused)]
         fn h() -> bool {
             true
         }
 
         #[allow(unused)]
-        #[hooq::tag("impl method")]
+        #[hooq::tag("method")]
         fn i(&self) -> Result<(), ()> {
             let res = Ok(());
 
@@ -52,7 +50,7 @@ fn func() -> Result<(), ()> {
             res
         }
 
-        #[hooq::tag("impl method 2 (not Result)")]
+        #[hooq::tag("method 2 (not Result)")]
         #[allow(unused)]
         fn j(&self) -> bool {
             true

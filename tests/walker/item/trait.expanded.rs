@@ -7,16 +7,14 @@ fn hoge() -> Result<(), ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ file: {1}, line: {2}\n", e,
-                        "/home/namn/workspace/hooq/tests/walker/item/impl.rs", 6usize,
+                        "/home/namn/workspace/hooq/tests/walker/item/trait.rs", 8usize,
                     ),
                 );
             };
         })
 }
 fn func() -> Result<(), ()> {
-    #[allow(unused)]
-    struct S;
-    impl S {
+    trait Trit {
         const _CONST_VAL: usize = {
             fn _f() -> Result<(), ()> {
                 hoge()
@@ -40,7 +38,7 @@ fn func() -> Result<(), ()> {
                 .inspect(|_| {
                     {
                         ::std::io::_print(
-                            format_args!("tag: {0}\n", "impl related function"),
+                            format_args!("tag: {0}\n", "related function"),
                         );
                     };
                 })?;
@@ -48,7 +46,7 @@ fn func() -> Result<(), ()> {
                 .inspect(|_| {
                     {
                         ::std::io::_print(
-                            format_args!("tag: {0}\n", "impl related function"),
+                            format_args!("tag: {0}\n", "related function"),
                         );
                     };
                 })
@@ -63,12 +61,12 @@ fn func() -> Result<(), ()> {
             hoge()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0}\n", "impl method"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "method"));
                     };
                 })?;
             res.inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0}\n", "impl method"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "method"));
                 };
             })
         }

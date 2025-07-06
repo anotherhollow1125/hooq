@@ -7,9 +7,12 @@ fn test_walk_stmt() {
 
 #[test]
 fn test_walk_item() {
+    macrotest::expand("tests/walker/item/const.rs");
     macrotest::expand("tests/walker/item/fn.rs");
     macrotest::expand("tests/walker/item/impl.rs");
     macrotest::expand("tests/walker/item/mod_.rs");
+    macrotest::expand("tests/walker/item/static.rs");
+    macrotest::expand("tests/walker/item/trait.rs");
 }
 
 #[test]

@@ -859,9 +859,12 @@ fn walk_expr(
                 .fields
                 .iter_mut()
                 .map(|field| {
-                    walk_expr(&mut field.expr, option, &context)?;
+                    let HandleInertAttrsResult {
+                        is_skiped: _,
+                        new_context: context,
+                    } = handle_inert_attrs(&mut field.attrs, &context)?;
 
-                    Ok(())
+                    walk_expr(&mut field.expr, option, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
             if let Some(rest) = expr_struct.rest.as_mut() {

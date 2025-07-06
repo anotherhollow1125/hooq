@@ -20,6 +20,30 @@ fn test_walk_expr() {
     macrotest::expand("tests/walker/expr/assign.rs");
     macrotest::expand("tests/walker/expr/async.rs");
     macrotest::expand("tests/walker/expr/await.rs");
+    macrotest::expand("tests/walker/expr/binary.rs");
+    macrotest::expand("tests/walker/expr/block.rs");
+    macrotest::expand("tests/walker/expr/break.rs");
+    macrotest::expand("tests/walker/expr/call.rs");
+    macrotest::expand("tests/walker/expr/cast.rs");
+    macrotest::expand("tests/walker/expr/closure.rs");
+    macrotest::expand("tests/walker/expr/const.rs");
+    macrotest::expand("tests/walker/expr/field.rs");
+    macrotest::expand("tests/walker/expr/for_loop.rs");
+    macrotest::expand("tests/walker/expr/group.rs");
+    macrotest::expand("tests/walker/expr/if.rs");
+    macrotest::expand("tests/walker/expr/index.rs");
+    macrotest::expand("tests/walker/expr/let.rs");
+    macrotest::expand("tests/walker/expr/loop.rs");
+    macrotest::expand("tests/walker/expr/match.rs");
+    macrotest::expand("tests/walker/expr/method_call.rs");
+    macrotest::expand("tests/walker/expr/paren.rs");
+    macrotest::expand("tests/walker/expr/range.rs");
+    macrotest::expand("tests/walker/expr/repeat.rs");
+    macrotest::expand("tests/walker/expr/struct.rs");
+    macrotest::expand("tests/walker/expr/tuple.rs");
+    macrotest::expand("tests/walker/expr/unary.rs");
+    macrotest::expand("tests/walker/expr/unsafe.rs");
+    macrotest::expand("tests/walker/expr/while.rs");
 }
 
 #[test]

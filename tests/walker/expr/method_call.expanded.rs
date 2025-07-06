@@ -48,32 +48,32 @@ fn func() -> Result<(), ()> {
     get_strct()
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?
         .method(
             get_val()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                     };
                 })?,
             get_val()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                     };
                 })?,
         )
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

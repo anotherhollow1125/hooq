@@ -21,7 +21,7 @@ fn get_val() -> Result<usize, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     get_strct()?.method(get_val()?, get_val()?)?;

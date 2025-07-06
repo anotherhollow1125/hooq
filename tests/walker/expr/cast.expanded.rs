@@ -16,13 +16,13 @@ fn func() -> Result<(), ()> {
     let _ = hoge()
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })? as i64;
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

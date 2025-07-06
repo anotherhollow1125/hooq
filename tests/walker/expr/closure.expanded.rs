@@ -46,7 +46,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "No Result Type (Block)"),
+                        format_args!("tag: {0}\n", "No Result Type (Block)"),
                     );
                 };
             })?;
@@ -56,7 +56,7 @@ fn func() -> Result<(), ()> {
                 .inspect(|_| {
                     {
                         ::std::io::_print(
-                            format_args!("tag: {0:?}\n", "No Result Type (Block)"),
+                            format_args!("tag: {0}\n", "No Result Type (Block)"),
                         );
                     };
                 })?,
@@ -67,7 +67,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "Result Type Annotated (Block)"),
+                        format_args!("tag: {0}\n", "Result Type Annotated (Block)"),
                     );
                 };
             })?;
@@ -77,9 +77,7 @@ fn func() -> Result<(), ()> {
                     .inspect(|_| {
                         {
                             ::std::io::_print(
-                                format_args!(
-                                    "tag: {0:?}\n", "Result Type Annotated (Block)",
-                                ),
+                                format_args!("tag: {0}\n", "Result Type Annotated (Block)"),
                             );
                         };
                     })?,
@@ -87,7 +85,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "Result Type Annotated (Block)"),
+                        format_args!("tag: {0}\n", "Result Type Annotated (Block)"),
                     );
                 };
             })
@@ -97,7 +95,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "Expr is Result Type (Block)"),
+                        format_args!("tag: {0}\n", "Expr is Result Type (Block)"),
                     );
                 };
             })?;
@@ -107,7 +105,7 @@ fn func() -> Result<(), ()> {
                     .inspect(|_| {
                         {
                             ::std::io::_print(
-                                format_args!("tag: {0:?}\n", "Expr is Result Type (Block)"),
+                                format_args!("tag: {0}\n", "Expr is Result Type (Block)"),
                             );
                         };
                     })?,
@@ -115,7 +113,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "Expr is Result Type (Block)"),
+                        format_args!("tag: {0}\n", "Expr is Result Type (Block)"),
                     );
                 };
             })?;
@@ -124,7 +122,7 @@ fn func() -> Result<(), ()> {
                 .inspect(|_| {
                     {
                         ::std::io::_print(
-                            format_args!("tag: {0:?}\n", "Expr is Result Type (Block)"),
+                            format_args!("tag: {0}\n", "Expr is Result Type (Block)"),
                         );
                     };
                 });
@@ -134,7 +132,7 @@ fn func() -> Result<(), ()> {
                     .inspect(|_| {
                         {
                             ::std::io::_print(
-                                format_args!("tag: {0:?}\n", "Expr is Result Type (Block)"),
+                                format_args!("tag: {0}\n", "Expr is Result Type (Block)"),
                             );
                         };
                     })? + 1,
@@ -142,7 +140,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "Expr is Result Type (Block)"),
+                        format_args!("tag: {0}\n", "Expr is Result Type (Block)"),
                     );
                 };
             })
@@ -153,7 +151,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "No Result Type (Single Expr)"),
+                        format_args!("tag: {0}\n", "No Result Type (Single Expr)"),
                     );
                 };
             })?,
@@ -166,7 +164,7 @@ fn func() -> Result<(), ()> {
                             {
                                 ::std::io::_print(
                                     format_args!(
-                                        "tag: {0:?}\n", "Expr is Result Type (Single Expr)",
+                                        "tag: {0}\n", "Expr is Result Type (Single Expr)",
                                     ),
                                 );
                             };
@@ -177,7 +175,7 @@ fn func() -> Result<(), ()> {
                         {
                             ::std::io::_print(
                                 format_args!(
-                                    "tag: {0:?}\n", "Expr is Result Type (Single Expr)",
+                                    "tag: {0}\n", "Expr is Result Type (Single Expr)",
                                 ),
                             );
                         };
@@ -189,7 +187,7 @@ fn func() -> Result<(), ()> {
                                     {
                                         ::std::io::_print(
                                             format_args!(
-                                                "tag: {0:?}\n", "Expr is Result Type (Single Expr)",
+                                                "tag: {0}\n", "Expr is Result Type (Single Expr)",
                                             ),
                                         );
                                     };
@@ -199,7 +197,7 @@ fn func() -> Result<(), ()> {
                             {
                                 ::std::io::_print(
                                     format_args!(
-                                        "tag: {0:?}\n", "Expr is Result Type (Single Expr)",
+                                        "tag: {0}\n", "Expr is Result Type (Single Expr)",
                                     ),
                                 );
                             };
@@ -208,7 +206,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "Expr is Result Type (Single Expr)"),
+                        format_args!("tag: {0}\n", "Expr is Result Type (Single Expr)"),
                     );
                 };
             })
@@ -216,7 +214,7 @@ fn func() -> Result<(), ()> {
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

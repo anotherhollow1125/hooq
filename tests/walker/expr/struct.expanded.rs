@@ -31,7 +31,7 @@ fn func() -> Result<(), ()> {
         field: hoge()
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                 };
             })?,
     };
@@ -40,7 +40,7 @@ fn func() -> Result<(), ()> {
             if hoge()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "field"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "field"));
                     };
                 })? > 100
             {
@@ -48,7 +48,7 @@ fn func() -> Result<(), ()> {
                     .inspect(|_| {
                         {
                             ::std::io::_print(
-                                format_args!("tag: {0:?}\n", "in field expr"),
+                                format_args!("tag: {0}\n", "in field expr"),
                             );
                         };
                     });
@@ -56,7 +56,7 @@ fn func() -> Result<(), ()> {
             hoge()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "field"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "field"));
                     };
                 })?
         },
@@ -65,7 +65,7 @@ fn func() -> Result<(), ()> {
         field: hoge()
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                 };
             })?,
     };
@@ -73,14 +73,14 @@ fn func() -> Result<(), ()> {
         uint32: hoge()
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                 };
             })?,
     };
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

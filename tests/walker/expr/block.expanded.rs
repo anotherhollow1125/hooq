@@ -26,7 +26,7 @@ fn func(flag: bool) -> Result<(), ()> {
                                     return hoge()
                                         .inspect(|_| {
                                             {
-                                                ::std::io::_print(format_args!("tag: {0:?}\n", "4"));
+                                                ::std::io::_print(format_args!("tag: {0}\n", "4"));
                                             };
                                         });
                                 }
@@ -35,20 +35,20 @@ fn func(flag: bool) -> Result<(), ()> {
                                         return Err(())
                                             .inspect(|_| {
                                                 {
-                                                    ::std::io::_print(format_args!("tag: {0:?}\n", "5"));
+                                                    ::std::io::_print(format_args!("tag: {0}\n", "5"));
                                                 };
                                             });
                                     }
                                     Ok(())
                                         .inspect(|_| {
                                             {
-                                                ::std::io::_print(format_args!("tag: {0:?}\n", "5"));
+                                                ::std::io::_print(format_args!("tag: {0}\n", "5"));
                                             };
                                         })
                                 }
                                     .inspect(|_| {
                                         {
-                                            ::std::io::_print(format_args!("tag: {0:?}\n", "5"));
+                                            ::std::io::_print(format_args!("tag: {0}\n", "5"));
                                         };
                                     })?;
                                 {
@@ -60,25 +60,25 @@ fn func(flag: bool) -> Result<(), ()> {
                         })
                         .inspect(|_| {
                             {
-                                ::std::io::_print(format_args!("tag: {0:?}\n", "3"));
+                                ::std::io::_print(format_args!("tag: {0}\n", "3"));
                             };
                         })
                 }
                     .inspect(|_| {
                         {
-                            ::std::io::_print(format_args!("tag: {0:?}\n", "2"));
+                            ::std::io::_print(format_args!("tag: {0}\n", "2"));
                         };
                     })?,
             )
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "2"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "2"));
                 };
             })
     }
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "1"));
+                ::std::io::_print(format_args!("tag: {0}\n", "1"));
             };
         })
 }

@@ -2,7 +2,7 @@ use hooq::hooq;
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func(flag: bool) -> Result<(), ()> {
     #[hooq::tag("return")]

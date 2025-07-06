@@ -16,7 +16,7 @@ fn func() -> Result<(), ()> {
     let b = !enresult(true)
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
     let v = -enresult({
@@ -24,7 +24,7 @@ fn func() -> Result<(), ()> {
                 return Err(())
                     .inspect(|_| {
                         {
-                            ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                            ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                         };
                     });
             }
@@ -32,13 +32,13 @@ fn func() -> Result<(), ()> {
         })
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
     let v = *enresult(&v)
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })? + 1;
     let _ = !enresult({
@@ -46,26 +46,26 @@ fn func() -> Result<(), ()> {
                 return enresult(())
                     .inspect(|_| {
                         {
-                            ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                            ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                         };
                     });
             }
             enresult(false)
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "nested"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "nested"));
                     };
                 })?
         })
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

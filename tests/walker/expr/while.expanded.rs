@@ -18,7 +18,7 @@ fn func() -> Result<(), ()> {
     while get_bool(&mut i)
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "while"));
+                ::std::io::_print(format_args!("tag: {0}\n", "while"));
             };
         })?
     {
@@ -26,61 +26,61 @@ fn func() -> Result<(), ()> {
         let _ = get_bool(&mut j)
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "while"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "while"));
                 };
             })?;
         if !get_bool(&mut j)
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "1"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "1"));
                 };
             })?
         {
             get_bool(&mut j)
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "1"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "1"));
                     };
                 })?;
             return Ok(())
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "1"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "1"));
                     };
                 });
         }
         if !get_bool(&mut j)
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "2"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "2"));
                 };
             })?
         {
             get_bool(&mut j)
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "2"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "2"));
                     };
                 })?;
             return get_bool(&mut j)
                 .map(|_| ())
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "2"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "2"));
                     };
                 });
         }
         if !get_bool(&mut j)
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "3"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "3"));
                 };
             })?
         {
             get_bool(&mut j)
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "3"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "3"));
                     };
                 })?;
             break;
@@ -89,7 +89,7 @@ fn func() -> Result<(), ()> {
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

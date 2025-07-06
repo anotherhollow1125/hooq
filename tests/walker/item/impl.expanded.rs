@@ -9,7 +9,7 @@ fn func() -> Result<(), ()> {
                 .inspect(|_| {
                     {
                         ::std::io::_print(
-                            format_args!("tag: {0:?}\n", "impl related function"),
+                            format_args!("tag: {0}\n", "impl related function"),
                         );
                     };
                 })
@@ -23,7 +23,7 @@ fn func() -> Result<(), ()> {
             let res = Ok(());
             res.inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "impl method"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "impl method"));
                 };
             })
         }
@@ -35,7 +35,7 @@ fn func() -> Result<(), ()> {
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

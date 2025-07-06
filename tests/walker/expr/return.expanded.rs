@@ -4,7 +4,7 @@ fn func(flag: bool) -> Result<(), ()> {
         return Ok(())
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "return"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "return"));
                 };
             });
     }
@@ -18,7 +18,7 @@ fn func(flag: bool) -> Result<(), ()> {
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

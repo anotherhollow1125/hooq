@@ -9,7 +9,7 @@ fn get_bool(i: &mut usize) -> Result<bool, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     let mut i = 0;

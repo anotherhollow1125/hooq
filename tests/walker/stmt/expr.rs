@@ -10,7 +10,7 @@ fn b() -> Result<bool, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     #[hooq::tag("closure")]

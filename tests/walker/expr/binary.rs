@@ -12,7 +12,7 @@ fn c() -> Result<u32, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<u32, ()> {
     #[hooq::tag("add")]

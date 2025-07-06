@@ -19,17 +19,13 @@ fn func() -> Result<(), ()> {
             hoge()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(
-                            format_args!("tag: {0:?}\n", "in const block"),
-                        );
+                        ::std::io::_print(format_args!("tag: {0}\n", "in const block"));
                     };
                 })?;
             Ok(())
                 .inspect(|_| {
                     {
-                        ::std::io::_print(
-                            format_args!("tag: {0:?}\n", "in const block"),
-                        );
+                        ::std::io::_print(format_args!("tag: {0}\n", "in const block"));
                     };
                 })
         }
@@ -38,7 +34,7 @@ fn func() -> Result<(), ()> {
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

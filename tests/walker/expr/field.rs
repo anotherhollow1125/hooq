@@ -11,7 +11,7 @@ fn hoge() -> Result<Hoge, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     let _ = hoge()?.field;

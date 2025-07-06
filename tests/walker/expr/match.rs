@@ -7,7 +7,7 @@ fn hoge() -> Result<usize, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func(flag: bool) -> Result<(), ()> {
     match hoge()? {

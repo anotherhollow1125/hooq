@@ -5,13 +5,13 @@ fn func() -> Result<(), ()> {
         Ok(true)
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "inner"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "inner"));
                 };
             })
     })()
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "outer"));
+                ::std::io::_print(format_args!("tag: {0}\n", "outer"));
             };
         })?;
     let n = 1;
@@ -19,14 +19,14 @@ fn func() -> Result<(), ()> {
         return Err(())
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "else"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "else"));
                 };
             });
     };
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

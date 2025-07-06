@@ -7,7 +7,7 @@ fn enresult<T>(v: T) -> Result<T, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     let b = !enresult(true)?;

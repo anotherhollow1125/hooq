@@ -18,14 +18,14 @@ fn func(flags: Vec<bool>) -> Result<(), ()> {
         hoge()
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "in unsafe"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "in unsafe"));
                 };
             })?;
         if flags.next().unwrap_or(false) {
             return Err(())
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                     };
                 });
         }
@@ -33,7 +33,7 @@ fn func(flags: Vec<bool>) -> Result<(), ()> {
             hoge()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "in closure"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "in closure"));
                     };
                 })?;
             hoge()
@@ -42,7 +42,7 @@ fn func(flags: Vec<bool>) -> Result<(), ()> {
             return hoge()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                     };
                 });
         }
@@ -50,7 +50,7 @@ fn func(flags: Vec<bool>) -> Result<(), ()> {
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

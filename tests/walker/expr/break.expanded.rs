@@ -28,7 +28,7 @@ fn func(flag: bool) -> Result<(), ()> {
     }
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
     'outer: loop {
@@ -50,21 +50,21 @@ fn func(flag: bool) -> Result<(), ()> {
                     hoge()
                         .inspect(|_| {
                             {
-                                ::std::io::_print(format_args!("tag: {0:?}\n", "nest"));
+                                ::std::io::_print(format_args!("tag: {0}\n", "nest"));
                             };
                         })?;
                     if !flag {
                         return Err(())
                             .inspect(|_| {
                                 {
-                                    ::std::io::_print(format_args!("tag: {0:?}\n", "return"));
+                                    ::std::io::_print(format_args!("tag: {0}\n", "return"));
                                 };
                             });
                     }
                     Ok(())
                         .inspect(|_| {
                             {
-                                ::std::io::_print(format_args!("tag: {0:?}\n", "nest"));
+                                ::std::io::_print(format_args!("tag: {0}\n", "nest"));
                             };
                         })
                 }
@@ -73,7 +73,7 @@ fn func(flag: bool) -> Result<(), ()> {
     }
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "check nest"));
+                ::std::io::_print(format_args!("tag: {0}\n", "check nest"));
             };
         })
 }

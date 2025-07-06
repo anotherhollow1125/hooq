@@ -7,7 +7,7 @@ fn hoge(v: usize) -> Result<usize, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     if let 11 = hoge(10)?

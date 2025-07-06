@@ -7,7 +7,7 @@ fn hoge() -> Result<(), ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 #[allow(clippy::unit_arg)]
 fn func(flag: bool) -> Result<(), ()> {

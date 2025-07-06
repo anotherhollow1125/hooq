@@ -6,31 +6,31 @@ fn func() -> Result<(), ()> {
             Ok(())
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "inner inner"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "inner inner"));
                     };
                 })
         })()
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "inner"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "inner"));
                 };
             })?;
         Ok(())
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "inner"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "inner"));
                 };
             })
     })()
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "try"));
+                ::std::io::_print(format_args!("tag: {0}\n", "try"));
             };
         })?;
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

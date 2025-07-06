@@ -17,19 +17,19 @@ fn func() -> Result<[u32; 2], ()> {
             hoge()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "first"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "first"));
                     };
                 })?,
             hoge()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "second"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "second"));
                     };
                 })?,
         ])
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

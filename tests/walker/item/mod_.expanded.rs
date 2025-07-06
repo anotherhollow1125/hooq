@@ -6,7 +6,7 @@ fn func() -> Result<(), ()> {
             Ok(())
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "mod"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "mod"));
                     };
                 })
         }
@@ -14,7 +14,7 @@ fn func() -> Result<(), ()> {
     Ok(())
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

@@ -7,7 +7,7 @@ unsafe fn hoge() -> Result<(), ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func(flags: Vec<bool>) -> Result<(), ()> {
     let mut flags = flags.into_iter();

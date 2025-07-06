@@ -24,7 +24,7 @@ fn hoge() -> Result<u32, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     let _ = Strct { field: hoge()? };

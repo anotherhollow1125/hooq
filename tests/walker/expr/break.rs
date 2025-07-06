@@ -7,7 +7,7 @@ fn hoge() -> Result<(), ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func(flag: bool) -> Result<(), ()> {
     let mut counter = 0;

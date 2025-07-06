@@ -29,13 +29,13 @@ fn func() -> Result<u32, ()> {
     let mut a = b()
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "add"));
+                ::std::io::_print(format_args!("tag: {0}\n", "add"));
             };
         })?
         + c()
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "add"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "add"));
                 };
             })?;
     {
@@ -43,7 +43,7 @@ fn func() -> Result<u32, ()> {
             += b()
                 .inspect(|_| {
                     {
-                        ::std::io::_print(format_args!("tag: {0:?}\n", "add_assign"));
+                        ::std::io::_print(format_args!("tag: {0}\n", "add_assign"));
                     };
                 })?;
     }
@@ -52,19 +52,19 @@ fn func() -> Result<u32, ()> {
                 + b()
                     .inspect(|_| {
                         {
-                            ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                            ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                         };
                     })?
                 + c()
                     .inspect(|_| {
                         {
-                            ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                            ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                         };
                     })?,
         )
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "(no tag)"));
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })
 }

@@ -10,7 +10,7 @@ fn func() -> Result<(), ()> {
         Ok(())
             .inspect(|_| {
                 {
-                    ::std::io::_print(format_args!("tag: {0:?}\n", "inner"));
+                    ::std::io::_print(format_args!("tag: {0}\n", "inner"));
                 };
             })
     };
@@ -25,7 +25,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0:?}\n", "in eq binary ops exprs"),
+                        format_args!("tag: {0}\n", "in eq binary ops exprs"),
                     );
                 };
             })?
@@ -33,7 +33,7 @@ fn func() -> Result<(), ()> {
                 .inspect(|_| {
                     {
                         ::std::io::_print(
-                            format_args!("tag: {0:?}\n", "in eq binary ops exprs"),
+                            format_args!("tag: {0}\n", "in eq binary ops exprs"),
                         );
                     };
                 })?;
@@ -56,7 +56,7 @@ fn func() -> Result<(), ()> {
     f()
         .inspect(|_| {
             {
-                ::std::io::_print(format_args!("tag: {0:?}\n", "tail expr"));
+                ::std::io::_print(format_args!("tag: {0}\n", "tail expr"));
             };
         })
 }

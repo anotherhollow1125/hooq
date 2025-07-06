@@ -15,7 +15,7 @@ fn two() -> Result<u32, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     #[hooq::tag("No Result Type (Block)")]

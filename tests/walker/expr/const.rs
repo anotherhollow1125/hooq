@@ -8,7 +8,7 @@ fn hoge() -> Result<(), ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {:?}", $tag);
+    println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
     const _N: usize = const {

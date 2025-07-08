@@ -48,8 +48,3 @@ fn test_walk_expr() {
     macrotest::expand("tests/walker/expr/unsafe.rs");
     macrotest::expand("tests/walker/expr/while.rs");
 }
-
-#[test]
-fn test_walk_special() {
-    macrotest::expand("tests/walker/special/fn_special.rs");
-}

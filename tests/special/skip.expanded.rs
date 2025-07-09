@@ -1,3 +1,4 @@
+#![allow(unused_braces)]
 use hooq::hooq;
 fn enresult<T>(t: T) -> Result<T, ()> {
     Ok(t)
@@ -6,7 +7,7 @@ fn enresult<T>(t: T) -> Result<T, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ file: {1}, line: {2}\n", e,
-                        "/home/namn/workspace/hooq/tests/special/skip.rs", 5usize,
+                        "/home/namn/workspace/hooq/tests/special/skip.rs", 7usize,
                     ),
                 );
             };
@@ -39,13 +40,7 @@ fn complex_skip() -> Result<(), ()> {
             };
         })?
     {
-        if gen_bools()
-            .inspect(|_| {
-                {
-                    ::std::io::_print(format_args!("tag: {0}\n", "2"));
-                };
-            })?
-        {
+        if gen_bools()? {
             if gen_bools()
                 .inspect(|_| {
                     {
@@ -59,13 +54,7 @@ fn complex_skip() -> Result<(), ()> {
                             ::std::io::_print(format_args!("tag: {0}\n", "3"));
                         };
                     })?;
-                if enresult(false)
-                    .inspect(|_| {
-                        {
-                            ::std::io::_print(format_args!("tag: {0}\n", "2"));
-                        };
-                    })?
-                {
+                if enresult(false)? {
                     enresult(())
                         .inspect(|_| {
                             {

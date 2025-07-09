@@ -10,6 +10,7 @@ mod walker;
 
 use crate::impls::option::context::ExtractFunctionInfo;
 use crate::impls::option::context::PartialReplaceContext;
+use crate::impls::option::context::SkipStatus;
 use crate::impls::walker::TailExprTargetKind;
 pub use option::HooqOption;
 
@@ -18,12 +19,14 @@ pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
 
     let fn_info = f.extract_function_info()?;
     // TODO: HooqOption の Context への統合
-    let mut context = PartialReplaceContext::new_root(
-        &fn_info,
-        hooq_option.is_skiped_all,
-        hooq_option.tag.clone(),
-        None,
-    );
+    let skip_status = if hooq_option.is_skiped_all {
+        Some(SkipStatus::SkipAll)
+    } else {
+        None
+    };
+
+    let mut context =
+        PartialReplaceContext::new_root(&fn_info, skip_status, hooq_option.tag.clone(), None);
     let stmts_len = f.block.stmts.len();
 
     context.update_return_type_is_result(return_type_is_result(&f.sig.output));

@@ -80,7 +80,7 @@ impl Counter {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum LocalContextField<'a, T> {
     None,
     Inherit(&'a T),
@@ -88,7 +88,14 @@ pub enum LocalContextField<'a, T> {
 }
 
 impl<'a, 'b: 'a, T> LocalContextField<'a, T> {
-    fn new(val: Option<T>, parent: &'b LocalContextField<'b, T>) -> Self {
+    fn new_from_option(val: Option<T>) -> Self {
+        match val {
+            Some(v) => LocalContextField::Override(v),
+            None => LocalContextField::None,
+        }
+    }
+
+    fn from_parent(val: Option<T>, parent: &'b LocalContextField<'b, T>) -> Self {
         if let Some(val) = val {
             return Self::Override(val);
         }
@@ -107,17 +114,27 @@ impl<'a, 'b: 'a, T> LocalContextField<'a, T> {
             Self::Override(val) => Some(val),
         }
     }
+
+    fn is_some(&self) -> bool {
+        matches!(self, Self::Inherit(_) | Self::Override(_))
+    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
+pub enum SkipStatus {
+    SkipSameScope,
+    SkipAll,
+}
+
+#[derive(Debug, Clone)]
 pub struct LocalContext<'a> {
-    pub is_skiped_all: LocalContextField<'a, bool>,
+    pub skip_status: LocalContextField<'a, SkipStatus>,
     pub tag: LocalContextField<'a, String>,
     pub override_method: LocalContextField<'a, TokenStream>,
     pub return_type_is_result: LocalContextField<'a, bool>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PartialReplaceContext<'a> {
     pub counter: Rc<RefCell<Counter>>,
     pub fn_info: &'a FunctionInfo,
@@ -127,7 +144,7 @@ pub struct PartialReplaceContext<'a> {
 impl<'a> PartialReplaceContext<'a> {
     pub fn new_root<'b: 'a>(
         fn_info: &'b FunctionInfo,
-        is_skiped_all: bool,
+        skip_status: Option<SkipStatus>,
         tag: Option<String>,
         override_method: Option<TokenStream>,
     ) -> Self {
@@ -135,19 +152,9 @@ impl<'a> PartialReplaceContext<'a> {
             counter: Rc::new(RefCell::new(Counter::new())),
             fn_info,
             local_context: LocalContext {
-                is_skiped_all: if is_skiped_all {
-                    LocalContextField::Override(true)
-                } else {
-                    LocalContextField::None
-                },
-                tag: match tag {
-                    Some(tag) => LocalContextField::Override(tag),
-                    None => LocalContextField::None,
-                },
-                override_method: match override_method {
-                    Some(override_method) => LocalContextField::Override(override_method),
-                    None => LocalContextField::None,
-                },
+                skip_status: LocalContextField::new_from_option(skip_status),
+                tag: LocalContextField::new_from_option(tag),
+                override_method: LocalContextField::new_from_option(override_method),
                 return_type_is_result: LocalContextField::Override(fn_info.return_type_is_result),
             },
         }
@@ -158,27 +165,25 @@ impl<'a> PartialReplaceContext<'a> {
         tag: Option<String>,
         override_method: Option<TokenStream>,
         return_type_is_result: Option<bool>,
-        is_skiped_all: bool,
+        skip_status: Option<SkipStatus>,
     ) -> Self {
-        let tag = LocalContextField::new(tag, &parent_context.local_context.tag);
-        let override_method = LocalContextField::new(
+        let tag = LocalContextField::from_parent(tag, &parent_context.local_context.tag);
+        let override_method = LocalContextField::from_parent(
             override_method,
             &parent_context.local_context.override_method,
         );
-        let return_type_is_result = LocalContextField::new(
+        let return_type_is_result = LocalContextField::from_parent(
             return_type_is_result,
             &parent_context.local_context.return_type_is_result,
         );
-        let is_skiped_all = LocalContextField::new(
-            if is_skiped_all { Some(true) } else { None },
-            &parent_context.local_context.is_skiped_all,
-        );
+        let skip_status =
+            LocalContextField::from_parent(skip_status, &parent_context.local_context.skip_status);
 
         Self {
             counter: Rc::clone(&parent_context.counter),
             fn_info: parent_context.fn_info,
             local_context: LocalContext {
-                is_skiped_all,
+                skip_status,
                 tag,
                 override_method,
                 return_type_is_result,
@@ -192,6 +197,23 @@ impl<'a> PartialReplaceContext<'a> {
             kind,
 
             partial_replace_context: self,
+        }
+    }
+
+    pub fn for_sub_scope_context(&self) -> Self {
+        Self {
+            counter: self.counter.clone(),
+            fn_info: self.fn_info,
+            local_context: LocalContext {
+                skip_status: match self.local_context.skip_status {
+                    LocalContextField::Inherit(&SkipStatus::SkipAll)
+                    | LocalContextField::Override(SkipStatus::SkipAll) => {
+                        LocalContextField::Override(SkipStatus::SkipAll)
+                    }
+                    _ => LocalContextField::None,
+                },
+                ..self.local_context.clone()
+            },
         }
     }
 
@@ -230,8 +252,8 @@ impl<'a> PartialReplaceContext<'a> {
     }
     */
 
-    pub fn is_skiped_all(&self) -> bool {
-        *self.local_context.is_skiped_all.as_ref().unwrap_or(&false)
+    pub fn is_skiped(&self) -> bool {
+        self.local_context.skip_status.is_some()
     }
 
     pub fn return_type_is_result(&self) -> bool {

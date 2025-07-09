@@ -1,4 +1,4 @@
-use crate::impls::option::context::{PartialReplaceContext, ReplaceKind};
+use crate::impls::option::context::{PartialReplaceContext, ReplaceKind, SkipStatus};
 use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
@@ -150,8 +150,20 @@ fn handle_inert_attrs<'a>(
     } = extract_hooq_info_from_attrs(attrs)?;
 
     Ok(HandleInertAttrsResult {
-        is_skiped: is_skiped || is_skiped_all || context.is_skiped_all(),
-        new_context: PartialReplaceContext::new(context, tag, method, None, is_skiped_all),
+        is_skiped: is_skiped || is_skiped_all || context.is_skiped(),
+        new_context: PartialReplaceContext::new(
+            context,
+            tag,
+            method,
+            None,
+            if is_skiped_all {
+                Some(SkipStatus::SkipAll)
+            } else if is_skiped {
+                Some(SkipStatus::SkipSameScope)
+            } else {
+                None
+            },
+        ),
     })
 }
 
@@ -176,6 +188,8 @@ fn walk_item(
             context.update_return_type_is_result(return_type_is_result(&item_fn.sig.output));
 
             let stmts_len = item_fn.block.stmts.len();
+            let context = context.for_sub_scope_context();
+
             item_fn
                 .block
                 .stmts
@@ -216,6 +230,8 @@ fn walk_item(
                             ));
 
                             let stmts_len = impl_item_fn.block.stmts.len();
+                            let context = context.for_sub_scope_context();
+
                             impl_item_fn
                                 .block
                                 .stmts
@@ -321,6 +337,8 @@ fn walk_item(
                                 .update_return_type_is_result(return_type_is_result(&sig.output));
 
                             let stmts_len = block.stmts.len();
+                            let context = context.for_sub_scope_context();
+
                             block
                                 .stmts
                                 .iter_mut()
@@ -492,6 +510,7 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_async.attrs, context)?;
 
             let stmts_len = expr_async.block.stmts.len();
+            let context = context.for_sub_scope_context();
 
             expr_async
                 .block
@@ -535,6 +554,7 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_block.attrs, context)?;
 
             let stmts_len = expr_block.block.stmts.len();
+            let context = context.for_sub_scope_context();
 
             expr_block
                 .block
@@ -605,6 +625,8 @@ fn walk_expr(
                     } = handle_inert_attrs(&mut expr_block.attrs, &context)?;
 
                     let stmts_len = expr_block.block.stmts.len();
+                    let context = context.for_sub_scope_context();
+
                     expr_block
                         .block
                         .stmts
@@ -633,6 +655,7 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_const.attrs, context)?;
 
             let stmts_len = expr_const.block.stmts.len();
+            let context = context.for_sub_scope_context();
 
             expr_const
                 .block
@@ -669,6 +692,7 @@ fn walk_expr(
             walk_expr(&mut expr_for_loop.expr, option, &context)?;
 
             let stmts_len = expr_for_loop.body.stmts.len();
+            let context = context.for_sub_scope_context();
 
             expr_for_loop
                 .body
@@ -705,6 +729,7 @@ fn walk_expr(
             walk_expr(&mut expr_if.cond, option, &context)?;
 
             let stmts_len = expr_if.then_branch.stmts.len();
+            let context = context.for_sub_scope_context();
 
             expr_if
                 .then_branch
@@ -722,6 +747,7 @@ fn walk_expr(
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
+            // 注意: こちらもサブスコープ
             if let Some((_, else_branch)) = expr_if.else_branch.as_mut() {
                 walk_expr(else_branch, option, &context)?;
             }
@@ -752,6 +778,7 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_loop.attrs, context)?;
 
             let stmts_len = expr_loop.body.stmts.len();
+            let context = context.for_sub_scope_context();
 
             expr_loop
                 .body
@@ -887,6 +914,7 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_try_block.attrs, context)?;
 
             let stmts_len = expr_try_block.block.stmts.len();
+            let context = context.for_sub_scope_context();
 
             // nightly な機能と考えられるためテストしない
 
@@ -937,6 +965,7 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_unsafe.attrs, context)?;
 
             let stmts_len = expr_unsafe.block.stmts.len();
+            let context = context.for_sub_scope_context();
 
             expr_unsafe
                 .block
@@ -965,6 +994,7 @@ fn walk_expr(
             walk_expr(&mut expr_while.cond, option, &context)?;
 
             let stmts_len = expr_while.body.stmts.len();
+            let context = context.for_sub_scope_context();
 
             expr_while
                 .body

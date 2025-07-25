@@ -1,5 +1,6 @@
 mod fn_special;
 mod skip;
+mod skip_expr;
 
 // ほかのテストでは不十分と考えられるケースをテスト
 
@@ -7,4 +8,5 @@ mod skip;
 fn test_walk_special() {
     macrotest::expand("tests/special/fn_special.rs");
     macrotest::expand("tests/special/skip.rs");
+    macrotest::expand("tests/special/skip_expr.rs");
 }

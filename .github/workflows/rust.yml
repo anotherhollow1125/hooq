@@ -16,6 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Set up cargo expand
+      run: |
+        cargo install cargo-expand
     - name: Build
       run: cargo build --verbose
     - name: Run tests

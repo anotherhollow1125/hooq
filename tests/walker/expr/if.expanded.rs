@@ -49,6 +49,25 @@ fn func(flag: bool) -> Result<(), ()> {
                     ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
                 };
             })
+    } else if hoge()
+        .inspect(|_| {
+            {
+                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
+            };
+        })?
+    {
+        let _ = hoge()
+            .inspect(|_| {
+                {
+                    ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
+                };
+            })?;
+        Ok(())
+            .inspect(|_| {
+                {
+                    ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
+                };
+            })
     } else {
         let _ = hoge()
             .inspect(|_| {

@@ -22,6 +22,10 @@ fn func(flag: bool) -> Result<(), ()> {
         }
 
         Ok(())
+    } else if hoge()? {
+        let _ = hoge()?;
+
+        Ok(())
     } else {
         let _ = hoge()?;
 

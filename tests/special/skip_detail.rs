@@ -208,7 +208,7 @@ fn skip_expr() -> Result<(), ()> {
     (enresult(10)?, { enresult(())? }).0 as u64;
 
     let _ = #[hooq::tag("closure")]
-    #[hooq::skip]
+    #[hooq::skip] // nop
     |f: bool| -> Result<(), ()> {
         #[hooq::tag("sub scope in closure")]
         enresult(())?;
@@ -223,7 +223,7 @@ fn skip_expr() -> Result<(), ()> {
     };
 
     #[hooq::tag("const block")]
-    #[hooq::skip]
+    #[hooq::skip] // nop
     const _C: () = const {
         let _ = || {
             #[hooq::tag("sub scope in const block")]
@@ -236,6 +236,8 @@ fn skip_expr() -> Result<(), ()> {
     struct Strct {
         #[allow(unused)]
         field: (),
+        #[allow(unused)]
+        field2: (),
     }
 
     // 順番的には field の検証が先で、
@@ -249,12 +251,22 @@ fn skip_expr() -> Result<(), ()> {
             enresult(())?
         })
             .0),
+        field2: ((enresult(())?, {
+            #[hooq::tag("sub scope in struct field")]
+            enresult(())?
+        })
+            .0),
     };
 
     let _ = #[hooq::tag("field")]
     Strct {
         #[hooq::skip]
         field: ((enresult(())?, {
+            #[hooq::tag("sub scope in struct field")]
+            enresult(())?
+        })
+            .0),
+        field2: ((enresult(())?, {
             #[hooq::tag("sub scope in struct field")]
             enresult(())?
         })
@@ -300,7 +312,7 @@ fn skip_expr() -> Result<(), ()> {
     #[hooq::tag("let")]
     if let Ok(()) = enresult(())
         && #[hooq::skip]
-        let Ok(()) = enresult((enresult(()), { enresult(())? }).0)?
+        let Ok(()) = enresult((enresult(enresult(()))?, { enresult(())? }).0)?
     {
         enresult(())?;
     }
@@ -346,7 +358,10 @@ fn skip_expr() -> Result<(), ()> {
         }
     }
 
-    let s = Strct { field: () };
+    let s = Strct {
+        field: (),
+        field2: (),
+    };
 
     #[hooq::tag("method_call")]
     #[hooq::skip]
@@ -361,9 +376,38 @@ fn skip_expr() -> Result<(), ()> {
     #[hooq::skip]
     (enresult({ enresult(enresult(()))? })?)?;
 
-    let _ = #[hooq::tag("range")]
+    // Range 全体に skip を適用することは難しいため、
+    // range-1, range-2 のテストはあまり意味がない
+
+    let _ = #[hooq::tag("range-1")]
     #[hooq::skip]
-    enresult(enresult(0)?)?..enresult({ enresult(1)? })?;
+    enresult(
+        (enresult(0)?, {
+            enresult(())?;
+        })
+            .0,
+    )?
+        ..enresult(
+            (enresult(1)?, {
+                enresult(())?;
+            })
+                .0,
+        )?;
+
+    let _ = #[hooq::tag("range-2")]
+    enresult(
+        (enresult(0)?, {
+            enresult(())?;
+        })
+            .0,
+    )?
+        ..(#[hooq::skip]
+        enresult(
+            (enresult(1)?, {
+                enresult(())?;
+            })
+                .0,
+        )?);
 
     // rawAddr, reference は実質使われないため検証不要
 
@@ -432,15 +476,45 @@ async fn skip_expr_async_await() -> Result<(), ()> {
     #[hooq::skip]
     let _ = async {
         #[hooq::tag("sub scope in async")]
-        enresult(async {})?.await;
+        enresult(async {
+            enresult(async {})?.await;
+            enresult(())
+        })?
+        .await?;
 
         #[hooq::skip]
-        enresult(async {})?.await;
+        enresult(async {
+            enresult(())?;
+            enresult(())
+        })?
+        .await?;
 
         Ok(())
     }
     .await?;
 
+    Ok(())
+}
+
+#[hooq]
+#[hooq::method(.inspect(|_| {
+    println!("tag: {}", $tag);
+}))]
+fn skip_last_ok() -> Result<(), ()> {
+    let _: Result<(), ()> = #[hooq::tag("last ok 1")]
+    #[hooq::skip]
+    {
+        Ok(())
+    };
+
+    let _: Result<(), ()> = #[hooq::tag("last ok 2")]
+    {
+        #[hooq::skip]
+        Ok(())
+    };
+
+    #[hooq::tag("last ok 3")]
+    #[hooq::skip]
     Ok(())
 }
 
@@ -450,4 +524,5 @@ async fn test() {
     skip_item().unwrap();
     skip_expr().unwrap();
     skip_expr_async_await().await.unwrap();
+    skip_last_ok().unwrap();
 }

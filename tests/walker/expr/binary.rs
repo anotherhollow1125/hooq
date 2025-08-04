@@ -5,7 +5,13 @@ fn b() -> Result<u32, ()> {
     Ok(10)
 }
 
+// デフォルトだとrustfmtのせいでテストが通らないので
+// メソッドの中身を変更した
+// 非常に怒です
 #[hooq]
+#[hooq::method(.inspect(|_| {
+    println!("(# ﾟДﾟ)");
+}))]
 fn c() -> Result<u32, ()> {
     Ok(20)
 }

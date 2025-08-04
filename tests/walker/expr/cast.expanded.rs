@@ -6,7 +6,7 @@ fn hoge() -> Result<u32, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/cast.rs", 5usize,
+                        "<hooq_root>/tests/walker/expr/cast.rs", 5usize
                     ),
                 );
             };

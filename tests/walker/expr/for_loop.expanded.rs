@@ -7,8 +7,7 @@ fn range(end: usize) -> Result<RangeInclusive<usize>, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/for_loop.rs",
-                        7usize,
+                        "<hooq_root>/tests/walker/expr/for_loop.rs", 7usize
                     ),
                 );
             };
@@ -22,7 +21,7 @@ fn hoge() -> Result<(), ()> {
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
                         "<hooq_root>/tests/walker/expr/for_loop.rs",
-                        12usize,
+                        12usize
                     ),
                 );
             };

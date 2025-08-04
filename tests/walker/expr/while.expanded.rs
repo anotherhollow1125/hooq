@@ -7,7 +7,7 @@ fn get_bool(i: &mut usize) -> Result<bool, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/while.rs", 7usize,
+                        "<hooq_root>/tests/walker/expr/while.rs", 7usize
                     ),
                 );
             };

@@ -39,9 +39,9 @@ fn mask_project_root(target_path: &str, mode: MaskMode) {
 fn test_walk_stmt() {
     mask_project_root("tests/walker/stmt", UnMask);
 
-    macrotest::expand("tests/walker/stmt/local.rs");
-    macrotest::expand("tests/walker/stmt/item.rs");
-    macrotest::expand("tests/walker/stmt/expr.rs");
+    macrotest::expand_args("tests/walker/stmt/local.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/stmt/item.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/stmt/expr.rs", &["--ugly"]);
 
     mask_project_root("tests/walker/stmt", Mask);
 }
@@ -50,12 +50,12 @@ fn test_walk_stmt() {
 fn test_walk_item() {
     mask_project_root("tests/walker/item", UnMask);
 
-    macrotest::expand("tests/walker/item/const.rs");
-    macrotest::expand("tests/walker/item/fn.rs");
-    macrotest::expand("tests/walker/item/impl.rs");
-    macrotest::expand("tests/walker/item/mod_.rs");
-    macrotest::expand("tests/walker/item/static.rs");
-    macrotest::expand("tests/walker/item/trait.rs");
+    macrotest::expand_args("tests/walker/item/const.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/item/fn.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/item/impl.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/item/mod_.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/item/static.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/item/trait.rs", &["--ugly"]);
 
     mask_project_root("tests/walker/item", Mask);
 }
@@ -64,36 +64,36 @@ fn test_walk_item() {
 fn test_walk_expr() {
     mask_project_root("tests/walker/expr", UnMask);
 
-    macrotest::expand("tests/walker/expr/try.rs");
-    macrotest::expand("tests/walker/expr/return.rs");
-    macrotest::expand("tests/walker/expr/array.rs");
-    macrotest::expand("tests/walker/expr/assign.rs");
-    macrotest::expand("tests/walker/expr/async.rs");
-    macrotest::expand("tests/walker/expr/await.rs");
-    macrotest::expand("tests/walker/expr/binary.rs");
-    macrotest::expand("tests/walker/expr/block.rs");
-    macrotest::expand("tests/walker/expr/break.rs");
-    macrotest::expand("tests/walker/expr/call.rs");
-    macrotest::expand("tests/walker/expr/cast.rs");
-    macrotest::expand("tests/walker/expr/closure.rs");
-    macrotest::expand("tests/walker/expr/const.rs");
-    macrotest::expand("tests/walker/expr/field.rs");
-    macrotest::expand("tests/walker/expr/for_loop.rs");
-    macrotest::expand("tests/walker/expr/group.rs");
-    macrotest::expand("tests/walker/expr/if.rs");
-    macrotest::expand("tests/walker/expr/index.rs");
-    macrotest::expand("tests/walker/expr/let.rs");
-    macrotest::expand("tests/walker/expr/loop.rs");
-    macrotest::expand("tests/walker/expr/match.rs");
-    macrotest::expand("tests/walker/expr/method_call.rs");
-    macrotest::expand("tests/walker/expr/paren.rs");
-    macrotest::expand("tests/walker/expr/range.rs");
-    macrotest::expand("tests/walker/expr/repeat.rs");
-    macrotest::expand("tests/walker/expr/struct.rs");
-    macrotest::expand("tests/walker/expr/tuple.rs");
-    macrotest::expand("tests/walker/expr/unary.rs");
-    macrotest::expand("tests/walker/expr/unsafe.rs");
-    macrotest::expand("tests/walker/expr/while.rs");
+    macrotest::expand_args("tests/walker/expr/try.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/return.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/array.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/assign.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/async.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/await.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/binary.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/block.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/break.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/call.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/cast.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/closure.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/const.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/field.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/for_loop.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/group.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/if.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/index.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/let.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/loop.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/match.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/method_call.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/paren.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/range.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/repeat.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/struct.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/tuple.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/unary.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/unsafe.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/while.rs", &["--ugly"]);
 
     mask_project_root("tests/walker/expr", Mask);
 }

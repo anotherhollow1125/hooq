@@ -9,7 +9,7 @@ impl Strct {
                         format_args!(
                             "{0:?} @ path: {1}, line: {2}\n", e,
                             "<hooq_root>/tests/walker/expr/method_call.rs",
-                            8usize,
+                            8usize
                         ),
                     );
                 };
@@ -24,7 +24,7 @@ fn get_strct() -> Result<Strct, ()> {
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
                         "<hooq_root>/tests/walker/expr/method_call.rs",
-                        14usize,
+                        14usize
                     ),
                 );
             };
@@ -38,7 +38,7 @@ fn get_val() -> Result<usize, ()> {
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
                         "<hooq_root>/tests/walker/expr/method_call.rs",
-                        19usize,
+                        19usize
                     ),
                 );
             };

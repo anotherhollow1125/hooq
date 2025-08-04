@@ -6,7 +6,7 @@ fn v() -> Result<Vec<usize>, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/index.rs", 5usize,
+                        "<hooq_root>/tests/walker/expr/index.rs", 5usize
                     ),
                 );
             };
@@ -19,7 +19,7 @@ fn hoge() -> Result<usize, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/index.rs", 10usize,
+                        "<hooq_root>/tests/walker/expr/index.rs", 10usize
                     ),
                 );
             };
@@ -32,7 +32,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/index.rs", 15usize,
+                        "<hooq_root>/tests/walker/expr/index.rs", 15usize
                     ),
                 );
             };
@@ -42,7 +42,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/index.rs", 15usize,
+                        "<hooq_root>/tests/walker/expr/index.rs", 15usize
                     ),
                 );
             };
@@ -53,7 +53,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/index.rs", 17usize,
+                        "<hooq_root>/tests/walker/expr/index.rs", 17usize
                     ),
                 );
             };

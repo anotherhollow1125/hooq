@@ -9,7 +9,7 @@ fn hoge() -> Result<Hoge, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/field.rs", 9usize,
+                        "<hooq_root>/tests/walker/expr/field.rs", 9usize
                     ),
                 );
             };

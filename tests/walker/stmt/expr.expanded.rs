@@ -44,7 +44,7 @@ fn func() -> Result<(), ()> {
                         format_args!(
                             "[{0}:{1}:{2}] {3} = {4:#?}\n",
                             "<hooq_root>/tests/walker/stmt/expr.rs", 32u32,
-                            9u32, "res", & tmp,
+                            9u32, "res", & tmp
                         ),
                     );
                 };

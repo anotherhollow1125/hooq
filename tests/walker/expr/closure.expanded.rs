@@ -8,7 +8,7 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
                         format_args!(
                             "{0:?} @ path: {1}, line: {2}\n", e,
                             "<hooq_root>/tests/walker/expr/closure.rs",
-                            6usize,
+                            6usize
                         ),
                     );
                 };
@@ -20,7 +20,7 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/closure.rs", 8usize,
+                        "<hooq_root>/tests/walker/expr/closure.rs", 8usize
                     ),
                 );
             };
@@ -33,8 +33,7 @@ fn two() -> Result<u32, ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/closure.rs",
-                        13usize,
+                        "<hooq_root>/tests/walker/expr/closure.rs", 13usize
                     ),
                 );
             };
@@ -164,7 +163,7 @@ fn func() -> Result<(), ()> {
                             {
                                 ::std::io::_print(
                                     format_args!(
-                                        "tag: {0}\n", "Expr is Result Type (Single Expr)",
+                                        "tag: {0}\n", "Expr is Result Type (Single Expr)"
                                     ),
                                 );
                             };
@@ -175,7 +174,7 @@ fn func() -> Result<(), ()> {
                         {
                             ::std::io::_print(
                                 format_args!(
-                                    "tag: {0}\n", "Expr is Result Type (Single Expr)",
+                                    "tag: {0}\n", "Expr is Result Type (Single Expr)"
                                 ),
                             );
                         };
@@ -187,7 +186,7 @@ fn func() -> Result<(), ()> {
                                     {
                                         ::std::io::_print(
                                             format_args!(
-                                                "tag: {0}\n", "Expr is Result Type (Single Expr)",
+                                                "tag: {0}\n", "Expr is Result Type (Single Expr)"
                                             ),
                                         );
                                     };
@@ -197,7 +196,7 @@ fn func() -> Result<(), ()> {
                             {
                                 ::std::io::_print(
                                     format_args!(
-                                        "tag: {0}\n", "Expr is Result Type (Single Expr)",
+                                        "tag: {0}\n", "Expr is Result Type (Single Expr)"
                                     ),
                                 );
                             };

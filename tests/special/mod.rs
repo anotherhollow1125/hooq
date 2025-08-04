@@ -8,9 +8,9 @@ mod skip_detail;
 fn test_walk_special() {
     crate::mask_project_root("tests/special", crate::UnMask);
 
-    macrotest::expand("tests/special/fn_special.rs");
-    macrotest::expand("tests/special/skip.rs");
-    macrotest::expand("tests/special/skip_detail.rs");
+    macrotest::expand_args("tests/special/fn_special.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/skip.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/skip_detail.rs", &["--ugly"]);
 
     crate::mask_project_root("tests/special", crate::Mask);
 }

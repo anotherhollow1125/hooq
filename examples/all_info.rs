@@ -6,6 +6,7 @@ use hooq::hooq;
     println!(
 "$line: {}
 $flle: {}
+$path: {}
 $expr: {}
 $nth: {} ($count: {})
 $tag: {}
@@ -14,6 +15,7 @@ $fn_sig: {}
 ",
     $line,
     $file,
+    $path,
     $expr,
     $nth,
     $count,
@@ -25,7 +27,8 @@ $fn_sig: {}
 }).map_err(|e| {
     println!(
 "$line: {}
-$flle: {}
+$file: {}
+$path: {}
 $expr: {}
 $nth: {} ($count: {})
 $tag: {}
@@ -34,6 +37,7 @@ $fn_sig: {}
 ",
     $line,
     $file,
+    $path,
     $expr,
     $nth,
     $count,

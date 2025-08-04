@@ -14,14 +14,9 @@ fn b() -> Result<u32, ()> {
 }
 fn c() -> Result<u32, ()> {
     Ok(20)
-        .inspect_err(|e| {
+        .inspect(|_| {
             {
-                ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/binary.rs", 10usize
-                    ),
-                );
+                ::std::io::_print(format_args!("(# \u{ff9f}Д\u{ff9f})\n"));
             };
         })
 }

@@ -4,13 +4,11 @@ impl Strct {
     fn method(&self, _val1: usize, _val2: usize) -> Result<(), ()> {
         Ok(())
             .inspect_err(|e| {
+                let path = "<hooq_root>/tests/walker/expr/method_call.rs";
+                let line = 8usize;
                 {
                     ::std::io::_eprint(
-                        format_args!(
-                            "{0:?} @ path: {1}, line: {2}\n", e,
-                            "<hooq_root>/tests/walker/expr/method_call.rs",
-                            8usize
-                        ),
+                        format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                     );
                 };
             })
@@ -19,13 +17,11 @@ impl Strct {
 fn get_strct() -> Result<Strct, ()> {
     Ok(Strct)
         .inspect_err(|e| {
+            let path = "<hooq_root>/tests/walker/expr/method_call.rs";
+            let line = 14usize;
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/method_call.rs",
-                        14usize
-                    ),
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                 );
             };
         })
@@ -33,13 +29,11 @@ fn get_strct() -> Result<Strct, ()> {
 fn get_val() -> Result<usize, ()> {
     Ok(10)
         .inspect_err(|e| {
+            let path = "<hooq_root>/tests/walker/expr/method_call.rs";
+            let line = 19usize;
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/method_call.rs",
-                        19usize
-                    ),
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                 );
             };
         })

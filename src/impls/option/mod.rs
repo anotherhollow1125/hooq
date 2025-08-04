@@ -12,10 +12,16 @@ pub struct HooqOption {
     pub method: TokenStream,
 }
 
+// eprintln! に直接埋め込みたいところだが、
+// テストの関係でこのようになっている
+// (恨むならeprintln!の仕様を恨んでください)
 fn default_method() -> TokenStream {
     parse_quote! {
         .inspect_err(|e| {
-            ::std::eprintln!("{:?} @ path: {}, line: {}", e, $path, $line);
+            let path = $path;
+            let line = $line;
+
+            ::std::eprintln!("{e:?} @ path: {path}, line: {line}");
         })
     }
 }

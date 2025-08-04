@@ -2,21 +2,24 @@ use hooq::hooq;
 fn b() -> Result<u32, ()> {
     Ok(10)
         .inspect_err(|e| {
+            let path = "<hooq_root>/tests/walker/expr/binary.rs";
+            let line = 5usize;
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/binary.rs", 5usize
-                    ),
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                 );
             };
         })
 }
 fn c() -> Result<u32, ()> {
     Ok(20)
-        .inspect(|_| {
+        .inspect_err(|e| {
+            let path = "<hooq_root>/tests/walker/expr/binary.rs";
+            let line = 10usize;
             {
-                ::std::io::_print(format_args!("(# \u{ff9f}Д\u{ff9f})\n"));
+                ::std::io::_eprint(
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
+                );
             };
         })
 }

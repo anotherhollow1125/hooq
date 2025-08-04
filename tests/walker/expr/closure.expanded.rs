@@ -3,25 +3,22 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
     if y > x {
         return Err(())
             .inspect_err(|e| {
+                let path = "<hooq_root>/tests/walker/expr/closure.rs";
+                let line = 6usize;
                 {
                     ::std::io::_eprint(
-                        format_args!(
-                            "{0:?} @ path: {1}, line: {2}\n", e,
-                            "<hooq_root>/tests/walker/expr/closure.rs",
-                            6usize
-                        ),
+                        format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                     );
                 };
             });
     }
     Ok(x - y)
         .inspect_err(|e| {
+            let path = "<hooq_root>/tests/walker/expr/closure.rs";
+            let line = 8usize;
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/closure.rs", 8usize
-                    ),
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                 );
             };
         })
@@ -29,12 +26,11 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
 fn two() -> Result<u32, ()> {
     Ok(2)
         .inspect_err(|e| {
+            let path = "<hooq_root>/tests/walker/expr/closure.rs";
+            let line = 13usize;
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/closure.rs", 13usize
-                    ),
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                 );
             };
         })

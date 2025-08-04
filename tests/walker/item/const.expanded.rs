@@ -3,12 +3,11 @@ use hooq::hooq;
 fn hoge() -> Result<(), ()> {
     Ok(())
         .inspect_err(|e| {
+            let path = "<hooq_root>/tests/walker/item/const.rs";
+            let line = 8usize;
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/item/const.rs", 8usize
-                    ),
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                 );
             };
         })

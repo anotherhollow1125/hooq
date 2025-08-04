@@ -3,12 +3,11 @@ use hooq::hooq;
 fn enresult<T>(t: T) -> Result<T, ()> {
     Ok(t)
         .inspect_err(|e| {
+            let path = "<hooq_root>/tests/special/skip.rs";
+            let line = 7usize;
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/special/skip.rs", 7usize
-                    ),
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                 );
             };
         })

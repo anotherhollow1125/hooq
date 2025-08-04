@@ -5,12 +5,11 @@ struct Hoge {
 fn hoge() -> Result<Hoge, ()> {
     Ok(Hoge { field: 10 })
         .inspect_err(|e| {
+            let path = "<hooq_root>/tests/walker/expr/field.rs";
+            let line = 9usize;
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "{0:?} @ path: {1}, line: {2}\n", e,
-                        "<hooq_root>/tests/walker/expr/field.rs", 9usize
-                    ),
+                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
                 );
             };
         })

@@ -15,7 +15,6 @@ pub struct HooqOption {
 fn default_method() -> TokenStream {
     parse_quote! {
         .inspect_err(|e| {
-            #[rustfmt::skip]
             ::std::eprintln!("{:?} @ path: {}, line: {}", e, $path, $line);
         })
     }

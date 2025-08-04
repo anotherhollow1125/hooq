@@ -5,8 +5,8 @@ fn hoge() -> Result<u32, ()> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "{0:?} @ file: {1}, line: {2}\n", e,
-                        "/home/namn/workspace/hooq/tests/walker/expr/group.rs", 9usize,
+                        "{0:?} @ path: {1}, line: {2}\n", e,
+                        "<hooq_root>/tests/walker/expr/group.rs", 9usize,
                     ),
                 );
             };

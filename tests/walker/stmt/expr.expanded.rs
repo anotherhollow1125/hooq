@@ -43,7 +43,7 @@ fn func() -> Result<(), ()> {
                     ::std::io::_eprint(
                         format_args!(
                             "[{0}:{1}:{2}] {3} = {4:#?}\n",
-                            "/home/namn/workspace/hooq/tests/walker/stmt/expr.rs", 32u32,
+                            "<hooq_root>/tests/walker/stmt/expr.rs", 32u32,
                             9u32, "res", & tmp,
                         ),
                     );

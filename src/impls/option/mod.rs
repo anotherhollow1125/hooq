@@ -15,7 +15,7 @@ pub struct HooqOption {
 fn default_method() -> TokenStream {
     parse_quote! {
         .inspect_err(|e| {
-            ::std::eprintln!("{:?} @ file: {}, line: {}", e, $file, $line);
+            ::std::eprintln!("{:?} @ path: {}, line: {}", e, $path, $line);
         })
     }
 }
@@ -204,9 +204,21 @@ fn special_vars2token_stream(
 
             Ok(col)
         }
-        "file" => Ok(parse_quote! {
-            file!()
-        }),
+        "path" => {
+            let path = q_span.unwrap().file();
+
+            Ok(parse_quote! {
+                #path
+            })
+        }
+        "file" => {
+            let path = q_span.unwrap().file();
+            let file = path.rsplit('/').next().unwrap_or(&path);
+
+            Ok(parse_quote! {
+                #file
+            })
+        }
         "expr" => {
             let expr = context.expr.clone();
 

@@ -9,8 +9,8 @@ fn enresult<T>(t: T) -> Result<T, ()> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "{0:?} @ file: {1}, line: {2}\n", e,
-                        "/home/namn/workspace/hooq/tests/special/skip_detail.rs",
+                        "{0:?} @ path: {1}, line: {2}\n", e,
+                        "<hooq_root>/tests/special/skip_detail.rs",
                         10usize,
                     ),
                 );

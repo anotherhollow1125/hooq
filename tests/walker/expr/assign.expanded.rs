@@ -5,8 +5,8 @@ fn hoge(v: usize) -> Result<usize, ()> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "{0:?} @ file: {1}, line: {2}\n", e,
-                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs", 5usize,
+                        "{0:?} @ path: {1}, line: {2}\n", e,
+                        "<hooq_root>/tests/walker/expr/assign.rs", 5usize,
                     ),
                 );
             };
@@ -26,7 +26,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "[{0}:{1}:{2}] {3} = {4:#?}\n",
-                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs", 17u32,
+                        "<hooq_root>/tests/walker/expr/assign.rs", 17u32,
                         5u32, "x", & tmp,
                     ),
                 );
@@ -49,7 +49,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_eprint(
                     format_args!(
                         "[{0}:{1}:{2}] {3} = {4:#?}\n",
-                        "/home/namn/workspace/hooq/tests/walker/expr/assign.rs", 26u32,
+                        "<hooq_root>/tests/walker/expr/assign.rs", 26u32,
                         5u32, "x", & tmp,
                     ),
                 );

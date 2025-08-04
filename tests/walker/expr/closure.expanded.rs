@@ -6,8 +6,8 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
                 {
                     ::std::io::_eprint(
                         format_args!(
-                            "{0:?} @ file: {1}, line: {2}\n", e,
-                            "/home/namn/workspace/hooq/tests/walker/expr/closure.rs",
+                            "{0:?} @ path: {1}, line: {2}\n", e,
+                            "<hooq_root>/tests/walker/expr/closure.rs",
                             6usize,
                         ),
                     );
@@ -19,8 +19,8 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "{0:?} @ file: {1}, line: {2}\n", e,
-                        "/home/namn/workspace/hooq/tests/walker/expr/closure.rs", 8usize,
+                        "{0:?} @ path: {1}, line: {2}\n", e,
+                        "<hooq_root>/tests/walker/expr/closure.rs", 8usize,
                     ),
                 );
             };
@@ -32,8 +32,8 @@ fn two() -> Result<u32, ()> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "{0:?} @ file: {1}, line: {2}\n", e,
-                        "/home/namn/workspace/hooq/tests/walker/expr/closure.rs",
+                        "{0:?} @ path: {1}, line: {2}\n", e,
+                        "<hooq_root>/tests/walker/expr/closure.rs",
                         13usize,
                     ),
                 );

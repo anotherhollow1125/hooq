@@ -322,6 +322,7 @@ dependencies = [
  "clap",
  "env_logger",
  "futures",
+ "glob",
  "log",
  "macrotest",
  "proc-macro2",

@@ -12,10 +12,12 @@ pub struct HooqOption {
     pub method: TokenStream,
 }
 
-// eprintln! に直接埋め込みたいところだが、
-// テストの関係でこのようになっている
-// (恨むならeprintln!の仕様を恨んでください)
 fn default_method() -> TokenStream {
+    // NOTE:
+    // $path や $line は eprintln! に直接埋め込みたいところだが、
+    // CI側のテストの関係でこのようになっている
+    // (恨むならeprintln!の仕様を恨んでください)
+
     parse_quote! {
         .inspect_err(|e| {
             let path = $path;

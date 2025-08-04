@@ -21,7 +21,7 @@ fn func() -> Result<(), ()> {
         true
     };
     {
-        let res = a()
+        let _ = a()
             .inspect(|_| {
                 {
                     ::std::io::_print(
@@ -37,20 +37,6 @@ fn func() -> Result<(), ()> {
                         );
                     };
                 })?;
-        match res {
-            tmp => {
-                {
-                    ::std::io::_eprint(
-                        format_args!(
-                            "[{0}:{1}:{2}] {3} = {4:#?}\n",
-                            "<hooq_root>/tests/walker/stmt/expr.rs", 32u32,
-                            9u32, "res", & tmp
-                        ),
-                    );
-                };
-                tmp
-            }
-        };
     }
     let _ = g();
     f()

@@ -20,20 +20,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_print(format_args!("{0}\n", "(no tag)"));
             };
         })?;
-    match x {
-        tmp => {
-            {
-                ::std::io::_eprint(
-                    format_args!(
-                        "[{0}:{1}:{2}] {3} = {4:#?}\n",
-                        "<hooq_root>/tests/walker/expr/assign.rs", 17u32,
-                        5u32, "x", & tmp
-                    ),
-                );
-            };
-            tmp
-        }
-    };
+    let _ = x;
     #[allow(clippy::let_unit_value)]
     let _ = {
         x = hoge(2)
@@ -43,20 +30,7 @@ fn func() -> Result<(), ()> {
                 };
             })?
     };
-    match x {
-        tmp => {
-            {
-                ::std::io::_eprint(
-                    format_args!(
-                        "[{0}:{1}:{2}] {3} = {4:#?}\n",
-                        "<hooq_root>/tests/walker/expr/assign.rs", 26u32,
-                        5u32, "x", & tmp
-                    ),
-                );
-            };
-            tmp
-        }
-    };
+    let _ = x;
     Ok(())
         .inspect(|_| {
             {

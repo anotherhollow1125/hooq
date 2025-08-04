@@ -14,7 +14,7 @@ fn func() -> Result<(), ()> {
 
     x = hoge(1)?;
 
-    dbg!(x);
+    let _ = x;
 
     #[hooq::tag("outer")]
     #[allow(clippy::let_unit_value)]
@@ -23,7 +23,7 @@ fn func() -> Result<(), ()> {
         hoge(2)?
     };
 
-    dbg!(x);
+    let _ = x;
 
     Ok(())
 }

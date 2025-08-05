@@ -1,4 +1,5 @@
 mod fn_special;
+mod nested;
 mod skip;
 mod skip_detail;
 
@@ -11,6 +12,7 @@ fn test_walk_special() {
     macrotest::expand_args("tests/special/fn_special.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/skip.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/skip_detail.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/nested.rs", &["--ugly"]);
 
     crate::mask_project_root("tests/special", crate::Mask);
 }

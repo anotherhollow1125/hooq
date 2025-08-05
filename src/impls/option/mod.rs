@@ -228,7 +228,7 @@ fn special_vars2token_stream(
             })
         }
         "expr" => {
-            let expr = context.expr.clone();
+            let expr = context.expr;
 
             Ok(parse_quote! {
                 #expr

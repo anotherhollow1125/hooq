@@ -191,7 +191,7 @@ impl<'a> PartialReplaceContext<'a> {
         }
     }
 
-    pub fn as_replace_context(&'a self, expr: String, kind: ReplaceKind) -> ReplaceContext<'a> {
+    pub fn as_replace_context(&'a self, expr: &'a str, kind: ReplaceKind) -> ReplaceContext<'a> {
         ReplaceContext {
             expr,
             kind,
@@ -267,7 +267,7 @@ impl<'a> PartialReplaceContext<'a> {
 
 #[derive(Debug)]
 pub struct ReplaceContext<'a> {
-    pub expr: String,
+    pub expr: &'a str,
     pub kind: ReplaceKind,
 
     pub partial_replace_context: &'a PartialReplaceContext<'a>,

@@ -46,6 +46,8 @@ fn handle_tail_expr(
         new_context: context,
     } = handle_inert_attrs(attrs, context)?;
 
+    let expr_for_display = expr.to_token_stream().to_string();
+
     walk_expr(expr, option, &context)?;
 
     // 念のためここでもターゲットであることを確認
@@ -62,6 +64,7 @@ fn handle_tail_expr(
         replace_expr(
             !is_skiped,
             expr,
+            &expr_for_display,
             ReplaceKind::TailExpr,
             q_span,
             option,
@@ -81,6 +84,7 @@ fn handle_tail_expr(
         replace_expr(
             !is_skiped,
             expr,
+            &expr_for_display,
             ReplaceKind::TailExpr,
             q_span,
             option,
@@ -394,6 +398,7 @@ fn walk_item(
 fn replace_expr(
     apply: bool,
     expr_field: &mut Expr,
+    expr_field_for_display: &str,
     kind: ReplaceKind,
     q_span: Span,
     option: &HooqOption,
@@ -404,7 +409,7 @@ fn replace_expr(
     }
 
     context.counter.borrow_mut().count_up(kind);
-    let context = context.as_replace_context(expr_field.to_token_stream().to_string(), kind);
+    let context = context.as_replace_context(expr_field_for_display, kind);
 
     let method = option.generate_method(q_span, &context)?;
     let original_expr = expr_field.clone();
@@ -429,6 +434,8 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_try.attrs, context)?;
 
+            let expr_for_display = expr_try.expr.to_token_stream().to_string();
+
             walk_expr(&mut expr_try.expr, option, &context)?;
 
             let q_span = expr_try.question_token.span();
@@ -436,6 +443,7 @@ fn walk_expr(
             replace_expr(
                 !is_skiped,
                 &mut expr_try.expr,
+                &expr_for_display,
                 ReplaceKind::Question,
                 q_span,
                 option,
@@ -451,6 +459,8 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_return.attrs, context)?;
 
             if let Some(expr) = expr_return.expr.as_mut() {
+                let expr_for_display = expr.to_token_stream().to_string();
+
                 walk_expr(expr, option, &context)?;
 
                 let q_span = expr_return.return_token.span();
@@ -469,6 +479,7 @@ fn walk_expr(
                     replace_expr(
                         !is_skiped,
                         expr,
+                        &expr_for_display,
                         ReplaceKind::Return,
                         q_span,
                         option,

@@ -10,10 +10,11 @@ List the main changes in this PR.
 箇条書きで構いません。主要な変更点を書いてください。
 -->
 
-<!-- Examples -->
+<!-- Examples
 - Add `Foo` struct to support X
 - Fix `Bar` function panic on edge case
 - Refactor internal logic in `baz.rs`
+-->
 
 ## 🧪 Tests / テスト
 
@@ -23,9 +24,10 @@ How did you confirm it works?
 どんなテストを追加・更新しましたか？動作確認はどのように行いましたか？
 -->
 
-<!-- Examples -->
+<!-- Examples
 - Added unit tests for `foo::do_something`
 - Manually verified with `cargo test`
+-->
 
 ## 📚 Related Issues / 関連Issue
 
@@ -34,7 +36,9 @@ If this PR fixes or is related to any issue, reference it here.
 Issueがある場合はここに貼ってください（例: closes #12）
 -->
 
+<!-- Examples
 closes #12
+-->
 
 ## ✅ Checklist
 

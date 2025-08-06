@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
 use syn::{Attribute, Meta, MetaList, Path, Token, parse::Parse, parse_quote};
 
@@ -214,6 +216,21 @@ fn special_vars2token_stream(
         }
         "path" => {
             let path = q_span.unwrap().file();
+
+            Ok(parse_quote! {
+                #path
+            })
+        }
+        "abspath" | "abs_path" => {
+            let rel_path = q_span.unwrap().local_file().unwrap_or_else(|| {
+                let path = q_span.unwrap().file();
+                PathBuf::from(path)
+            });
+            let cargo_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| String::new());
+            let cargo_path = PathBuf::from(cargo_path);
+
+            let path = cargo_path.join(rel_path.strip_prefix(&cargo_path).unwrap_or(&rel_path));
+            let path = path.to_string_lossy();
 
             Ok(parse_quote! {
                 #path

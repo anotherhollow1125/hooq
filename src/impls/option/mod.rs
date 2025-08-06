@@ -223,15 +223,18 @@ fn special_vars2token_stream(
         }
         "abspath" | "abs_path" => {
             // Cargoプロジェクト以下の場合 local_file / file からは相対パスが返る
-            let rel_path = q_span.unwrap().local_file().unwrap_or_else(|| {
+            let span_path = q_span.unwrap().local_file().unwrap_or_else(|| {
                 let path = q_span.unwrap().file();
                 PathBuf::from(path)
             });
             let cargo_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| String::new());
             let cargo_path = PathBuf::from(cargo_path);
 
-            // 存在しないはずだが念のため cargo_path を取り除いてから、cargo_path を結合する
-            let path = cargo_path.join(rel_path.strip_prefix(&cargo_path).unwrap_or(&rel_path));
+            let path = if span_path.is_absolute() {
+                span_path.clone()
+            } else {
+                cargo_path.join(&span_path)
+            };
             let path = path.to_string_lossy();
 
             Ok(parse_quote! {

@@ -1,6 +1,5 @@
 use hooq::hooq;
-use tokio::time::Duration;
-use tokio::time::sleep;
+use tokio::time::{Duration, sleep};
 
 #[hooq]
 #[hooq::tag("async function")]

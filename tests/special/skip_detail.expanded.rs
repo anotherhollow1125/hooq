@@ -1,13 +1,13 @@
 #![allow(unused_braces)]
 #![allow(clippy::declare_interior_mutable_const)]
 #![allow(clippy::let_unit_value)]
-use hooq::hooq;
 use std::sync::LazyLock;
+use hooq::hooq;
 fn enresult<T>(t: T) -> Result<T, ()> {
     Ok(t)
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/skip_detail.rs";
-            let line = 10usize;
+            let line = 11usize;
             {
                 ::std::io::_eprint(
                     format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),

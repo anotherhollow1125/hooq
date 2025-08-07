@@ -1,6 +1,5 @@
 use hooq::hooq;
-use tokio::time::Duration;
-use tokio::time::sleep;
+use tokio::time::{Duration, sleep};
 async fn hoge() -> Result<usize, ()> {
     sleep(Duration::from_millis(10)).await;
     Ok(10)

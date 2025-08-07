@@ -2,8 +2,9 @@
 #![allow(clippy::declare_interior_mutable_const)]
 #![allow(clippy::let_unit_value)]
 
-use hooq::hooq;
 use std::sync::LazyLock;
+
+use hooq::hooq;
 
 #[hooq]
 fn enresult<T>(t: T) -> Result<T, ()> {

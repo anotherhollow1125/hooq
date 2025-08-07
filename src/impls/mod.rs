@@ -8,11 +8,10 @@ pub mod option;
 pub mod utils;
 mod walker;
 
-use crate::impls::option::context::ExtractFunctionInfo;
-use crate::impls::option::context::PartialReplaceContext;
-use crate::impls::option::context::SkipStatus;
-use crate::impls::walker::TailExprTargetKind;
 pub use option::HooqOption;
+
+use crate::impls::option::context::{ExtractFunctionInfo, PartialReplaceContext, SkipStatus};
+use crate::impls::walker::TailExprTargetKind;
 
 pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
     let hooq_option = HooqOption::new_from_attrs(&mut f.attrs)?;

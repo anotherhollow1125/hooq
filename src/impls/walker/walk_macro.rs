@@ -82,6 +82,10 @@ fn handle_token_stream(
     Ok(Some(new_stream))
 }
 
+// NOTE: syn::parse::discouraged::Speculative の利用について
+// - パフォーマンス面: この処理が走るのはマクロを見る時だけとはいえ、かなり読み込んでから巻き戻しているので注意が必要
+// - エラーメッセージ面: パースできないときはエラーにせず諦めるため考慮の必要なし
+
 #[derive(Debug)]
 enum Evaluable {
     File(syn::File),

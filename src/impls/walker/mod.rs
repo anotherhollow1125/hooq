@@ -1,17 +1,21 @@
-use crate::impls::option::context::{PartialReplaceContext, ReplaceKind, SkipStatus};
 use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{
-    Attribute, Expr, ExprCall, ExprPath, ImplItem, ImplItemConst, Item, ItemConst, ItemMod,
-    ItemStatic, Local, LocalInit, Stmt, TraitItem, TraitItemConst, TraitItemFn, parse_quote,
+    Attribute, Expr, ExprCall, ExprMacro, ExprPath, ImplItem, ImplItemConst, ImplItemMacro, Item,
+    ItemConst, ItemMacro, ItemMod, ItemStatic, Local, LocalInit, Stmt, StmtMacro, TraitItem,
+    TraitItemConst, TraitItemFn, TraitItemMacro, parse_quote,
 };
 
+use super::utils::return_type_is_result;
 use crate::impls::inert_attr::{InertAttrOption, extract_hooq_info_from_attrs};
 pub use crate::impls::option::HooqOption;
+use crate::impls::option::context::{PartialReplaceContext, ReplaceKind, SkipStatus};
 use crate::impls::utils::{get_attrs_from_expr, path_is_special_call_like_err};
 
-use super::utils::return_type_is_result;
+mod walk_macro;
+
+use walk_macro::walk_macro;
 
 #[cfg(test)]
 mod test;
@@ -132,8 +136,14 @@ pub fn walk_stmt(
         }
         Stmt::Expr(expr, _) => walk_expr(expr, option, context),
 
+        Stmt::Macro(StmtMacro {
+            attrs,
+            mac,
+            semi_token: _,
+        }) => walk_macro(attrs, mac, option, context),
+
         // 以下では何もしない
-        Stmt::Local(Local { init: None, .. }) | Stmt::Macro(_) => Ok(()),
+        Stmt::Local(Local { init: None, .. }) => Ok(()),
     }
 }
 
@@ -264,8 +274,11 @@ fn walk_item(
                             walk_expr(expr, option, &context)
                         }
 
-                        // TODO
-                        ImplItem::Macro(_) => Ok(()),
+                        ImplItem::Macro(ImplItemMacro {
+                            attrs,
+                            mac,
+                            semi_token: _,
+                        }) => walk_macro(attrs, mac, option, &context),
 
                         // 以下の場合何もしない
                         ImplItem::Type(_) | ImplItem::Verbatim(_) | _ => Ok(()),
@@ -361,8 +374,11 @@ fn walk_item(
                             Ok(())
                         }
 
-                        // TODO
-                        TraitItem::Macro(_) => Ok(()),
+                        TraitItem::Macro(TraitItemMacro {
+                            attrs,
+                            mac,
+                            semi_token: _,
+                        }) => walk_macro(attrs, mac, option, &context),
 
                         // 以下の場合何もしない
                         TraitItem::Const(TraitItemConst { default: None, .. })
@@ -376,8 +392,22 @@ fn walk_item(
 
             Ok(())
         }
-        // TODO
-        Item::Macro(_) => Ok(()),
+
+        Item::Macro(ItemMacro {
+            attrs,
+            ident,
+            mac,
+            semi_token: _,
+        }) => {
+            if ident.is_some() {
+                // ident がSomeということは
+                // macro_rules! の定義である
+                // ここにフックする必要はない
+                return Ok(());
+            }
+
+            walk_macro(attrs, mac, option, context)
+        }
 
         // 以下では何もしない
         // Item::TraitAlias は将来のために予約された要素
@@ -1040,12 +1070,12 @@ fn walk_expr(
             Ok(())
         }
 
+        Expr::Macro(ExprMacro { attrs, mac }) => walk_macro(attrs, mac, option, context),
+
         // 以下では何もしない
-        // 欲を言えばExpr::Macro(_)の中も見たいが、独自文法となってしまっているマクロもあるので諦める
         Expr::Continue(_)
         | Expr::Infer(_)
         | Expr::Lit(_)
-        | Expr::Macro(_)
         | Expr::Path(_)
         | Expr::Verbatim(_)
         | _ => Ok(()),

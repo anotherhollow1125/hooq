@@ -19,7 +19,7 @@ syn = { version = "2.0.104", features = ["full", "extra-traits"] }
 rustc_version = "0.4.1"
 
 [dev-dependencies]
-clap = { version = "4.5.42", features = ["derive"] }
+clap = { version = "4.5.43", features = ["derive"] }
 env_logger = "0.11.8"
 log = "0.4.27"
 macrotest = "1.2.0"

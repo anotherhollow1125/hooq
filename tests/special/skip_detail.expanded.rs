@@ -3,11 +3,12 @@
 #![allow(clippy::let_unit_value)]
 use std::sync::LazyLock;
 use hooq::hooq;
+use util_macros::id;
 fn enresult<T>(t: T) -> Result<T, ()> {
     Ok(t)
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/skip_detail.rs";
-            let line = 11usize;
+            let line = 12usize;
             {
                 ::std::io::_eprint(
                     format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
@@ -71,6 +72,28 @@ fn skip_stmts() -> Result<(), ()> {
         }
         enresult(())
     }?;
+    {
+        ::std::io::_print(
+            format_args!(
+                "{0}, {1}\n", enresult(10) ?, { enresult(()).inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}\n", "macro")); }; }) ?;
+                Result::< u32, () >::Ok(20).inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}\n", "macro")); }; }) } ?
+            ),
+        );
+    };
+    {
+        ::std::io::_print(
+            format_args!(
+                "{0}, {1}\n", enresult(10).inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}\n", "macro")); }; }) ?, {
+                enresult(()).inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}\n", "macro")); }; }) ?;
+                Result::< u32, () >::Ok(20).inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}\n", "macro")); }; }) } ?
+            ),
+        );
+    };
     Ok(())
         .inspect(|_| {
             {
@@ -92,6 +115,26 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
         fn _method2() -> Result<(), ()> {
+            Ok(())
+                .inspect(|_| {
+                    {
+                        ::std::io::_print(
+                            format_args!("tag: {0}\n", "sub scope in impl"),
+                        );
+                    };
+                })
+        }
+        fn _method3(&self) -> Result<(), ()> {
+            Ok(())
+                .inspect(|_| {
+                    {
+                        ::std::io::_print(
+                            format_args!("tag: {0}\n", "sub scope in impl"),
+                        );
+                    };
+                })
+        }
+        fn _method4(&self) -> Result<(), ()> {
             Ok(())
                 .inspect(|_| {
                     {
@@ -182,6 +225,56 @@ fn skip_item() -> Result<(), ()> {
                         );
                     };
                 })
+        }
+        fn _trait_method3(&self) -> Result<(), ()> {
+            Ok(())
+                .inspect(|_| {
+                    {
+                        ::std::io::_print(
+                            format_args!("tag: {0}\n", "sub scope in impl"),
+                        );
+                    };
+                })
+        }
+        fn _trait_method4(&self) -> Result<(), ()> {
+            Ok(())
+                .inspect(|_| {
+                    {
+                        ::std::io::_print(
+                            format_args!("tag: {0}\n", "sub scope in impl"),
+                        );
+                    };
+                })
+        }
+    }
+    mod tmp {
+        use super::*;
+        fn _macro_fn() -> Result<(), ()> {
+            Ok(())
+                .inspect(|_| {
+                    {
+                        ::std::io::_print(format_args!("tag: {0}\n", "macro"));
+                    };
+                })
+        }
+        #[allow(clippy::needless_question_mark)]
+        fn _macro_fn_2() -> Result<(), ()> {
+            Ok(
+                {
+                    enresult(())
+                        .inspect(|_| {
+                            {
+                                ::std::io::_print(format_args!("tag: {0}\n", "macro"));
+                            };
+                        })?;
+                    Result::<(), ()>::Ok(())
+                        .inspect(|_| {
+                            {
+                                ::std::io::_print(format_args!("tag: {0}\n", "macro"));
+                            };
+                        })
+                }?,
+            )
         }
     }
     Ok(())
@@ -582,6 +675,42 @@ fn skip_expr() -> Result<(), ()> {
                 };
             })?;
     }?;
+    let _ = <[_]>::into_vec(
+        ::alloc::boxed::box_new([
+            enresult(0)?,
+            enresult(1)?,
+            {
+                enresult(2)
+                    .inspect(|_| {
+                        {
+                            ::std::io::_print(
+                                format_args!("tag: {0}\n", "sub scope in macro-outer"),
+                            );
+                        };
+                    })?
+            },
+        ]),
+    );
+    let _ = <[_]>::into_vec(
+        ::alloc::boxed::box_new([
+            <[_]>::into_vec(
+                ::alloc::boxed::box_new([
+                    enresult(0)?,
+                    enresult(1)?,
+                    {
+                        enresult(2)
+                            .inspect(|_| {
+                                {
+                                    ::std::io::_print(
+                                        format_args!("tag: {0}\n", "sub scope in macro-inner"),
+                                    );
+                                };
+                            })?
+                    },
+                ]),
+            ),
+        ]),
+    );
     #[allow(clippy::unit_arg)]
     let _ = match enresult(
         Some({

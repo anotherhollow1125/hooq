@@ -1,5 +1,6 @@
 mod abs_path;
 mod fn_special;
+mod r#macro;
 mod nested;
 mod skip;
 mod skip_detail;
@@ -12,6 +13,7 @@ fn test_special() {
 
     macrotest::expand_args("tests/special/abs_path.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/fn_special.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/macro.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/nested.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/skip.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/skip_detail.rs", &["--ugly"]);

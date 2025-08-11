@@ -1,4 +1,5 @@
 use hooq::hooq;
+use util_macros::id;
 
 #[hooq]
 #[allow(unused)]
@@ -56,6 +57,26 @@ fn func() -> Result<(), ()> {
         #[allow(unused)]
         fn j(&self) -> bool {
             true
+        }
+
+        #[hooq::tag("outer")]
+        id! {
+            #[allow(unused)]
+            fn outer() -> Result<(), ()> {
+                hoge()?;
+
+                Ok(())
+            }
+        }
+
+        id! {
+            #[allow(unused)]
+            fn inner() -> Result<(), ()> {
+                #[hooq::tag("inner")]
+                hoge()?;
+
+                Ok(())
+            }
         }
     }
 

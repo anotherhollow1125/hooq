@@ -16,6 +16,7 @@ mod r#if;
 mod index;
 mod r#let;
 mod r#loop;
+mod r#macro;
 mod r#match;
 mod method_call;
 mod paren;

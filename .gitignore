@@ -1,3 +1,4 @@
 /target
+/tests/util_macros/target
 *.memo.*
 examples/playground.rs

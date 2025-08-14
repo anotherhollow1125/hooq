@@ -1,7 +1,8 @@
 use std::path::PathBuf;
 
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
-use syn::{Attribute, Meta, MetaList, Path, Token, parse::Parse, parse_quote};
+use syn::parse::Parse;
+use syn::{Attribute, Meta, MetaList, Path, Token, parse_quote};
 
 pub mod context;
 use context::ReplaceContext;

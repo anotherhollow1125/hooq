@@ -42,6 +42,7 @@ fn test_walk_stmt() {
     macrotest::expand_args("tests/walker/stmt/local.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/stmt/item.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/stmt/expr.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/stmt/macro.rs", &["--ugly"]);
 
     mask_project_root("tests/walker/stmt", Mask);
 }
@@ -53,6 +54,7 @@ fn test_walk_item() {
     macrotest::expand_args("tests/walker/item/const.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/item/fn.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/item/impl.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/item/macro.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/item/mod_.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/item/static.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/item/trait.rs", &["--ugly"]);
@@ -84,6 +86,7 @@ fn test_walk_expr() {
     macrotest::expand_args("tests/walker/expr/index.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/expr/let.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/expr/loop.rs", &["--ugly"]);
+    macrotest::expand_args("tests/walker/expr/macro.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/expr/match.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/expr/method_call.rs", &["--ugly"]);
     macrotest::expand_args("tests/walker/expr/paren.rs", &["--ugly"]);

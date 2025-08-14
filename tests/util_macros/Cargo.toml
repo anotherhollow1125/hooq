@@ -1,0 +1,10 @@
+[package]
+name = "util_macros"
+version = "0.1.0"
+edition = "2024"
+description = "マクロ構文要素の置換部分を検証するために使うマクロユーティリティクレート"
+
+[lib]
+proc-macro = true
+
+[dependencies]

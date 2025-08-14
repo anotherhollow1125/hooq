@@ -2,8 +2,10 @@
 #![allow(clippy::declare_interior_mutable_const)]
 #![allow(clippy::let_unit_value)]
 
-use hooq::hooq;
 use std::sync::LazyLock;
+
+use hooq::hooq;
+use util_macros::id;
 
 #[hooq]
 fn enresult<T>(t: T) -> Result<T, ()> {
@@ -48,6 +50,26 @@ fn skip_stmts() -> Result<(), ()> {
         enresult(())
     }?;
 
+    #[hooq::tag("macro")]
+    #[hooq::skip]
+    println!("{}, {}", enresult(10)?, {
+        enresult(())?;
+
+        Result::<u32, ()>::Ok(20)
+    }?);
+
+    #[hooq::tag("macro")]
+    println!(
+        "{}, {}",
+        enresult(10)?,
+        #[hooq::skip]
+        {
+            enresult(())?;
+
+            Result::<u32, ()>::Ok(20)
+        }?
+    );
+
     Ok(())
 }
 
@@ -72,6 +94,22 @@ fn skip_item() -> Result<(), ()> {
         #[hooq::skip] // nop
         fn _method2() -> Result<(), ()> {
             Ok(())
+        }
+
+        #[hooq::tag("sub scope in impl")]
+        #[hooq::skip] // nop
+        id! {
+            fn _method3(&self) -> Result<(), ()> {
+                Ok(())
+            }
+        }
+
+        #[hooq::tag("sub scope in impl")]
+        id! {
+            #[hooq::skip] // nop
+            fn _method4(&self) -> Result<(), ()> {
+                Ok(())
+            }
         }
     }
 
@@ -126,6 +164,47 @@ fn skip_item() -> Result<(), ()> {
         #[hooq::skip] // nop
         fn _trait_method2() -> Result<(), ()> {
             Ok(())
+        }
+
+        #[hooq::tag("sub scope in impl")]
+        #[hooq::skip] // nop
+        id! {
+            fn _trait_method3(&self) -> Result<(), ()> {
+                Ok(())
+            }
+        }
+
+        #[hooq::tag("sub scope in impl")]
+        id! {
+            #[hooq::skip] // nop
+            fn _trait_method4(&self) -> Result<(), ()> {
+                Ok(())
+            }
+        }
+    }
+
+    mod tmp {
+        use super::*;
+
+        #[hooq::tag("macro")]
+        #[hooq::skip] // nop
+        id! {
+            fn _macro_fn() -> Result<(), ()> {
+                Ok(())
+            }
+        }
+
+        #[hooq::tag("macro")]
+        id! {
+            #[allow(clippy::needless_question_mark)]
+            fn _macro_fn_2() -> Result<(), ()> {
+                #[hooq::skip]
+                Ok({
+                    enresult(())?;
+
+                    Result::<(), ()>::Ok(())
+                }?)
+            }
         }
     }
 
@@ -330,6 +409,22 @@ fn skip_expr() -> Result<(), ()> {
 
         enresult(())?;
     }?;
+
+    let _ = #[hooq::tag("macro-outer")]
+    #[hooq::skip]
+    vec![enresult(0)?, enresult(1)?, {
+        #[hooq::tag("sub scope in macro-outer")]
+        enresult(2)?
+    }];
+
+    let _ = #[hooq::tag("macro-inner")]
+    vec![
+        #[hooq::skip]
+        vec![enresult(0)?, enresult(1)?, {
+            #[hooq::tag("sub scope in macro-inner")]
+            enresult(2)?
+        }],
+    ];
 
     #[allow(clippy::unit_arg)]
     let _ = #[hooq::tag("match")]

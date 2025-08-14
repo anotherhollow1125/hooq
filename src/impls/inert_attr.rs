@@ -1,5 +1,6 @@
 use proc_macro2::TokenStream;
-use syn::{Attribute, Meta, MetaList, parse::Parse, parse_quote};
+use syn::parse::Parse;
+use syn::{Attribute, Meta, MetaList, parse_quote};
 
 pub struct InertAttrOption {
     pub is_skiped: bool,

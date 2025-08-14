@@ -11,7 +11,7 @@ fn enresult<T>(v: T) -> Result<T, ()> {
 }))]
 fn func() -> Result<(), ()> {
     let _ = #[hooq::tag("outer")]
-    vec![enresult(10)?, 20, enresult(30)?];
+    vec![enresult(10)?; enresult(2)?];
 
     let _ = vec![
         #[hooq::tag("inner 1")]

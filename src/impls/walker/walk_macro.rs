@@ -85,6 +85,8 @@ fn handle_token_stream(
 // NOTE: syn::parse::discouraged::Speculative の利用について
 // - パフォーマンス面: この処理が走るのはマクロを見る時だけとはいえ、かなり読み込んでから巻き戻しているので注意が必要
 // - エラーメッセージ面: パースできないときはエラーにせず諦めるため考慮の必要なし
+//
+// TODO: マクロ呼び出しの中身は見ないオプションfeatureを設ける
 
 #[derive(Debug)]
 enum Evaluable {
@@ -120,7 +122,6 @@ impl Parse for Evaluable {
             return Ok(Evaluable::Expr(expr));
         }
 
-        // TODO: セミコロンの判定取り扱いについてこのままで問題ないかを確かめるテストケースを設ける
         let forked = input.fork();
         if let Ok(stmt) = forked.parse::<syn::Stmt>()
             && (forked.peek(Token![;]) || forked.peek(Token![,]) || forked.is_empty())

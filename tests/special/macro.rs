@@ -82,7 +82,7 @@ fn func() -> Result<(), ()> {
 
     // Expr としてパースされるマクロ
     let _ = #[hooq::tag("outer")]
-    vec![enresult(10)?, 20, enresult(30)?];
+    vec![enresult(10)?; enresult(2)?];
 
     let _ = vec![
         #[hooq::tag("inner 1")]
@@ -91,6 +91,58 @@ fn func() -> Result<(), ()> {
         enresult(20)?,
         #[hooq::tag("inner 3")]
         enresult(30)?,
+    ];
+
+    // 区切り文字に `,` と `;` の両方が混ざっているものの検証
+
+    macro_rules! stmts_with_print {
+        ($($s:stmt, $e:expr);*) => {
+            $(
+                $s
+                println!("{}", $e);
+            )*
+        };
+    }
+
+    #[hooq::tag("stmts_with_print")]
+    stmts_with_print!(
+        if enresult(true)? {
+            println!("It's true");
+        }, enresult("if let")?;
+        for _ in enresult([1, 2])? {}, enresult("for loop")?
+    );
+
+    macro_rules! stmts_with_print_rev {
+        ($($e:expr, $s:stmt);*) => {
+            $(
+                $s
+                println!("{}", $e);
+            )*
+        };
+    }
+
+    #[hooq::tag("stmts_with_print")]
+    stmts_with_print_rev!(
+        enresult("if let")?, if enresult(true)? {
+            println!("It's true");
+        };
+        enresult("for loop")?, for _ in enresult([1, 2])? {}
+    );
+
+    macro_rules! vecs {
+        ($($v:expr; $n:expr),*) => {
+            vec![
+                $(
+                    vec![$v; $n]
+                ),*
+            ]
+        };
+    }
+
+    #[hooq::tag("vecs")]
+    let _ = vecs![
+        enresult(10)?; enresult(2)?,
+        enresult(20)?; enresult(3)?
     ];
 
     // Rustコードとして解釈できないものについては無理にパースしない

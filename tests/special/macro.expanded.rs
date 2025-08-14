@@ -110,30 +110,23 @@ fn func() -> Result<(), ()> {
                 })
         }
     }
-    let _ = <[_]>::into_vec(
-        ::alloc::boxed::box_new([
-            enresult(10)
-                .inspect(|_| {
-                    {
-                        ::std::io::_print(
-                            format_args!(
-                                "tag: {0}, expr: {1}\n", "outer", "enresult(10)"
-                            ),
-                        );
-                    };
-                })?,
-            20,
-            enresult(30)
-                .inspect(|_| {
-                    {
-                        ::std::io::_print(
-                            format_args!(
-                                "tag: {0}, expr: {1}\n", "outer", "enresult(30)"
-                            ),
-                        );
-                    };
-                })?,
-        ]),
+    let _ = ::alloc::vec::from_elem(
+        enresult(10)
+            .inspect(|_| {
+                {
+                    ::std::io::_print(
+                        format_args!("tag: {0}, expr: {1}\n", "outer", "enresult(10)"),
+                    );
+                };
+            })?,
+        enresult(2)
+            .inspect(|_| {
+                {
+                    ::std::io::_print(
+                        format_args!("tag: {0}, expr: {1}\n", "outer", "enresult(2)"),
+                    );
+                };
+            })?,
     );
     let _ = <[_]>::into_vec(
         ::alloc::boxed::box_new([
@@ -167,6 +160,153 @@ fn func() -> Result<(), ()> {
                         );
                     };
                 })?,
+        ]),
+    );
+    macro_rules! stmts_with_print {
+        ($($s:stmt, $e:expr);*) => {
+            $($s println!("{}", $e);)*
+        };
+    }
+    if enresult(true)
+        .inspect(|_| {
+            {
+                ::std::io::_print(
+                    format_args!(
+                        "tag: {0}, expr: {1}\n", "stmts_with_print", "enresult(true)"
+                    ),
+                );
+            };
+        })?
+    {
+        {
+            ::std::io::_print(format_args!("It\'s true\n"));
+        };
+    }
+    {
+        ::std::io::_print(
+            format_args!(
+                "{0}\n", enresult("if let").inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}, expr: {1}\n",
+                "stmts_with_print", "enresult(\"if let\")")); }; }) ?
+            ),
+        );
+    };
+    for _ in enresult([1, 2])
+        .inspect(|_| {
+            {
+                ::std::io::_print(
+                    format_args!(
+                        "tag: {0}, expr: {1}\n", "stmts_with_print", "enresult([1, 2])"
+                    ),
+                );
+            };
+        })?
+    {}
+    {
+        ::std::io::_print(
+            format_args!(
+                "{0}\n", enresult("for loop").inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}, expr: {1}\n",
+                "stmts_with_print", "enresult(\"for loop\")")); }; }) ?
+            ),
+        );
+    };
+    macro_rules! stmts_with_print_rev {
+        ($($e:expr, $s:stmt);*) => {
+            $($s println!("{}", $e);)*
+        };
+    }
+    if enresult(true)
+        .inspect(|_| {
+            {
+                ::std::io::_print(
+                    format_args!(
+                        "tag: {0}, expr: {1}\n", "stmts_with_print", "enresult(true)"
+                    ),
+                );
+            };
+        })?
+    {
+        {
+            ::std::io::_print(format_args!("It\'s true\n"));
+        };
+    }
+    {
+        ::std::io::_print(
+            format_args!(
+                "{0}\n", enresult("if let").inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}, expr: {1}\n",
+                "stmts_with_print", "enresult(\"if let\")")); }; }) ?
+            ),
+        );
+    };
+    for _ in enresult([1, 2])
+        .inspect(|_| {
+            {
+                ::std::io::_print(
+                    format_args!(
+                        "tag: {0}, expr: {1}\n", "stmts_with_print", "enresult([1, 2])"
+                    ),
+                );
+            };
+        })?
+    {}
+    {
+        ::std::io::_print(
+            format_args!(
+                "{0}\n", enresult("for loop").inspect(| _ | { {
+                ::std::io::_print(format_args!("tag: {0}, expr: {1}\n",
+                "stmts_with_print", "enresult(\"for loop\")")); }; }) ?
+            ),
+        );
+    };
+    macro_rules! vecs {
+        ($($v:expr; $n:expr),*) => {
+            vec![$(vec![$v; $n]),*]
+        };
+    }
+    let _ = <[_]>::into_vec(
+        ::alloc::boxed::box_new([
+            ::alloc::vec::from_elem(
+                enresult(10)
+                    .inspect(|_| {
+                        {
+                            ::std::io::_print(
+                                format_args!(
+                                    "tag: {0}, expr: {1}\n", "vecs", "enresult(10)"
+                                ),
+                            );
+                        };
+                    })?,
+                enresult(2)
+                    .inspect(|_| {
+                        {
+                            ::std::io::_print(
+                                format_args!("tag: {0}, expr: {1}\n", "vecs", "enresult(2)"),
+                            );
+                        };
+                    })?,
+            ),
+            ::alloc::vec::from_elem(
+                enresult(20)
+                    .inspect(|_| {
+                        {
+                            ::std::io::_print(
+                                format_args!(
+                                    "tag: {0}, expr: {1}\n", "vecs", "enresult(20)"
+                                ),
+                            );
+                        };
+                    })?,
+                enresult(3)
+                    .inspect(|_| {
+                        {
+                            ::std::io::_print(
+                                format_args!("tag: {0}, expr: {1}\n", "vecs", "enresult(3)"),
+                            );
+                        };
+                    })?,
+            ),
         ]),
     );
     let _ = ::serde_json::Value::Object({

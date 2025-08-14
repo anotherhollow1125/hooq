@@ -144,7 +144,10 @@ impl Parse for EvaluableList {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let mut res = Vec::new();
 
-        while let Ok(ev) = input.parse::<Evaluable>() {
+        while !input.is_empty() {
+            // Evaluable でないものがあれば全体をエラーとする
+            let ev = input.parse::<Evaluable>()?;
+
             let punct = if let Ok(p) = input.parse::<Token![,]>() {
                 Some(p.to_token_stream())
             } else if let Ok(p) = input.parse::<Token![;]>() {
@@ -154,10 +157,6 @@ impl Parse for EvaluableList {
             };
 
             res.push((ev, punct));
-
-            if input.is_empty() {
-                break;
-            }
         }
 
         Ok(EvaluableList(res))

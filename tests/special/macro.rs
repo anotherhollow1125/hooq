@@ -145,6 +145,9 @@ fn func() -> Result<(), ()> {
         enresult(20)?; enresult(3)?
     ];
 
+    // 空のマクロ呼び出し
+    empty!();
+
     // Rustコードとして解釈できないものについては無理にパースしない
     // empty! と serde_json! でこのことを検証
 

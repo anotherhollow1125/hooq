@@ -87,3 +87,5 @@
   - `#[hooq::hoge("")]` == `#[hooq::var(hoge = "")]` みたいな機能にしてみる
 - [ ] (公開後でいい) examples 以下の内容も expand 自動化
 - [ ] `$parent_method` でメソッド上書き時に元のメソッドも活用できるようにする
+- [ ] `cargo sort` をCIに入れる
+- [ ] `cargo build --timings html` の検討及び良さそうであればCIに入れる

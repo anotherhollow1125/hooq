@@ -16,17 +16,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
-    - name: Set up cargo expand
-    # 最新バージョンで検証してほしいためバージョンロックせず
-      run: |
-        cargo install cargo-expand
-        cargo install cargo-sort
+    # ツールについて、最新バージョンで検証してほしいためバージョンロックせず
+    - name: Set up cargo sort
+      run: cargo install cargo-sort
     - name: Check Cargo.toml sorted
       run: cargo sort --workspace --check
+    - name: Set up nightly cargo fmt
+      run: rustup toolchain install nightly --component rustfmt
     - name: Check format
       run: cargo +nightly fmt --all -- --check
     - name: Check clippy
       run: cargo clippy --all-targets --workspace -- -D warnings
+    - name: Set up cargo expand
+      run: cargo install cargo-expand
     - name: Run tests
       run: cargo test --workspace --no-fail-fast --verbose
 

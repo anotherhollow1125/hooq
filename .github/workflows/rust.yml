@@ -45,3 +45,4 @@ jobs:
       with:
         name: cargo-timing
         path: target/cargo-timings/cargo-timing.html
+        if-no-files-found: warn

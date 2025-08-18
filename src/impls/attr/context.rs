@@ -4,6 +4,7 @@ use std::rc::Rc;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 
+use crate::impls::attr::inert_attr::InertAttrOption;
 use crate::impls::utils::return_type_is_result;
 
 #[derive(Clone, Debug)]
@@ -32,18 +33,18 @@ impl ExtractFunctionInfo for syn::ItemFn {
 }
 
 #[derive(Clone, Copy, Debug)]
-pub enum ReplaceKind {
+pub enum HookTargetKind {
     Question,
     Return,
     TailExpr,
 }
 
-impl std::fmt::Display for ReplaceKind {
+impl std::fmt::Display for HookTargetKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ReplaceKind::Question => write!(f, "?"),
-            ReplaceKind::Return => write!(f, "return"),
-            ReplaceKind::TailExpr => write!(f, "tail expr"),
+            HookTargetKind::Question => write!(f, "?"),
+            HookTargetKind::Return => write!(f, "return"),
+            HookTargetKind::TailExpr => write!(f, "tail expr"),
         }
     }
 }
@@ -64,19 +65,19 @@ impl Counter {
         }
     }
 
-    pub fn count_up(&mut self, kind: ReplaceKind) {
+    pub fn count_up(&mut self, kind: HookTargetKind) {
         match kind {
-            ReplaceKind::Question => self.question += 1,
-            ReplaceKind::Return => self.return_ += 1,
-            ReplaceKind::TailExpr => self.tail_expr += 1,
+            HookTargetKind::Question => self.question += 1,
+            HookTargetKind::Return => self.return_ += 1,
+            HookTargetKind::TailExpr => self.tail_expr += 1,
         }
     }
 
-    pub fn get_count(&self, kind: ReplaceKind) -> usize {
+    pub fn get_count(&self, kind: HookTargetKind) -> usize {
         match kind {
-            ReplaceKind::Question => self.question,
-            ReplaceKind::Return => self.return_,
-            ReplaceKind::TailExpr => self.tail_expr,
+            HookTargetKind::Question => self.question,
+            HookTargetKind::Return => self.return_,
+            HookTargetKind::TailExpr => self.tail_expr,
         }
     }
 }
@@ -131,54 +132,50 @@ pub enum SkipStatus {
 pub struct LocalContext<'a> {
     pub skip_status: LocalContextField<'a, SkipStatus>,
     pub tag: LocalContextField<'a, String>,
-    pub override_method: LocalContextField<'a, TokenStream>,
+    pub method: LocalContextField<'a, TokenStream>,
     pub return_type_is_result: LocalContextField<'a, bool>,
 }
 
 #[derive(Debug, Clone)]
-pub struct PartialReplaceContext<'a> {
+pub struct HookContext<'a> {
     pub counter: Rc<RefCell<Counter>>,
     pub fn_info: &'a FunctionInfo,
     pub local_context: LocalContext<'a>,
 }
 
-impl<'a> PartialReplaceContext<'a> {
-    pub fn new_root<'b: 'a>(
-        fn_info: &'b FunctionInfo,
-        skip_status: Option<SkipStatus>,
-        tag: Option<String>,
-        override_method: Option<TokenStream>,
-    ) -> Self {
+impl<'a> HookContext<'a> {
+    pub fn init<'b: 'a>(fn_info: &'b FunctionInfo, inert_attr_option: InertAttrOption) -> Self {
         Self {
             counter: Rc::new(RefCell::new(Counter::new())),
             fn_info,
             local_context: LocalContext {
-                skip_status: LocalContextField::new_from_option(skip_status),
-                tag: LocalContextField::new_from_option(tag),
-                override_method: LocalContextField::new_from_option(override_method),
+                skip_status: LocalContextField::new_from_option(
+                    inert_attr_option.get_skip_status(),
+                ),
+                tag: LocalContextField::new_from_option(inert_attr_option.tag),
+                method: LocalContextField::new_from_option(inert_attr_option.method),
                 return_type_is_result: LocalContextField::Override(fn_info.return_type_is_result),
             },
         }
     }
 
-    pub fn new<'b: 'a>(
-        parent_context: &'b PartialReplaceContext<'b>,
-        tag: Option<String>,
-        override_method: Option<TokenStream>,
-        return_type_is_result: Option<bool>,
-        skip_status: Option<SkipStatus>,
+    pub fn updated_by_inert_attr<'b: 'a>(
+        parent_context: &'b HookContext<'b>,
+        new_option: InertAttrOption,
     ) -> Self {
-        let tag = LocalContextField::from_parent(tag, &parent_context.local_context.tag);
-        let override_method = LocalContextField::from_parent(
-            override_method,
-            &parent_context.local_context.override_method,
+        let skip_status = LocalContextField::from_parent(
+            new_option.get_skip_status(),
+            &parent_context.local_context.skip_status,
         );
+        let InertAttrOption { tag, method, .. } = new_option;
+
+        let tag = LocalContextField::from_parent(tag, &parent_context.local_context.tag);
+        let method = LocalContextField::from_parent(method, &parent_context.local_context.method);
+        // return_type_is_result の更新は別タイミングで行う
         let return_type_is_result = LocalContextField::from_parent(
-            return_type_is_result,
+            None,
             &parent_context.local_context.return_type_is_result,
         );
-        let skip_status =
-            LocalContextField::from_parent(skip_status, &parent_context.local_context.skip_status);
 
         Self {
             counter: Rc::clone(&parent_context.counter),
@@ -186,18 +183,18 @@ impl<'a> PartialReplaceContext<'a> {
             local_context: LocalContext {
                 skip_status,
                 tag,
-                override_method,
+                method,
                 return_type_is_result,
             },
         }
     }
 
-    pub fn as_replace_context(&'a self, expr: &'a str, kind: ReplaceKind) -> ReplaceContext<'a> {
-        ReplaceContext {
+    pub fn as_hook_info(&'a self, expr: &'a str, kind: HookTargetKind) -> HookInfo<'a> {
+        HookInfo {
             expr,
             kind,
 
-            partial_replace_context: self,
+            hook_context: self,
         }
     }
 
@@ -232,8 +229,8 @@ impl<'a> PartialReplaceContext<'a> {
     */
 
     /*
-    pub fn update_override_method(&mut self, override_method: TokenStream) {
-        self.local_context.override_method = LocalContextField::Override(override_method);
+    pub fn update_method(&mut self, method: TokenStream) {
+        self.local_context.method = LocalContextField::Override(method);
     }
     */
 
@@ -248,8 +245,8 @@ impl<'a> PartialReplaceContext<'a> {
     */
 
     /*
-    pub fn override_method(&self) -> Option<&TokenStream> {
-        self.local_context.override_method.as_ref()
+    pub fn method(&self) -> Option<&TokenStream> {
+        self.local_context.method.as_ref()
     }
     */
 
@@ -267,37 +264,34 @@ impl<'a> PartialReplaceContext<'a> {
 }
 
 #[derive(Debug)]
-pub struct ReplaceContext<'a> {
+pub struct HookInfo<'a> {
     pub expr: &'a str,
-    pub kind: ReplaceKind,
+    pub kind: HookTargetKind,
 
-    pub partial_replace_context: &'a PartialReplaceContext<'a>,
+    pub hook_context: &'a HookContext<'a>,
 }
 
-impl ReplaceContext<'_> {
+impl HookInfo<'_> {
     pub fn counter(&self) -> Rc<RefCell<Counter>> {
-        Rc::clone(&self.partial_replace_context.counter)
+        Rc::clone(&self.hook_context.counter)
     }
 
     pub fn fn_info(&self) -> &FunctionInfo {
-        self.partial_replace_context.fn_info
+        self.hook_context.fn_info
     }
 
     pub fn tag(&self) -> Option<&String> {
-        self.partial_replace_context.local_context.tag.as_ref()
+        self.hook_context.local_context.tag.as_ref()
     }
 
-    pub fn override_method(&self) -> Option<&TokenStream> {
-        self.partial_replace_context
-            .local_context
-            .override_method
-            .as_ref()
+    pub fn method(&self) -> Option<&TokenStream> {
+        self.hook_context.local_context.method.as_ref()
     }
 
     /*
     pub fn return_type_is_result(&self) -> bool {
         *self
-            .partial_replace_context
+            .hook_context
             .local_context
             .return_type_is_result
             .as_ref()

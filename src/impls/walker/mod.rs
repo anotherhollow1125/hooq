@@ -2,15 +2,14 @@ use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{
-    Attribute, Expr, ExprCall, ExprMacro, ExprPath, ImplItem, ImplItemConst, ImplItemMacro, Item,
-    ItemConst, ItemMacro, ItemMod, ItemStatic, Local, LocalInit, Stmt, StmtMacro, TraitItem,
-    TraitItemConst, TraitItemFn, TraitItemMacro, parse_quote,
+    Expr, ExprCall, ExprMacro, ExprPath, ImplItem, ImplItemConst, ImplItemMacro, Item, ItemConst,
+    ItemMacro, ItemMod, ItemStatic, Local, LocalInit, Stmt, StmtMacro, TraitItem, TraitItemConst,
+    TraitItemFn, TraitItemMacro, parse_quote,
 };
 
 use super::utils::return_type_is_result;
-use crate::impls::inert_attr::{InertAttrOption, extract_hooq_info_from_attrs};
-pub use crate::impls::option::HooqOption;
-use crate::impls::option::context::{PartialReplaceContext, ReplaceKind, SkipStatus};
+use crate::impls::attr::context::{HookContext, HookTargetKind};
+use crate::impls::attr::inert_attr::{HandleInertAttrsResult, handle_inert_attrs};
 use crate::impls::utils::{get_attrs_from_expr, path_is_special_call_like_err};
 
 mod walk_macro;
@@ -38,8 +37,7 @@ impl TailExprTargetKind {
 
 fn handle_tail_expr(
     expr: &mut Expr,
-    option: &HooqOption,
-    context: &PartialReplaceContext,
+    context: &HookContext,
     tail_expr_target_kind: TailExprTargetKind,
 ) -> syn::Result<()> {
     let Some(attrs) = get_attrs_from_expr(expr) else {
@@ -52,7 +50,7 @@ fn handle_tail_expr(
 
     let expr_for_display = expr.to_token_stream().to_string();
 
-    walk_expr(expr, option, &context)?;
+    walk_expr(expr, &context)?;
 
     // 念のためここでもターゲットであることを確認
     if !tail_expr_target_kind.is_target() {
@@ -65,13 +63,12 @@ fn handle_tail_expr(
     {
         let q_span = expr.span();
 
-        replace_expr(
+        hook_expr(
             !is_skiped,
             expr,
             &expr_for_display,
-            ReplaceKind::TailExpr,
+            HookTargetKind::TailExpr,
             q_span,
-            option,
             &context,
         )?;
 
@@ -85,13 +82,12 @@ fn handle_tail_expr(
     {
         let q_span = path.span();
 
-        replace_expr(
+        hook_expr(
             !is_skiped,
             expr,
             &expr_for_display,
-            ReplaceKind::TailExpr,
+            HookTargetKind::TailExpr,
             q_span,
-            option,
             &context,
         )?;
 
@@ -104,8 +100,7 @@ fn handle_tail_expr(
 pub fn walk_stmt(
     stmt: &mut Stmt,
     tail_expr_target_kind: TailExprTargetKind,
-    option: &HooqOption,
-    context: &PartialReplaceContext,
+    context: &HookContext,
 ) -> syn::Result<()> {
     match stmt {
         Stmt::Local(Local {
@@ -118,67 +113,33 @@ pub fn walk_stmt(
                 new_context: context,
             } = handle_inert_attrs(attrs, context)?;
 
-            walk_expr(expr, option, &context)?;
+            walk_expr(expr, &context)?;
             if let Some((_, expr_else)) = diverge {
-                walk_expr(expr_else, option, &context)?;
+                walk_expr(expr_else, &context)?;
             }
 
             Ok(())
         }
-        Stmt::Item(item) => walk_item(item, option, context),
+        Stmt::Item(item) => walk_item(item, context),
 
         // 以下は返り値となる Expr
         // 次の場合にフックすることにしたい
         // - 返り値型がResultな関数・クロージャ内部の時: 常にフック
         // - 上記以外: `Ok` | `Err` の時にフック
         Stmt::Expr(expr, None) if tail_expr_target_kind.is_target() => {
-            handle_tail_expr(expr, option, context, tail_expr_target_kind)
+            handle_tail_expr(expr, context, tail_expr_target_kind)
         }
-        Stmt::Expr(expr, _) => walk_expr(expr, option, context),
+        Stmt::Expr(expr, _) => walk_expr(expr, context),
 
         Stmt::Macro(StmtMacro {
             attrs,
             mac,
             semi_token: _,
-        }) => walk_macro(attrs, mac, option, context),
+        }) => walk_macro(attrs, mac, context),
 
         // 以下では何もしない
         Stmt::Local(Local { init: None, .. }) => Ok(()),
     }
-}
-
-struct HandleInertAttrsResult<'a> {
-    is_skiped: bool,
-    new_context: PartialReplaceContext<'a>,
-}
-
-fn handle_inert_attrs<'a>(
-    attrs: &mut Vec<Attribute>,
-    context: &'a PartialReplaceContext,
-) -> syn::Result<HandleInertAttrsResult<'a>> {
-    let InertAttrOption {
-        is_skiped,
-        is_skiped_all,
-        tag,
-        method,
-    } = extract_hooq_info_from_attrs(attrs)?;
-
-    Ok(HandleInertAttrsResult {
-        is_skiped: is_skiped || is_skiped_all || context.is_skiped(),
-        new_context: PartialReplaceContext::new(
-            context,
-            tag,
-            method,
-            None,
-            if is_skiped_all {
-                Some(SkipStatus::SkipAll)
-            } else if is_skiped {
-                Some(SkipStatus::SkipSameScope)
-            } else {
-                None
-            },
-        ),
-    })
 }
 
 // 以降、本来的にはVisitやFoldで実装するべきかもしれないが、
@@ -187,11 +148,7 @@ fn handle_inert_attrs<'a>(
 // またもしこれらで行えたとして、結局各要素のAttributeを見ていく必要があるので、記述量に差はないと考えられる。
 // ...ともかくTODO
 
-fn walk_item(
-    item: &mut Item,
-    option: &HooqOption,
-    context: &PartialReplaceContext,
-) -> syn::Result<()> {
+fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
     match item {
         Item::Fn(item_fn) => {
             let HandleInertAttrsResult {
@@ -216,7 +173,7 @@ fn walk_item(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -258,7 +215,7 @@ fn walk_item(
                                         TailExprTargetKind::NotTarget
                                     };
 
-                                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                                    walk_stmt(stmt, tail_expr_target_kind, &context)
                                 })
                                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -271,14 +228,14 @@ fn walk_item(
                                 new_context: context,
                             } = handle_inert_attrs(attrs, &context)?;
 
-                            walk_expr(expr, option, &context)
+                            walk_expr(expr, &context)
                         }
 
                         ImplItem::Macro(ImplItemMacro {
                             attrs,
                             mac,
                             semi_token: _,
-                        }) => walk_macro(attrs, mac, option, &context),
+                        }) => walk_macro(attrs, mac, &context),
 
                         // 以下の場合何もしない
                         ImplItem::Type(_) | ImplItem::Verbatim(_) | _ => Ok(()),
@@ -300,7 +257,7 @@ fn walk_item(
 
             items
                 .iter_mut()
-                .map(|item| walk_item(item, option, &context))
+                .map(|item| walk_item(item, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -313,7 +270,7 @@ fn walk_item(
                 new_context: context,
             } = handle_inert_attrs(attrs, context)?;
 
-            walk_expr(expr, option, &context)
+            walk_expr(expr, &context)
         }
 
         Item::Trait(item_trait) => {
@@ -337,7 +294,7 @@ fn walk_item(
                                 new_context: context,
                             } = handle_inert_attrs(attrs, &context)?;
 
-                            walk_expr(expr, option, &context)
+                            walk_expr(expr, &context)
                         }
                         TraitItem::Fn(TraitItemFn {
                             attrs,
@@ -367,7 +324,7 @@ fn walk_item(
                                         TailExprTargetKind::NotTarget
                                     };
 
-                                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                                    walk_stmt(stmt, tail_expr_target_kind, &context)
                                 })
                                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -378,7 +335,7 @@ fn walk_item(
                             attrs,
                             mac,
                             semi_token: _,
-                        }) => walk_macro(attrs, mac, option, &context),
+                        }) => walk_macro(attrs, mac, &context),
 
                         // 以下の場合何もしない
                         TraitItem::Const(TraitItemConst { default: None, .. })
@@ -406,7 +363,7 @@ fn walk_item(
                 return Ok(());
             }
 
-            walk_macro(attrs, mac, option, context)
+            walk_macro(attrs, mac, context)
         }
 
         // 以下では何もしない
@@ -425,23 +382,22 @@ fn walk_item(
     }
 }
 
-fn replace_expr(
+fn hook_expr(
     apply: bool,
     expr_field: &mut Expr,
     expr_field_for_display: &str,
-    kind: ReplaceKind,
+    kind: HookTargetKind,
     q_span: Span,
-    option: &HooqOption,
-    context: &PartialReplaceContext,
+    context: &HookContext,
 ) -> syn::Result<()> {
     if !apply {
         return Ok(());
     }
 
     context.counter.borrow_mut().count_up(kind);
-    let context = context.as_replace_context(expr_field_for_display, kind);
+    let context = context.as_hook_info(expr_field_for_display, kind);
 
-    let method = option.generate_method(q_span, &context)?;
+    let method = context.generate_method(q_span)?;
     let original_expr = expr_field.clone();
 
     *expr_field = parse_quote! {
@@ -451,11 +407,7 @@ fn replace_expr(
     Ok(())
 }
 
-fn walk_expr(
-    expr: &mut Expr,
-    option: &HooqOption,
-    context: &PartialReplaceContext,
-) -> syn::Result<()> {
+fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
     match expr {
         // 置換対象となるバリアント
         Expr::Try(expr_try) => {
@@ -466,17 +418,16 @@ fn walk_expr(
 
             let expr_for_display = expr_try.expr.to_token_stream().to_string();
 
-            walk_expr(&mut expr_try.expr, option, &context)?;
+            walk_expr(&mut expr_try.expr, &context)?;
 
             let q_span = expr_try.question_token.span();
 
-            replace_expr(
+            hook_expr(
                 !is_skiped,
                 &mut expr_try.expr,
                 &expr_for_display,
-                ReplaceKind::Question,
+                HookTargetKind::Question,
                 q_span,
-                option,
                 &context,
             )?;
 
@@ -491,7 +442,7 @@ fn walk_expr(
             if let Some(expr) = expr_return.expr.as_mut() {
                 let expr_for_display = expr.to_token_stream().to_string();
 
-                walk_expr(expr, option, &context)?;
+                walk_expr(expr, &context)?;
 
                 let q_span = expr_return.return_token.span();
 
@@ -506,13 +457,12 @@ fn walk_expr(
 
                 // 返り値型がResultの時 or OkやErrの時フック
                 if is_ok_or_err || context.return_type_is_result() {
-                    replace_expr(
+                    hook_expr(
                         !is_skiped,
                         expr,
                         &expr_for_display,
-                        ReplaceKind::Return,
+                        HookTargetKind::Return,
                         q_span,
-                        option,
                         &context,
                     )?;
                 }
@@ -531,7 +481,7 @@ fn walk_expr(
             expr_array
                 .elems
                 .iter_mut()
-                .map(|expr| walk_expr(expr, option, &context))
+                .map(|expr| walk_expr(expr, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -542,7 +492,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_assign.attrs, context)?;
 
-            walk_expr(&mut expr_assign.right, option, &context)
+            walk_expr(&mut expr_assign.right, &context)
         }
         Expr::Async(expr_async) => {
             let HandleInertAttrsResult {
@@ -565,7 +515,7 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -577,7 +527,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_await.attrs, context)?;
 
-            walk_expr(&mut expr_await.base, option, &context)
+            walk_expr(&mut expr_await.base, &context)
         }
         Expr::Binary(expr_binary) => {
             let HandleInertAttrsResult {
@@ -585,8 +535,8 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_binary.attrs, context)?;
 
-            walk_expr(&mut expr_binary.left, option, &context)?;
-            walk_expr(&mut expr_binary.right, option, &context)
+            walk_expr(&mut expr_binary.left, &context)?;
+            walk_expr(&mut expr_binary.right, &context)
         }
         Expr::Block(expr_block) => {
             let HandleInertAttrsResult {
@@ -609,7 +559,7 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -622,7 +572,7 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_break.attrs, context)?;
 
             if let Some(res) = expr_break.expr.as_mut() {
-                walk_expr(res, option, &context)?;
+                walk_expr(res, &context)?;
             }
 
             Ok(())
@@ -633,11 +583,11 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_call.attrs, context)?;
 
-            walk_expr(&mut expr_call.func, option, &context)?;
+            walk_expr(&mut expr_call.func, &context)?;
             expr_call
                 .args
                 .iter_mut()
-                .map(|expr| walk_expr(expr, option, &context))
+                .map(|expr| walk_expr(expr, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -648,7 +598,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_cast.attrs, context)?;
 
-            walk_expr(&mut expr_cast.expr, option, &context)
+            walk_expr(&mut expr_cast.expr, &context)
         }
         Expr::Closure(expr_closure) => {
             let HandleInertAttrsResult {
@@ -680,11 +630,11 @@ fn walk_expr(
                                 TailExprTargetKind::NotTarget
                             };
 
-                            walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                            walk_stmt(stmt, tail_expr_target_kind, &context)
                         })
                         .collect::<syn::Result<Vec<()>>>()?;
                 }
-                e => handle_tail_expr(e, option, &context, TailExprTargetKind::FnBlockTailExpr)?,
+                e => handle_tail_expr(e, &context, TailExprTargetKind::FnBlockTailExpr)?,
             }
 
             Ok(())
@@ -710,7 +660,7 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -722,7 +672,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_field.attrs, context)?;
 
-            walk_expr(&mut expr_field.base, option, &context)
+            walk_expr(&mut expr_field.base, &context)
         }
         Expr::ForLoop(expr_for_loop) => {
             let HandleInertAttrsResult {
@@ -730,7 +680,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_for_loop.attrs, context)?;
 
-            walk_expr(&mut expr_for_loop.expr, option, &context)?;
+            walk_expr(&mut expr_for_loop.expr, &context)?;
 
             let stmts_len = expr_for_loop.body.stmts.len();
             let context = context.for_sub_scope_context();
@@ -747,7 +697,7 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -759,7 +709,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_group.attrs, context)?;
 
-            walk_expr(&mut expr_group.expr, option, &context)
+            walk_expr(&mut expr_group.expr, &context)
         }
         Expr::If(expr_if) => {
             let HandleInertAttrsResult {
@@ -767,7 +717,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_if.attrs, context)?;
 
-            walk_expr(&mut expr_if.cond, option, &context)?;
+            walk_expr(&mut expr_if.cond, &context)?;
 
             let stmts_len = expr_if.then_branch.stmts.len();
             let context = context.for_sub_scope_context();
@@ -784,13 +734,13 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
             // 注意: こちらもサブスコープ
             if let Some((_, else_branch)) = expr_if.else_branch.as_mut() {
-                walk_expr(else_branch, option, &context)?;
+                walk_expr(else_branch, &context)?;
             }
 
             Ok(())
@@ -801,8 +751,8 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_index.attrs, context)?;
 
-            walk_expr(&mut expr_index.expr, option, &context)?;
-            walk_expr(&mut expr_index.index, option, &context)
+            walk_expr(&mut expr_index.expr, &context)?;
+            walk_expr(&mut expr_index.index, &context)
         }
         Expr::Let(expr_let) => {
             let HandleInertAttrsResult {
@@ -810,7 +760,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_let.attrs, context)?;
 
-            walk_expr(&mut expr_let.expr, option, &context)
+            walk_expr(&mut expr_let.expr, &context)
         }
         Expr::Loop(expr_loop) => {
             let HandleInertAttrsResult {
@@ -833,7 +783,7 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -845,15 +795,15 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_match.attrs, context)?;
 
-            walk_expr(&mut expr_match.expr, option, &context)?;
+            walk_expr(&mut expr_match.expr, &context)?;
             expr_match
                 .arms
                 .iter_mut()
                 .map(|arm| {
                     if let Some((_, guard)) = arm.guard.as_mut() {
-                        walk_expr(guard, option, &context)?;
+                        walk_expr(guard, &context)?;
                     }
-                    walk_expr(&mut arm.body, option, &context)?;
+                    walk_expr(&mut arm.body, &context)?;
 
                     Ok(())
                 })
@@ -867,11 +817,11 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_method_call.attrs, context)?;
 
-            walk_expr(&mut expr_method_call.receiver, option, &context)?;
+            walk_expr(&mut expr_method_call.receiver, &context)?;
             expr_method_call
                 .args
                 .iter_mut()
-                .map(|expr| walk_expr(expr, option, &context))
+                .map(|expr| walk_expr(expr, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -882,7 +832,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_paren.attrs, context)?;
 
-            walk_expr(&mut expr_paren.expr, option, &context)
+            walk_expr(&mut expr_paren.expr, &context)
         }
         Expr::Range(expr_range) => {
             let HandleInertAttrsResult {
@@ -891,10 +841,10 @@ fn walk_expr(
             } = handle_inert_attrs(&mut expr_range.attrs, context)?;
 
             if let Some(expr_start) = expr_range.start.as_mut() {
-                walk_expr(expr_start, option, &context)?;
+                walk_expr(expr_start, &context)?;
             }
             if let Some(expr_end) = expr_range.end.as_mut() {
-                walk_expr(expr_end, option, &context)?;
+                walk_expr(expr_end, &context)?;
             }
 
             Ok(())
@@ -905,7 +855,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_raw_addr.attrs, context)?;
 
-            walk_expr(&mut expr_raw_addr.expr, option, &context)
+            walk_expr(&mut expr_raw_addr.expr, &context)
         }
         Expr::Reference(expr_reference) => {
             let HandleInertAttrsResult {
@@ -913,7 +863,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_reference.attrs, context)?;
 
-            walk_expr(&mut expr_reference.expr, option, &context)
+            walk_expr(&mut expr_reference.expr, &context)
         }
         Expr::Repeat(expr_repeat) => {
             let HandleInertAttrsResult {
@@ -921,8 +871,8 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_repeat.attrs, context)?;
 
-            walk_expr(&mut expr_repeat.expr, option, &context)?;
-            walk_expr(&mut expr_repeat.len, option, &context)
+            walk_expr(&mut expr_repeat.expr, &context)?;
+            walk_expr(&mut expr_repeat.len, &context)
         }
         Expr::Struct(expr_struct) => {
             let HandleInertAttrsResult {
@@ -939,11 +889,11 @@ fn walk_expr(
                         new_context: context,
                     } = handle_inert_attrs(&mut field.attrs, &context)?;
 
-                    walk_expr(&mut field.expr, option, &context)
+                    walk_expr(&mut field.expr, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
             if let Some(rest) = expr_struct.rest.as_mut() {
-                walk_expr(rest, option, &context)?;
+                walk_expr(rest, &context)?;
             }
 
             Ok(())
@@ -971,7 +921,7 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -986,7 +936,7 @@ fn walk_expr(
             expr_tuple
                 .elems
                 .iter_mut()
-                .map(|expr| walk_expr(expr, option, &context))
+                .map(|expr| walk_expr(expr, &context))
                 .collect::<syn::Result<Vec<()>>>()?;
 
             Ok(())
@@ -997,7 +947,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_unary.attrs, context)?;
 
-            walk_expr(&mut expr_unary.expr, option, &context)
+            walk_expr(&mut expr_unary.expr, &context)
         }
         Expr::Unsafe(expr_unsafe) => {
             let HandleInertAttrsResult {
@@ -1020,7 +970,7 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -1032,7 +982,7 @@ fn walk_expr(
                 new_context: context,
             } = handle_inert_attrs(&mut expr_while.attrs, context)?;
 
-            walk_expr(&mut expr_while.cond, option, &context)?;
+            walk_expr(&mut expr_while.cond, &context)?;
 
             let stmts_len = expr_while.body.stmts.len();
             let context = context.for_sub_scope_context();
@@ -1049,7 +999,7 @@ fn walk_expr(
                         TailExprTargetKind::NotTarget
                     };
 
-                    walk_stmt(stmt, tail_expr_target_kind, option, &context)
+                    walk_stmt(stmt, tail_expr_target_kind, &context)
                 })
                 .collect::<syn::Result<Vec<()>>>()?;
 
@@ -1064,13 +1014,13 @@ fn walk_expr(
             // nightly な機能と考えられるためテストしない
 
             if let Some(expr) = expr_yield.expr.as_mut() {
-                walk_expr(expr, option, &context)?;
+                walk_expr(expr, &context)?;
             }
 
             Ok(())
         }
 
-        Expr::Macro(ExprMacro { attrs, mac }) => walk_macro(attrs, mac, option, context),
+        Expr::Macro(ExprMacro { attrs, mac }) => walk_macro(attrs, mac, context),
 
         // 以下では何もしない
         Expr::Continue(_)

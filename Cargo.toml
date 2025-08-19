@@ -11,7 +11,7 @@ proc-macro = true
 err-only = []
 
 [dependencies]
-proc-macro2 = { version = "1.0.96", features = ["span-locations"] }
+proc-macro2 = { version = "1.0.101", features = ["span-locations"] }
 quote = "1.0.40"
 syn = { version = "2.0.106", features = ["full", "extra-traits"] }
 

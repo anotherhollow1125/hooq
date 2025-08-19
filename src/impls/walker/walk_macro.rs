@@ -4,8 +4,7 @@ use syn::parse::Parse;
 use syn::parse::discouraged::Speculative;
 use syn::{Attribute, Macro, Token};
 
-use crate::impls::HooqOption;
-use crate::impls::option::context::PartialReplaceContext;
+use crate::impls::attr::context::HookContext;
 use crate::impls::walker::{
     HandleInertAttrsResult, handle_inert_attrs, walk_expr, walk_item, walk_stmt,
 };
@@ -13,15 +12,14 @@ use crate::impls::walker::{
 pub fn walk_macro(
     attrs: &mut Vec<Attribute>,
     mac: &mut Macro,
-    option: &HooqOption,
-    context: &PartialReplaceContext,
+    context: &HookContext,
 ) -> syn::Result<()> {
     let HandleInertAttrsResult {
         is_skiped: _,
         new_context: context,
     } = handle_inert_attrs(attrs, context)?;
 
-    if let Some(new_token_stream) = handle_token_stream(&mac.tokens, option, &context)? {
+    if let Some(new_token_stream) = handle_token_stream(&mac.tokens, &context)? {
         mac.tokens = new_token_stream;
     }
 
@@ -30,8 +28,7 @@ pub fn walk_macro(
 
 fn handle_token_stream(
     token_stream: &TokenStream,
-    option: &HooqOption,
-    context: &PartialReplaceContext,
+    context: &HookContext,
 ) -> syn::Result<Option<TokenStream>> {
     // ここでパースできない場合はRustコードを扱わないマクロであるため諦める
     let Ok(EvaluableList(evaluables)) = syn::parse2::<EvaluableList>(token_stream.clone()) else {
@@ -46,28 +43,23 @@ fn handle_token_stream(
                     .items
                     .into_iter()
                     .map(|mut item| {
-                        walk_item(&mut item, option, context)?;
+                        walk_item(&mut item, context)?;
                         Ok(item.to_token_stream())
                     })
                     .collect::<syn::Result<_>>()?,
                 Evaluable::Expr(mut expr) => {
-                    walk_expr(&mut expr, option, context)?;
+                    walk_expr(&mut expr, context)?;
                     expr.to_token_stream()
                 }
                 Evaluable::Item(mut item) => {
-                    walk_item(&mut item, option, context)?;
+                    walk_item(&mut item, context)?;
                     item.to_token_stream()
                 }
                 Evaluable::Stmt(mut stmt) => {
                     // マクロ内の最後の TailExpr であったとしても、
                     // これを TailExprTargetKind::*TailExpr としてみなそうとすると
                     // 考え方が煩雑になるので諦める
-                    walk_stmt(
-                        &mut stmt,
-                        super::TailExprTargetKind::NotTarget,
-                        option,
-                        context,
-                    )?;
+                    walk_stmt(&mut stmt, super::TailExprTargetKind::NotTarget, context)?;
                     stmt.to_token_stream()
                 }
             };

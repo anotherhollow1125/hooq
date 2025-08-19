@@ -13,7 +13,12 @@ enum Tag {
     eprintln!("tag: {} @ {} {}", $tag, $line, $expr);
     v
 }))]
-fn hoge(tag: Tag) -> Result<(), ()> {
+#[hooq::tag("top level tag")]
+fn hoge(flag: bool, tag: Tag) -> Result<(), ()> {
+    if flag {
+        return Ok(());
+    }
+
     #[hooq::tag("match")]
     match tag {
         Tag::A =>
@@ -54,39 +59,41 @@ fn fuga() -> Result<(), ()> {
     v
 }))]
 fn main() -> Result<(), ()> {
+    hoge(true, Tag::A)?;
+
     // (no tag)
-    hoge(Tag::A)?;
+    hoge(false, Tag::A)?;
 
     eprintln!("\n=========\n");
 
     #[hooq::tag("outer 1")]
-    hoge(Tag::B)?;
+    hoge(false, Tag::B)?;
 
     eprintln!("\n=========\n");
 
     // (no tag)
-    hoge(Tag::C)?;
+    hoge(false, Tag::C)?;
 
     eprintln!("\n=========\n");
 
-    hoge(Tag::NoOne)?;
+    hoge(false, Tag::NoOne)?;
 
     eprintln!("\n=========\n");
 
     #[hooq::tag("outer 2")]
-    hoge(Tag::NoOne)?;
+    hoge(false, Tag::NoOne)?;
 
     eprintln!("\n=========\n");
 
     // (no tag)
     // リセットされているかの確認
-    hoge(Tag::NoOne)?;
+    hoge(false, Tag::NoOne)?;
 
     eprintln!("\n=========\n");
 
     #[hooq::tag("outer 3")]
     {
-        hoge(Tag::A)?;
+        hoge(false, Tag::A)?;
 
         eprintln!("\n=========\n");
 
@@ -96,18 +103,18 @@ fn main() -> Result<(), ()> {
         eprintln!("\n=========\n");
 
         {
-            hoge(Tag::B)?;
+            hoge(false, Tag::B)?;
         }
 
         eprintln!("\n=========\n");
 
         #[hooq::tag("outer 4")]
-        hoge(Tag::C)?;
+        hoge(false, Tag::C)?;
     }
 
     eprintln!("\n=========\n");
 
-    let Err(()) = hoge(Tag::Err) else {
+    let Err(()) = hoge(false, Tag::Err) else {
         unreachable!();
     };
 

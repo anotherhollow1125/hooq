@@ -13,7 +13,7 @@ err-only = []
 [dependencies]
 proc-macro2 = { version = "1.0.96", features = ["span-locations"] }
 quote = "1.0.40"
-syn = { version = "2.0.104", features = ["full", "extra-traits"] }
+syn = { version = "2.0.106", features = ["full", "extra-traits"] }
 
 [dev-dependencies]
 clap = { version = "4.5.45", features = ["derive"] }

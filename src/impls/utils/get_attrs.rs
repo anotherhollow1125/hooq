@@ -1,12 +1,11 @@
-use std::ops::Deref;
-
 use syn::{
     Attribute, Expr, ExprArray, ExprAssign, ExprAsync, ExprAwait, ExprBinary, ExprBlock, ExprBreak,
     ExprCall, ExprCast, ExprClosure, ExprConst, ExprContinue, ExprField, ExprForLoop, ExprGroup,
     ExprIf, ExprIndex, ExprInfer, ExprLet, ExprLit, ExprLoop, ExprMacro, ExprMatch, ExprMethodCall,
     ExprParen, ExprPath, ExprRange, ExprRawAddr, ExprReference, ExprRepeat, ExprReturn, ExprStruct,
-    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, Path,
-    ReturnType, Type, TypePath,
+    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, Item, ItemConst,
+    ItemEnum, ItemExternCrate, ItemFn, ItemForeignMod, ItemImpl, ItemMacro, ItemMod, ItemStatic,
+    ItemStruct, ItemTrait, ItemTraitAlias, ItemType, ItemUnion, ItemUse,
 };
 
 pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut Vec<Attribute>> {
@@ -54,63 +53,23 @@ pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut Vec<Attribute>> {
     }
 }
 
-fn path_is_end_of(path: &Path, target: &str) -> bool {
-    path.segments
-        .iter()
-        .next_back()
-        .is_some_and(|segment| segment.ident == target)
-}
-
-pub fn return_type_is_result(rt: &ReturnType) -> bool {
-    if let ReturnType::Type(_, t) = rt {
-        if let Type::Path(TypePath { path, .. }) = t.deref() {
-            path_is_end_of(path, "Result")
-        } else {
-            false
-        }
-    } else {
-        false
-    }
-}
-
-pub fn path_is_special_call_like_err(path: &Path) -> bool {
-    #[cfg(not(feature = "err-only"))]
-    {
-        path_is_end_of(path, "Err") || path_is_end_of(path, "Ok")
-    }
-    #[cfg(feature = "err-only")]
-    {
-        path_is_end_of(path, "Err")
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use syn::{ItemFn, parse_quote};
-
-    use super::return_type_is_result;
-
-    #[test]
-    fn test_return_type_is_result() {
-        let item_fn: ItemFn = parse_quote! {
-            fn foo() -> Result<(), ()> {
-                Ok(())
-            }
-        };
-        assert!(return_type_is_result(&item_fn.sig.output));
-
-        let item_fn: ItemFn = parse_quote! {
-            fn bar() -> ::std::result::Result<(), ()> {
-                Ok(())
-            }
-        };
-        assert!(return_type_is_result(&item_fn.sig.output));
-
-        let item_fn: ItemFn = parse_quote! {
-            fn baz() -> i32 {
-                42
-            }
-        };
-        assert!(!return_type_is_result(&item_fn.sig.output));
+pub fn get_attrs_from_item(item: &mut Item) -> Option<&mut Vec<Attribute>> {
+    match item {
+        Item::Const(ItemConst { attrs, .. })
+        | Item::Enum(ItemEnum { attrs, .. })
+        | Item::ExternCrate(ItemExternCrate { attrs, .. })
+        | Item::Fn(ItemFn { attrs, .. })
+        | Item::ForeignMod(ItemForeignMod { attrs, .. })
+        | Item::Impl(ItemImpl { attrs, .. })
+        | Item::Macro(ItemMacro { attrs, .. })
+        | Item::Mod(ItemMod { attrs, .. })
+        | Item::Static(ItemStatic { attrs, .. })
+        | Item::Struct(ItemStruct { attrs, .. })
+        | Item::Trait(ItemTrait { attrs, .. })
+        | Item::TraitAlias(ItemTraitAlias { attrs, .. })
+        | Item::Type(ItemType { attrs, .. })
+        | Item::Union(ItemUnion { attrs, .. })
+        | Item::Use(ItemUse { attrs, .. }) => Some(attrs),
+        Item::Verbatim(_) | _ => None,
     }
 }

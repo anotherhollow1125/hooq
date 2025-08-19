@@ -1,23 +1,40 @@
 use proc_macro2::TokenStream;
 use syn::parse::Parse;
-use syn::{Attribute, Meta, MetaList, parse_quote};
+use syn::{Attribute, Meta, MetaList, Path, Token, parse_quote};
 
+use crate::impls::attr::context::{HookContext, SkipStatus};
+
+#[derive(Debug, Default)]
 pub struct InertAttrOption {
     pub is_skiped: bool,
     pub is_skiped_all: bool,
     pub tag: Option<String>,
+    #[allow(unused)] // TODO: FIXME
+    pub trait_use: Vec<Path>,
     pub method: Option<TokenStream>,
+}
+
+impl InertAttrOption {
+    pub fn get_skip_status(&self) -> Option<SkipStatus> {
+        match (self.is_skiped_all, self.is_skiped) {
+            (true, _) => Some(SkipStatus::SkipAll),
+            (false, true) => Some(SkipStatus::SkipSameScope),
+            _ => None,
+        }
+    }
 }
 
 pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttrOption> {
     let hooq_skip = parse_quote!(hooq::skip);
     let hooq_skip_all = parse_quote!(hooq::skip_all);
     let hooq_tag = parse_quote!(hooq::tag);
+    let hooq_trait_use = parse_quote!(hooq::trait_use);
     let hooq_method = parse_quote!(hooq::method);
 
     let mut is_skiped = false;
     let mut is_skiped_all = false;
     let mut tag: Option<String> = None;
+    let mut trait_use: Vec<Path> = Vec::new();
     let mut method: Option<TokenStream> = None;
 
     let mut keeps = Vec::with_capacity(attrs.len());
@@ -49,6 +66,21 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
                 tag = Some(t.0);
                 keeps.push(false);
             }
+            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_trait_use => {
+                struct Paths(Vec<Path>);
+
+                impl Parse for Paths {
+                    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+                        let paths = input.parse_terminated(Path::parse, Token![,])?;
+                        Ok(Self(paths.into_iter().collect()))
+                    }
+                }
+
+                let paths = syn::parse2::<Paths>(tokens.clone())?.0;
+
+                trait_use.extend(paths);
+                keeps.push(false);
+            }
             _ => {
                 keeps.push(true);
             }
@@ -63,6 +95,24 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
         is_skiped,
         is_skiped_all,
         tag,
+        trait_use,
         method,
+    })
+}
+
+pub struct HandleInertAttrsResult<'a> {
+    pub is_skiped: bool,
+    pub new_context: HookContext<'a>,
+}
+
+pub fn handle_inert_attrs<'a>(
+    attrs: &mut Vec<Attribute>,
+    context: &'a HookContext,
+) -> syn::Result<HandleInertAttrsResult<'a>> {
+    let option = extract_hooq_info_from_attrs(attrs)?;
+
+    Ok(HandleInertAttrsResult {
+        is_skiped: option.is_skiped || option.is_skiped_all || context.is_skiped(),
+        new_context: HookContext::updated_by_inert_attr(context, option),
     })
 }

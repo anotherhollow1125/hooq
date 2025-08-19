@@ -7,10 +7,9 @@ use syn::{
     TraitItemFn, TraitItemMacro, parse_quote,
 };
 
-use super::utils::return_type_is_result;
 use crate::impls::attr::context::{HookContext, HookTargetKind};
 use crate::impls::attr::inert_attr::{HandleInertAttrsResult, handle_inert_attrs};
-use crate::impls::utils::{get_attrs_from_expr, path_is_special_call_like_err};
+use crate::impls::utils::{closure_signature, get_attrs_from_expr, path_is_special_call_like_err};
 
 mod walk_macro;
 
@@ -97,7 +96,7 @@ fn handle_tail_expr(
     Ok(())
 }
 
-pub fn walk_stmt(
+fn walk_stmt(
     stmt: &mut Stmt,
     tail_expr_target_kind: TailExprTargetKind,
     context: &HookContext,
@@ -148,7 +147,7 @@ pub fn walk_stmt(
 // またもしこれらで行えたとして、結局各要素のAttributeを見ていく必要があるので、記述量に差はないと考えられる。
 // ...ともかくTODO
 
-fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
+pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
     match item {
         Item::Fn(item_fn) => {
             let HandleInertAttrsResult {
@@ -156,7 +155,7 @@ fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                 new_context: mut context,
             } = handle_inert_attrs(&mut item_fn.attrs, context)?;
 
-            context.update_return_type_is_result(return_type_is_result(&item_fn.sig.output));
+            context.update_fn_info(&item_fn.sig);
 
             let stmts_len = item_fn.block.stmts.len();
             let context = context.for_sub_scope_context();
@@ -196,9 +195,7 @@ fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                                 new_context: mut context,
                             } = handle_inert_attrs(&mut impl_item_fn.attrs, &context)?;
 
-                            context.update_return_type_is_result(return_type_is_result(
-                                &impl_item_fn.sig.output,
-                            ));
+                            context.update_fn_info(&impl_item_fn.sig);
 
                             let stmts_len = impl_item_fn.block.stmts.len();
                             let context = context.for_sub_scope_context();
@@ -307,8 +304,7 @@ fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                                 new_context: mut context,
                             } = handle_inert_attrs(attrs, &context)?;
 
-                            context
-                                .update_return_type_is_result(return_type_is_result(&sig.output));
+                            context.update_fn_info(sig);
 
                             let stmts_len = block.stmts.len();
                             let context = context.for_sub_scope_context();
@@ -606,7 +602,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                 new_context: mut context,
             } = handle_inert_attrs(&mut expr_closure.attrs, context)?;
 
-            context.update_return_type_is_result(return_type_is_result(&expr_closure.output));
+            context.update_fn_info(&closure_signature(expr_closure));
 
             match &mut *expr_closure.body {
                 Expr::Block(expr_block) => {

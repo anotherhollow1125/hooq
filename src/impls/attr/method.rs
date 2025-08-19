@@ -179,14 +179,20 @@ impl HookInfo<'_> {
                 Ok(res)
             }
             "fn_name" => {
-                let fn_name = &self.fn_info().name;
+                let fn_name = &self
+                    .fn_info()
+                    .map(|info| info.name())
+                    .unwrap_or_else(|| "<unknown>".to_string());
 
                 Ok(parse_quote! {
                     #fn_name
                 })
             }
             "fn_sig" => {
-                let fn_sig = &self.fn_info().sig;
+                let fn_sig = &self
+                    .fn_info()
+                    .map(|info| info.sig())
+                    .unwrap_or_else(|| "<unknown>".to_string());
 
                 Ok(parse_quote! {
                     #fn_sig

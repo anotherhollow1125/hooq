@@ -1,8 +1,8 @@
-use std::ops::Deref;
-
 pub use get_attrs::*;
-use syn::{Path, ReturnType, Type, TypePath};
+use syn::spanned::Spanned;
+use syn::{ExprClosure, Ident, Path, Signature};
 
+pub mod function_info;
 mod get_attrs;
 
 fn path_is_end_of(path: &Path, target: &str) -> bool {
@@ -10,16 +10,6 @@ fn path_is_end_of(path: &Path, target: &str) -> bool {
         .iter()
         .next_back()
         .is_some_and(|segment| segment.ident == target)
-}
-
-pub fn return_type_is_result(rt: &ReturnType) -> bool {
-    if let ReturnType::Type(_, t) = rt
-        && let Type::Path(TypePath { path, .. }) = t.deref()
-    {
-        path_is_end_of(path, "Result")
-    } else {
-        false
-    }
 }
 
 pub fn path_is_special_call_like_err(path: &Path) -> bool {
@@ -33,33 +23,20 @@ pub fn path_is_special_call_like_err(path: &Path) -> bool {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use syn::{ItemFn, parse_quote};
+pub fn closure_signature(expr_closure: &ExprClosure) -> Signature {
+    let span = expr_closure.span();
 
-    use super::return_type_is_result;
-
-    #[test]
-    fn test_return_type_is_result() {
-        let item_fn: ItemFn = parse_quote! {
-            fn foo() -> Result<(), ()> {
-                Ok(())
-            }
-        };
-        assert!(return_type_is_result(&item_fn.sig.output));
-
-        let item_fn: ItemFn = parse_quote! {
-            fn bar() -> ::std::result::Result<(), ()> {
-                Ok(())
-            }
-        };
-        assert!(return_type_is_result(&item_fn.sig.output));
-
-        let item_fn: ItemFn = parse_quote! {
-            fn baz() -> i32 {
-                42
-            }
-        };
-        assert!(!return_type_is_result(&item_fn.sig.output));
+    Signature {
+        constness: None,
+        asyncness: None,
+        unsafety: None,
+        abi: None,
+        fn_token: Default::default(),
+        ident: Ident::new("__closure__", span),
+        generics: Default::default(),
+        paren_token: Default::default(),
+        inputs: Default::default(),
+        variadic: None,
+        output: expr_closure.output.clone(),
     }
 }

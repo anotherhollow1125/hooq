@@ -2,35 +2,10 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use proc_macro2::TokenStream;
-use quote::ToTokens;
+use syn::Signature;
 
 use crate::impls::attr::inert_attr::InertAttrOption;
-use crate::impls::utils::return_type_is_result;
-
-#[derive(Clone, Debug)]
-pub struct FunctionInfo {
-    pub name: String,
-    pub sig: String,
-    pub return_type_is_result: bool,
-}
-
-pub trait ExtractFunctionInfo {
-    fn extract_function_info(&self) -> syn::Result<FunctionInfo>;
-}
-
-impl ExtractFunctionInfo for syn::ItemFn {
-    fn extract_function_info(&self) -> syn::Result<FunctionInfo> {
-        let sig = self.sig.to_token_stream().to_string();
-        let name = self.sig.ident.to_string();
-        let return_type_is_result = return_type_is_result(&self.sig.output);
-
-        Ok(FunctionInfo {
-            name,
-            sig,
-            return_type_is_result,
-        })
-    }
-}
+use crate::impls::utils::function_info::FunctionInfo;
 
 #[derive(Clone, Copy, Debug)]
 pub enum HookTargetKind {
@@ -133,28 +108,26 @@ pub struct LocalContext<'a> {
     pub skip_status: LocalContextField<'a, SkipStatus>,
     pub tag: LocalContextField<'a, String>,
     pub method: LocalContextField<'a, TokenStream>,
-    pub return_type_is_result: LocalContextField<'a, bool>,
+    pub fn_info: LocalContextField<'a, FunctionInfo>,
 }
 
 #[derive(Debug, Clone)]
 pub struct HookContext<'a> {
     pub counter: Rc<RefCell<Counter>>,
-    pub fn_info: &'a FunctionInfo,
     pub local_context: LocalContext<'a>,
 }
 
 impl<'a> HookContext<'a> {
-    pub fn init<'b: 'a>(fn_info: &'b FunctionInfo, inert_attr_option: InertAttrOption) -> Self {
+    pub fn init<'b: 'a>(inert_attr_option: InertAttrOption) -> Self {
         Self {
             counter: Rc::new(RefCell::new(Counter::new())),
-            fn_info,
             local_context: LocalContext {
                 skip_status: LocalContextField::new_from_option(
                     inert_attr_option.get_skip_status(),
                 ),
                 tag: LocalContextField::new_from_option(inert_attr_option.tag),
                 method: LocalContextField::new_from_option(inert_attr_option.method),
-                return_type_is_result: LocalContextField::Override(fn_info.return_type_is_result),
+                fn_info: LocalContextField::None,
             },
         }
     }
@@ -171,20 +144,16 @@ impl<'a> HookContext<'a> {
 
         let tag = LocalContextField::from_parent(tag, &parent_context.local_context.tag);
         let method = LocalContextField::from_parent(method, &parent_context.local_context.method);
-        // return_type_is_result の更新は別タイミングで行う
-        let return_type_is_result = LocalContextField::from_parent(
-            None,
-            &parent_context.local_context.return_type_is_result,
-        );
+        // fn_info の更新は別タイミングで行う
+        let fn_info = LocalContextField::from_parent(None, &parent_context.local_context.fn_info);
 
         Self {
             counter: Rc::clone(&parent_context.counter),
-            fn_info: parent_context.fn_info,
             local_context: LocalContext {
                 skip_status,
                 tag,
                 method,
-                return_type_is_result,
+                fn_info,
             },
         }
     }
@@ -201,7 +170,6 @@ impl<'a> HookContext<'a> {
     pub fn for_sub_scope_context(&self) -> Self {
         Self {
             counter: self.counter.clone(),
-            fn_info: self.fn_info,
             local_context: LocalContext {
                 skip_status: match self.local_context.skip_status {
                     LocalContextField::Inherit(&SkipStatus::SkipAll)
@@ -234,8 +202,8 @@ impl<'a> HookContext<'a> {
     }
     */
 
-    pub fn update_return_type_is_result(&mut self, is_result: bool) {
-        self.local_context.return_type_is_result = LocalContextField::Override(is_result);
+    pub fn update_fn_info(&mut self, sig: &Signature) {
+        self.local_context.fn_info = LocalContextField::Override(FunctionInfo::new(sig.clone()));
     }
 
     /*
@@ -255,11 +223,11 @@ impl<'a> HookContext<'a> {
     }
 
     pub fn return_type_is_result(&self) -> bool {
-        *self
-            .local_context
-            .return_type_is_result
+        self.local_context
+            .fn_info
             .as_ref()
-            .unwrap_or(&false)
+            .map(|info| info.return_type_is_result())
+            .unwrap_or(false)
     }
 }
 
@@ -276,8 +244,8 @@ impl HookInfo<'_> {
         Rc::clone(&self.hook_context.counter)
     }
 
-    pub fn fn_info(&self) -> &FunctionInfo {
-        self.hook_context.fn_info
+    pub fn fn_info(&self) -> Option<&FunctionInfo> {
+        self.hook_context.local_context.fn_info.as_ref()
     }
 
     pub fn tag(&self) -> Option<&String> {
@@ -287,15 +255,4 @@ impl HookInfo<'_> {
     pub fn method(&self) -> Option<&TokenStream> {
         self.hook_context.local_context.method.as_ref()
     }
-
-    /*
-    pub fn return_type_is_result(&self) -> bool {
-        *self
-            .hook_context
-            .local_context
-            .return_type_is_result
-            .as_ref()
-            .unwrap_or(&false)
-    }
-    */
 }

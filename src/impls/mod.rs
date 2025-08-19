@@ -1,41 +1,30 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::ItemFn;
-use utils::return_type_is_result;
+use syn::Item;
+use syn::spanned::Spanned;
+
+use crate::impls::attr::context::HookContext;
+use crate::impls::attr::inert_attr::extract_hooq_info_from_attrs;
+use crate::impls::utils::get_attrs_from_item;
 
 pub mod attr;
 pub mod utils;
 mod walker;
 
-use crate::impls::attr::context::{ExtractFunctionInfo, HookContext};
-use crate::impls::attr::inert_attr::extract_hooq_info_from_attrs;
-use crate::impls::walker::TailExprTargetKind;
+pub fn hooq_impls(mut item: Item) -> syn::Result<TokenStream> {
+    let span = item.span();
+    let attrs = get_attrs_from_item(&mut item).ok_or_else(move || {
+        syn::Error::new(
+            span,
+            "Failed to extract attributes. (Item::Verbatim is not supported.)",
+        )
+    })?;
+    let inert_attr_option = extract_hooq_info_from_attrs(attrs)?;
+    let context = HookContext::init(inert_attr_option);
 
-pub fn hooq_impls(mut f: ItemFn) -> syn::Result<TokenStream> {
-    let fn_info = f.extract_function_info()?;
-
-    let inert_attr_option = extract_hooq_info_from_attrs(&mut f.attrs)?;
-    let mut context = HookContext::init(&fn_info, inert_attr_option);
-    let stmts_len = f.block.stmts.len();
-
-    context.update_return_type_is_result(return_type_is_result(&f.sig.output));
-
-    f.block
-        .stmts
-        .iter_mut()
-        .enumerate()
-        .map(|(i, stmt)| {
-            let tail_expr_target_kind = if i == stmts_len - 1 {
-                TailExprTargetKind::FnBlockTailExpr
-            } else {
-                TailExprTargetKind::NotTarget
-            };
-
-            walker::walk_stmt(stmt, tail_expr_target_kind, &context)
-        })
-        .collect::<syn::Result<Vec<()>>>()?;
+    walker::walk_item(&mut item, &context)?;
 
     Ok(quote! {
-        #f
+        #item
     })
 }

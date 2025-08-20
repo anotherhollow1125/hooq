@@ -65,13 +65,6 @@ pub enum LocalContextField<'a, T> {
 }
 
 impl<'a, 'b: 'a, T> LocalContextField<'a, T> {
-    fn new_from_option(val: Option<T>) -> Self {
-        match val {
-            Some(v) => LocalContextField::Override(v),
-            None => LocalContextField::None,
-        }
-    }
-
     fn from_parent(val: Option<T>, parent: &'b LocalContextField<'b, T>) -> Self {
         if let Some(val) = val {
             return Self::Override(val);
@@ -118,15 +111,13 @@ pub struct HookContext<'a> {
 }
 
 impl<'a> HookContext<'a> {
-    pub fn init<'b: 'a>(inert_attr_option: InertAttrOption) -> Self {
+    pub fn new<'b: 'a>() -> Self {
         Self {
             counter: Rc::new(RefCell::new(Counter::new())),
             local_context: LocalContext {
-                skip_status: LocalContextField::new_from_option(
-                    inert_attr_option.get_skip_status(),
-                ),
-                tag: LocalContextField::new_from_option(inert_attr_option.tag),
-                method: LocalContextField::new_from_option(inert_attr_option.method),
+                skip_status: LocalContextField::None,
+                tag: LocalContextField::None,
+                method: LocalContextField::None,
                 fn_info: LocalContextField::None,
             },
         }

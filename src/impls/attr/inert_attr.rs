@@ -4,13 +4,11 @@ use syn::{Attribute, Meta, MetaList, Path, Token, parse_quote};
 
 use crate::impls::attr::context::{HookContext, SkipStatus};
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct InertAttrOption {
     pub is_skiped: bool,
     pub is_skiped_all: bool,
     pub tag: Option<String>,
-    #[allow(unused)] // TODO: FIXME
-    pub trait_use: Vec<Path>,
     pub method: Option<TokenStream>,
 }
 
@@ -24,7 +22,13 @@ impl InertAttrOption {
     }
 }
 
-pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttrOption> {
+#[derive(Debug)]
+pub struct ExtractResult {
+    pub inert_attr_option: InertAttrOption,
+    pub trait_use: Vec<Path>,
+}
+
+pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<ExtractResult> {
     let hooq_skip = parse_quote!(hooq::skip);
     let hooq_skip_all = parse_quote!(hooq::skip_all);
     let hooq_tag = parse_quote!(hooq::tag);
@@ -91,12 +95,16 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     let mut keeps_iter = keeps.iter();
     attrs.retain(|_| *keeps_iter.next().unwrap());
 
-    Ok(InertAttrOption {
+    let inert_attr_option = InertAttrOption {
         is_skiped,
         is_skiped_all,
         tag,
-        trait_use,
         method,
+    };
+
+    Ok(ExtractResult {
+        inert_attr_option,
+        trait_use,
     })
 }
 
@@ -109,7 +117,13 @@ pub fn handle_inert_attrs<'a>(
     attrs: &mut Vec<Attribute>,
     context: &'a HookContext,
 ) -> syn::Result<HandleInertAttrsResult<'a>> {
-    let option = extract_hooq_info_from_attrs(attrs)?;
+    let ExtractResult {
+        inert_attr_option: option,
+        trait_use,
+    } = extract_hooq_info_from_attrs(attrs)?;
+
+    // FIXME
+    drop(trait_use);
 
     Ok(HandleInertAttrsResult {
         is_skiped: option.is_skiped || option.is_skiped_all || context.is_skiped(),

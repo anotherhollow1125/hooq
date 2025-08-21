@@ -2,9 +2,9 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::Item;
 
-use crate::impls::attr::context::HookContext;
+use crate::impls::inert_attr::context::HookContext;
 
-pub mod attr;
+pub mod inert_attr;
 pub mod utils;
 mod walker;
 

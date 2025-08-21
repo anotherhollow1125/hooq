@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
 use syn::parse_quote;
 
-use crate::impls::attr::context::HookInfo;
+use crate::impls::inert_attr::context::HookInfo;
 
 impl HookInfo<'_> {
     pub fn generate_method(&self, q_span: Span) -> syn::Result<TokenStream> {

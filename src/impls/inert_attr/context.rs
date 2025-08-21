@@ -4,7 +4,7 @@ use std::rc::Rc;
 use proc_macro2::TokenStream;
 use syn::Signature;
 
-use crate::impls::attr::inert_attr::InertAttrOption;
+use crate::impls::inert_attr::InertAttrOption;
 use crate::impls::utils::function_info::FunctionInfo;
 
 #[derive(Clone, Copy, Debug)]

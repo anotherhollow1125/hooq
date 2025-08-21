@@ -2,7 +2,10 @@ use proc_macro2::TokenStream;
 use syn::parse::Parse;
 use syn::{Attribute, Meta, MetaList, parse_quote};
 
-use crate::impls::attr::context::{HookContext, SkipStatus};
+use crate::impls::inert_attr::context::{HookContext, SkipStatus};
+
+pub mod context;
+pub mod method;
 
 #[derive(Debug)]
 pub struct InertAttrOption {

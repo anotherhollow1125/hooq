@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use syn::parse::Parse;
-use syn::{Attribute, Meta, MetaList, Path, Token, parse_quote};
+use syn::{Attribute, Meta, MetaList, parse_quote};
 
 use crate::impls::attr::context::{HookContext, SkipStatus};
 
@@ -22,23 +22,15 @@ impl InertAttrOption {
     }
 }
 
-#[derive(Debug)]
-pub struct ExtractResult {
-    pub inert_attr_option: InertAttrOption,
-    pub trait_use: Vec<Path>,
-}
-
-pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<ExtractResult> {
+pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttrOption> {
     let hooq_skip = parse_quote!(hooq::skip);
     let hooq_skip_all = parse_quote!(hooq::skip_all);
     let hooq_tag = parse_quote!(hooq::tag);
-    let hooq_trait_use = parse_quote!(hooq::trait_use);
     let hooq_method = parse_quote!(hooq::method);
 
     let mut is_skiped = false;
     let mut is_skiped_all = false;
     let mut tag: Option<String> = None;
-    let mut trait_use: Vec<Path> = Vec::new();
     let mut method: Option<TokenStream> = None;
 
     let mut keeps = Vec::with_capacity(attrs.len());
@@ -70,6 +62,9 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<E
                 tag = Some(t.0);
                 keeps.push(false);
             }
+            /*
+            // ルート部分でのパースで再利用するので一旦コメントアウトで
+            // TODO: 削除
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_trait_use => {
                 struct Paths(Vec<Path>);
 
@@ -85,6 +80,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<E
                 trait_use.extend(paths);
                 keeps.push(false);
             }
+            */
             _ => {
                 keeps.push(true);
             }
@@ -95,16 +91,11 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<E
     let mut keeps_iter = keeps.iter();
     attrs.retain(|_| *keeps_iter.next().unwrap());
 
-    let inert_attr_option = InertAttrOption {
+    Ok(InertAttrOption {
         is_skiped,
         is_skiped_all,
         tag,
         method,
-    };
-
-    Ok(ExtractResult {
-        inert_attr_option,
-        trait_use,
     })
 }
 
@@ -117,13 +108,7 @@ pub fn handle_inert_attrs<'a>(
     attrs: &mut Vec<Attribute>,
     context: &'a HookContext,
 ) -> syn::Result<HandleInertAttrsResult<'a>> {
-    let ExtractResult {
-        inert_attr_option: option,
-        trait_use,
-    } = extract_hooq_info_from_attrs(attrs)?;
-
-    // FIXME
-    drop(trait_use);
+    let option = extract_hooq_info_from_attrs(attrs)?;
 
     Ok(HandleInertAttrsResult {
         is_skiped: option.is_skiped || option.is_skiped_all || context.is_skiped(),

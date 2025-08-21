@@ -1,5 +1,4 @@
 use proc_macro2::TokenStream;
-use quote::quote;
 use syn::parse::Parse;
 use syn::{Attribute, Meta, MetaList, Path, Token, parse_quote};
 
@@ -111,7 +110,6 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<E
 
 pub struct HandleInertAttrsResult<'a> {
     pub is_skiped: bool,
-    pub trait_uses: TokenStream,
     pub new_context: HookContext<'a>,
 }
 
@@ -124,14 +122,11 @@ pub fn handle_inert_attrs<'a>(
         trait_use,
     } = extract_hooq_info_from_attrs(attrs)?;
 
-    let trait_uses = trait_use
-        .into_iter()
-        .map(|path| quote! { use #path as _; })
-        .collect::<TokenStream>();
+    // FIXME
+    drop(trait_use);
 
     Ok(HandleInertAttrsResult {
         is_skiped: option.is_skiped || option.is_skiped_all || context.is_skiped(),
-        trait_uses,
         new_context: HookContext::updated_by_inert_attr(context, option),
     })
 }

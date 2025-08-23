@@ -4,6 +4,7 @@ mod r#macro;
 mod nested;
 mod skip;
 mod skip_detail;
+mod trait_use;
 
 // ほかのテストでは不十分と考えられるケースをテスト
 
@@ -17,6 +18,7 @@ fn test_special() {
     macrotest::expand_args("tests/special/nested.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/skip.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/skip_detail.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/trait_use.rs", &["--ugly"]);
 
     crate::mask_project_root("tests/special", crate::Mask);
 }

@@ -65,25 +65,6 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
                 tag = Some(t.0);
                 keeps.push(false);
             }
-            /*
-            // ルート部分でのパースで再利用するので一旦コメントアウトで
-            // TODO: 削除
-            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_trait_use => {
-                struct Paths(Vec<Path>);
-
-                impl Parse for Paths {
-                    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-                        let paths = input.parse_terminated(Path::parse, Token![,])?;
-                        Ok(Self(paths.into_iter().collect()))
-                    }
-                }
-
-                let paths = syn::parse2::<Paths>(tokens.clone())?.0;
-
-                trait_use.extend(paths);
-                keeps.push(false);
-            }
-            */
             _ => {
                 keeps.push(true);
             }

@@ -1,4 +1,3 @@
-/target
-/tests/util_macros/target
+target/
 *.memo.*
-examples/playground.rs
+examples/examples/playground.rs

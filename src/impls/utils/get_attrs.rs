@@ -3,9 +3,7 @@ use syn::{
     ExprCall, ExprCast, ExprClosure, ExprConst, ExprContinue, ExprField, ExprForLoop, ExprGroup,
     ExprIf, ExprIndex, ExprInfer, ExprLet, ExprLit, ExprLoop, ExprMacro, ExprMatch, ExprMethodCall,
     ExprParen, ExprPath, ExprRange, ExprRawAddr, ExprReference, ExprRepeat, ExprReturn, ExprStruct,
-    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield, Item, ItemConst,
-    ItemEnum, ItemExternCrate, ItemFn, ItemForeignMod, ItemImpl, ItemMacro, ItemMod, ItemStatic,
-    ItemStruct, ItemTrait, ItemTraitAlias, ItemType, ItemUnion, ItemUse,
+    ExprTry, ExprTryBlock, ExprTuple, ExprUnary, ExprUnsafe, ExprWhile, ExprYield,
 };
 
 pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut Vec<Attribute>> {
@@ -50,26 +48,5 @@ pub fn get_attrs_from_expr(expr: &mut Expr) -> Option<&mut Vec<Attribute>> {
         | Expr::While(ExprWhile { attrs, .. })
         | Expr::Yield(ExprYield { attrs, .. }) => Some(attrs),
         Expr::Verbatim(_) | _ => None,
-    }
-}
-
-pub fn get_attrs_from_item(item: &mut Item) -> Option<&mut Vec<Attribute>> {
-    match item {
-        Item::Const(ItemConst { attrs, .. })
-        | Item::Enum(ItemEnum { attrs, .. })
-        | Item::ExternCrate(ItemExternCrate { attrs, .. })
-        | Item::Fn(ItemFn { attrs, .. })
-        | Item::ForeignMod(ItemForeignMod { attrs, .. })
-        | Item::Impl(ItemImpl { attrs, .. })
-        | Item::Macro(ItemMacro { attrs, .. })
-        | Item::Mod(ItemMod { attrs, .. })
-        | Item::Static(ItemStatic { attrs, .. })
-        | Item::Struct(ItemStruct { attrs, .. })
-        | Item::Trait(ItemTrait { attrs, .. })
-        | Item::TraitAlias(ItemTraitAlias { attrs, .. })
-        | Item::Type(ItemType { attrs, .. })
-        | Item::Union(ItemUnion { attrs, .. })
-        | Item::Use(ItemUse { attrs, .. }) => Some(attrs),
-        Item::Verbatim(_) | _ => None,
     }
 }

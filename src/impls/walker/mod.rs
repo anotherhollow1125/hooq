@@ -7,8 +7,8 @@ use syn::{
     TraitItemFn, TraitItemMacro, parse_quote,
 };
 
-use crate::impls::attr::context::{HookContext, HookTargetKind};
-use crate::impls::attr::inert_attr::{HandleInertAttrsResult, handle_inert_attrs};
+use crate::impls::inert_attr::context::{HookContext, HookTargetKind};
+use crate::impls::inert_attr::{HandleInertAttrsResult, handle_inert_attrs};
 use crate::impls::utils::{closure_signature, get_attrs_from_expr, path_is_special_call_like_err};
 
 mod walk_macro;

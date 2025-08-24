@@ -4,10 +4,10 @@ use syn::{Item, parse_macro_input};
 mod impls;
 
 #[proc_macro_attribute]
-pub fn hooq(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn hooq(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item = parse_macro_input!(item as Item);
 
-    impls::hooq_impls(item)
+    impls::hooq_impls(attr.into(), item)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

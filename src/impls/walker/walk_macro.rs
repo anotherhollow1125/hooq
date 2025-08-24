@@ -4,7 +4,7 @@ use syn::parse::Parse;
 use syn::parse::discouraged::Speculative;
 use syn::{Attribute, Macro, Token};
 
-use crate::impls::attr::context::HookContext;
+use crate::impls::inert_attr::context::HookContext;
 use crate::impls::walker::{
     HandleInertAttrsResult, handle_inert_attrs, walk_expr, walk_item, walk_stmt,
 };

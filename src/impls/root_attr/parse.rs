@@ -22,7 +22,7 @@ impl Parse for HooqRootOption {
 }
 
 fn parse_meta_path(input: Path) -> syn::Result<()> {
-    // error now.
+    // error for now.
     Err(syn::Error::new_spanned(
         input,
         "Expected trait_use(...) or custom(...) attribute format",
@@ -54,7 +54,7 @@ fn parse_meta_list(input: MetaList, trait_uses: &mut Vec<Path>) -> syn::Result<(
 }
 
 fn parse_name_value(input: MetaNameValue) -> syn::Result<()> {
-    // error now.
+    // error for now.
     Err(syn::Error::new_spanned(
         input,
         "Expected trait_use(...) or custom(...) attribute format",

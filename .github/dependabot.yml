@@ -21,27 +21,3 @@ updates:
       cargo-dependencies:
         patterns:
           - "*"
-  - package-ecosystem: "cargo"
-    directory: "/hooq-macros"
-    schedule:
-      interval: "weekly"
-    groups:
-      cargo-dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "cargo"
-    directory: "/hooq-helpers"
-    schedule:
-      interval: "weekly"
-    groups:
-      cargo-dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "cargo"
-    directory: "/hooq"
-    schedule:
-      interval: "weekly"
-    groups:
-      cargo-dependencies:
-        patterns:
-          - "*"

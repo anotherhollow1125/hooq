@@ -58,9 +58,42 @@ mod custom {
     }
 }
 
+mod custom2 {
+    use hooq_macros::hooq;
+
+    use super::trait_define::CustomHook;
+
+    #[hooq(custom)]
+    pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
+    where
+        E: std::fmt::Debug,
+    {
+        result
+    }
+
+    #[hooq(custom = true)]
+    pub fn use_hook2<T, E>(result: Result<T, E>) -> Result<T, E>
+    where
+        E: std::fmt::Debug,
+    {
+        result
+    }
+
+    #[hooq(preset = "custom")]
+    pub fn use_hook3<T, E>(result: Result<T, E>) -> Result<T, E>
+    where
+        E: std::fmt::Debug,
+    {
+        result
+    }
+}
+
 #[test]
 fn test() {
     let result: Result<i32, &str> = Ok(42);
     trait_use_inner::use_hook(result).unwrap();
     custom::use_hook(result).unwrap();
+    custom2::use_hook(result).unwrap();
+    custom2::use_hook2(result).unwrap();
+    custom2::use_hook3(result).unwrap();
 }

@@ -60,3 +60,58 @@ mod custom {
             })
     }
 }
+mod custom2 {
+    use hooq_macros::hooq;
+    use super::trait_define::CustomHook;
+    pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
+    where
+        E: std::fmt::Debug,
+    {
+        result
+            .hook(|| {
+                ::hooq::HooqInfo {
+                    line: 71usize,
+                    column: 9usize,
+                    path: "<hooq_root>/tests/special/trait_use.rs",
+                    abs_path: "<hooq_root>/tests/special/trait_use.rs",
+                    file: "trait_use.rs",
+                    expr: "result",
+                    count: "1th tail expr",
+                }
+            })
+    }
+    pub fn use_hook2<T, E>(result: Result<T, E>) -> Result<T, E>
+    where
+        E: std::fmt::Debug,
+    {
+        result
+            .hook(|| {
+                ::hooq::HooqInfo {
+                    line: 79usize,
+                    column: 9usize,
+                    path: "<hooq_root>/tests/special/trait_use.rs",
+                    abs_path: "<hooq_root>/tests/special/trait_use.rs",
+                    file: "trait_use.rs",
+                    expr: "result",
+                    count: "1th tail expr",
+                }
+            })
+    }
+    pub fn use_hook3<T, E>(result: Result<T, E>) -> Result<T, E>
+    where
+        E: std::fmt::Debug,
+    {
+        result
+            .hook(|| {
+                ::hooq::HooqInfo {
+                    line: 87usize,
+                    column: 9usize,
+                    path: "<hooq_root>/tests/special/trait_use.rs",
+                    abs_path: "<hooq_root>/tests/special/trait_use.rs",
+                    file: "trait_use.rs",
+                    expr: "result",
+                    count: "1th tail expr",
+                }
+            })
+    }
+}

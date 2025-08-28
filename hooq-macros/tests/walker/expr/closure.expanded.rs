@@ -7,7 +7,7 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
                 let line = 6usize;
                 {
                     ::std::io::_eprint(
-                        format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
+                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
                     );
                 };
             });
@@ -17,9 +17,7 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
             let path = "<hooq_root>/tests/walker/expr/closure.rs";
             let line = 8usize;
             {
-                ::std::io::_eprint(
-                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
-                );
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
         })
 }
@@ -29,9 +27,7 @@ fn two() -> Result<u32, ()> {
             let path = "<hooq_root>/tests/walker/expr/closure.rs";
             let line = 13usize;
             {
-                ::std::io::_eprint(
-                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
-                );
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
         })
 }

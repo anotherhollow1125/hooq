@@ -218,7 +218,7 @@ fn default_method() -> TokenStream {
             let path = $path;
             let line = $line;
 
-            ::std::eprintln!("{e:?} @ path: {path}, line: {line}");
+            ::std::eprintln!("[{path}:L{line}] {e:?}");
         })
     }
 }

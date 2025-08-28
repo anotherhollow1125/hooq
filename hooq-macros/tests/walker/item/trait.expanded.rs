@@ -7,9 +7,7 @@ fn hoge() -> Result<(), ()> {
             let path = "<hooq_root>/tests/walker/item/trait.rs";
             let line = 9usize;
             {
-                ::std::io::_eprint(
-                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
-                );
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
         })
 }

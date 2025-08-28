@@ -12,7 +12,7 @@ mod walker;
 
 pub fn hooq_impls(root_attr: TokenStream, mut item: Item) -> syn::Result<TokenStream> {
     let root_option: HooqRootOption = syn::parse2(root_attr)?;
-    let context = HookContext::new();
+    let context = HookContext::new(&root_option);
 
     walker::walk_item(&mut item, &context)?;
 

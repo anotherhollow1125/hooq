@@ -8,7 +8,7 @@ impl Strct {
                 let line = 8usize;
                 {
                     ::std::io::_eprint(
-                        format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
+                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
                     );
                 };
             })
@@ -20,9 +20,7 @@ fn get_strct() -> Result<Strct, ()> {
             let path = "<hooq_root>/tests/walker/expr/method_call.rs";
             let line = 14usize;
             {
-                ::std::io::_eprint(
-                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
-                );
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
         })
 }
@@ -32,9 +30,7 @@ fn get_val() -> Result<usize, ()> {
             let path = "<hooq_root>/tests/walker/expr/method_call.rs";
             let line = 19usize;
             {
-                ::std::io::_eprint(
-                    format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
-                );
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
         })
 }

@@ -234,7 +234,9 @@ pub fn method_for_custom() -> TokenStream {
                 file: $file,
                 expr: $expr,
                 count: $count,
-                // TODO: extra_vars,
+                // TODO: 任意の型の値を任意の変数名に格納した
+                // HashMap<String, (TypeId, Box<dyn Any>)> (仮) 型のextra_varsも
+                // 参照可能にする
             }
         })
     }

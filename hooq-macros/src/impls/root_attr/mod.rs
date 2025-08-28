@@ -6,6 +6,7 @@ mod parse;
 #[derive(Debug)]
 pub struct HooqRootOption {
     pub trait_uses: Vec<Path>,
+    pub is_custom: bool,
 }
 
 impl HooqRootOption {

@@ -5,6 +5,8 @@ use proc_macro2::TokenStream;
 use syn::Signature;
 
 use crate::impls::inert_attr::InertAttrOption;
+use crate::impls::inert_attr::method::method_for_custom;
+use crate::impls::root_attr::HooqRootOption;
 use crate::impls::utils::function_info::FunctionInfo;
 
 #[derive(Clone, Copy, Debug)]
@@ -111,13 +113,19 @@ pub struct HookContext<'a> {
 }
 
 impl<'a> HookContext<'a> {
-    pub fn new<'b: 'a>() -> Self {
+    pub fn new<'b: 'a>(root_option: &HooqRootOption) -> Self {
+        let method = if root_option.is_custom {
+            LocalContextField::Override(method_for_custom())
+        } else {
+            LocalContextField::None
+        };
+
         Self {
             counter: Rc::new(RefCell::new(Counter::new())),
             local_context: LocalContext {
                 skip_status: LocalContextField::None,
                 tag: LocalContextField::None,
-                method: LocalContextField::None,
+                method,
                 fn_info: LocalContextField::None,
             },
         }

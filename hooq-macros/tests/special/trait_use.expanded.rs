@@ -15,6 +15,18 @@ mod trait_define {
             self
         }
     }
+    pub trait CustomHook {
+        fn hook(self, f: impl FnOnce() -> hooq::HooqInfo) -> Self;
+    }
+    impl<T, E> CustomHook for Result<T, E> {
+        fn hook(self, f: impl FnOnce() -> hooq::HooqInfo) -> Self {
+            let info = f();
+            {
+                ::std::io::_eprint(format_args!("{0:?}\n", info));
+            };
+            self
+        }
+    }
 }
 mod trait_use_inner {
     use hooq_macros::hooq;
@@ -24,37 +36,27 @@ mod trait_use_inner {
     where
         E: std::fmt::Debug,
     {
-        result
-            .hook1()
-            .hook2()
-            .inspect_err(|e| {
-                let path = "<hooq_root>/tests/special/trait_use.rs";
-                let line = 32usize;
-                {
-                    ::std::io::_eprint(
-                        format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
-                    );
-                };
-            })
+        result.hook1().hook2()
     }
 }
 mod custom {
     use hooq_macros::hooq;
-    use super::trait_define::Hook2 as _;
+    use super::trait_define::CustomHook as _;
     pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
     where
         E: std::fmt::Debug,
     {
         result
-            .hook2()
-            .inspect_err(|e| {
-                let path = "<hooq_root>/tests/special/trait_use.rs";
-                let line = 44usize;
-                {
-                    ::std::io::_eprint(
-                        format_args!("{0:?} @ path: {1}, line: {2}\n", e, path, line),
-                    );
-                };
+            .hook(|| {
+                ::hooq::HooqInfo {
+                    line: 57usize,
+                    column: 9usize,
+                    path: "<hooq_root>/tests/special/trait_use.rs",
+                    abs_path: "<hooq_root>/tests/special/trait_use.rs",
+                    file: "trait_use.rs",
+                    expr: "result",
+                    count: "1th tail expr",
+                }
             })
     }
 }

@@ -165,6 +165,7 @@ impl HookInfo<'_> {
                     #val
                 })
             }
+            // TODO: tag 以外の変数も扱えるようにする
             "tag" => {
                 let res = if let Some(tag) = self.tag() {
                     parse_quote! {
@@ -218,6 +219,23 @@ fn default_method() -> TokenStream {
             let line = $line;
 
             ::std::eprintln!("{e:?} @ path: {path}, line: {line}");
+        })
+    }
+}
+
+pub fn method_for_custom() -> TokenStream {
+    parse_quote! {
+        .hook(|| {
+            ::hooq::HooqInfo {
+                line: $line,
+                column: $column,
+                path: $path,
+                abs_path: $abs_path,
+                file: $file,
+                expr: $expr,
+                count: $count,
+                // TODO: extra_vars,
+            }
         })
     }
 }

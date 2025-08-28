@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 hooq-macros = { path = "../hooq-macros" }
+hooq-helpers = { path = "../hooq-helpers" }

@@ -22,3 +22,4 @@ macrotest = "1.2.0"
 serde_json = "1.0.143"
 tokio = { version = "1.47.1", features = ["full"] }
 util_macros = { path = "tests/util_macros" }
+hooq = { path = "../hooq"}

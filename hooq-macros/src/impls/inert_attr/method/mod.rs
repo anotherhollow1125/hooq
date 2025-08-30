@@ -10,6 +10,30 @@ use crate::impls::inert_attr::context::HookInfo;
 
 mod meta_vars;
 
+fn get_abs_path(q_span: Span) -> String {
+    // Cargoプロジェクト以下の場合 local_file / file からは相対パスが返る
+    let span_path = q_span.unwrap().local_file().unwrap_or_else(|| {
+        let path = q_span.unwrap().file();
+        PathBuf::from(path)
+    });
+    let cargo_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| String::new());
+    let cargo_path = PathBuf::from(cargo_path);
+
+    let path = if span_path.is_absolute() {
+        span_path.clone()
+    } else {
+        cargo_path.join(&span_path)
+    };
+    path.to_string_lossy().to_string()
+}
+
+fn get_file_name(q_span: Span) -> String {
+    let path = q_span.unwrap().file();
+    let file = path.rsplit('/').next().unwrap_or(&path);
+
+    file.to_string()
+}
+
 impl HookInfo<'_> {
     pub fn generate_method(&self, q_span: Span) -> syn::Result<TokenStream> {
         let mut res = TokenStream::new();
@@ -90,6 +114,34 @@ impl HookInfo<'_> {
         Ok(())
     }
 
+    fn get_count(&self) -> String {
+        let kind = self.kind;
+        let count = self.counter().borrow().get_count(kind);
+        let th = match count % 100 {
+            11..=13 => "th",
+            n => match n % 10 {
+                1 => "st",
+                2 => "nd",
+                3 => "rd",
+                _ => "th",
+            },
+        };
+
+        format!("{count}{th} {kind}")
+    }
+
+    fn get_fn_name(&self) -> String {
+        self.fn_info()
+            .map(|info| info.name())
+            .unwrap_or_else(|| "<unknown>".to_string())
+    }
+
+    fn get_fn_sig(&self) -> String {
+        self.fn_info()
+            .map(|info| info.sig())
+            .unwrap_or_else(|| "<unknown>".to_string())
+    }
+
     fn meta_vars2token_stream(
         &self,
         var_ident: &Ident,
@@ -97,26 +149,18 @@ impl HookInfo<'_> {
     ) -> syn::Result<TokenStream> {
         match MetaVars::from_str(var_ident.to_string().as_str()) {
             Ok(MetaVars::Line) => {
-                let line: TokenStream = {
-                    let line = q_span.unwrap().line();
+                let line = q_span.unwrap().line();
 
-                    parse_quote! {
-                        #line
-                    }
-                };
-
-                Ok(line)
+                Ok(parse_quote! {
+                    #line
+                })
             }
             Ok(MetaVars::Column) => {
-                let col: TokenStream = {
-                    let col = q_span.unwrap().column();
+                let col = q_span.unwrap().column();
 
-                    parse_quote! {
-                        #col
-                    }
-                };
-
-                Ok(col)
+                Ok(parse_quote! {
+                    #col
+                })
             }
             Ok(MetaVars::Path) => {
                 let path = q_span.unwrap().file();
@@ -126,29 +170,14 @@ impl HookInfo<'_> {
                 })
             }
             Ok(MetaVars::AbsPath) => {
-                // Cargoプロジェクト以下の場合 local_file / file からは相対パスが返る
-                let span_path = q_span.unwrap().local_file().unwrap_or_else(|| {
-                    let path = q_span.unwrap().file();
-                    PathBuf::from(path)
-                });
-                let cargo_path =
-                    std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| String::new());
-                let cargo_path = PathBuf::from(cargo_path);
-
-                let path = if span_path.is_absolute() {
-                    span_path.clone()
-                } else {
-                    cargo_path.join(&span_path)
-                };
-                let path = path.to_string_lossy();
+                let path = get_abs_path(q_span);
 
                 Ok(parse_quote! {
                     #path
                 })
             }
             Ok(MetaVars::File) => {
-                let path = q_span.unwrap().file();
-                let file = path.rsplit('/').next().unwrap_or(&path);
+                let file = get_file_name(q_span);
 
                 Ok(parse_quote! {
                     #file
@@ -162,32 +191,48 @@ impl HookInfo<'_> {
                 })
             }
             Ok(MetaVars::Count) => {
-                let kind = self.kind;
-                let count = self.counter().borrow().get_count(kind);
-                let val = format!("{count}th {kind}");
+                let val = self.get_count();
 
                 Ok(parse_quote! {
                     #val
                 })
             }
             Ok(MetaVars::FnName) => {
-                let fn_name = &self
-                    .fn_info()
-                    .map(|info| info.name())
-                    .unwrap_or_else(|| "<unknown>".to_string());
+                let fn_name = self.get_fn_name();
 
                 Ok(parse_quote! {
                     #fn_name
                 })
             }
             Ok(MetaVars::FnSig) => {
-                let fn_sig = &self
-                    .fn_info()
-                    .map(|info| info.sig())
-                    .unwrap_or_else(|| "<unknown>".to_string());
+                let fn_sig = self.get_fn_sig();
 
                 Ok(parse_quote! {
                     #fn_sig
+                })
+            }
+            Ok(MetaVars::HooqMeta) => {
+                let line = q_span.unwrap().line();
+                let column = q_span.unwrap().column();
+                let path = q_span.unwrap().file();
+                let abs_path = get_abs_path(q_span);
+                let file = get_file_name(q_span);
+                let expr = self.expr;
+                let count = self.get_count();
+
+                Ok(parse_quote! {
+                    ::hooq::HooqMeta {
+                        line: #line,
+                        column: #column,
+                        path: #path,
+                        abs_path: #abs_path,
+                        file: #file,
+                        expr: #expr,
+                        count: #count,
+                        // TODO: 任意の型の値を任意の変数名に格納した
+                        // HashMap<String, (TypeId, Box<dyn Any>)> (仮) 型のextra_varsも
+                        // 参照可能にする
+                    }
                 })
             }
             Err(binding) => {
@@ -239,18 +284,7 @@ fn default_method() -> TokenStream {
 pub fn method_for_custom() -> TokenStream {
     parse_quote! {
         .hook(|| {
-            ::hooq::HooqMeta {
-                line: $line,
-                column: $column,
-                path: $path,
-                abs_path: $abs_path,
-                file: $file,
-                expr: $expr,
-                count: $count,
-                // TODO: 任意の型の値を任意の変数名に格納した
-                // HashMap<String, (TypeId, Box<dyn Any>)> (仮) 型のextra_varsも
-                // 参照可能にする
-            }
+            $hooq_meta
         })
     }
 }

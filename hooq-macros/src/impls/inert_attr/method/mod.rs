@@ -1,10 +1,14 @@
 use std::path::PathBuf;
+use std::str::FromStr;
 
+use meta_vars::{META_VARS_LIST, MetaVars};
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
 use quote::ToTokens;
 use syn::parse_quote;
 
 use crate::impls::inert_attr::context::HookInfo;
+
+mod meta_vars;
 
 impl HookInfo<'_> {
     pub fn generate_method(&self, q_span: Span) -> syn::Result<TokenStream> {
@@ -14,7 +18,7 @@ impl HookInfo<'_> {
             Some(method) => method.clone(),
             None => default_method(),
         };
-        self.expand_special_vars(method, &mut res, q_span)?;
+        self.expand_meta_vars(method, &mut res, q_span)?;
 
         let res = res
             .into_iter()
@@ -28,7 +32,7 @@ impl HookInfo<'_> {
     }
 
     // 再帰的に適用するために ts, res を引数としている
-    fn expand_special_vars(
+    fn expand_meta_vars(
         &self,
         ts: TokenStream,
         res: &mut TokenStream,
@@ -56,7 +60,7 @@ impl HookInfo<'_> {
 
                     next_is_replace_target = false;
 
-                    res.extend([self.special_vars2token_stream(&ident, q_span)?]);
+                    res.extend([self.meta_vars2token_stream(&ident, q_span)?]);
                 }
                 TokenTree::Group(group) => {
                     if next_is_replace_target {
@@ -64,7 +68,7 @@ impl HookInfo<'_> {
                     }
 
                     let mut res_for_group = TokenStream::new();
-                    self.expand_special_vars(group.stream(), &mut res_for_group, q_span)?;
+                    self.expand_meta_vars(group.stream(), &mut res_for_group, q_span)?;
 
                     let new_group = Group::new(group.delimiter(), res_for_group);
 
@@ -86,13 +90,13 @@ impl HookInfo<'_> {
         Ok(())
     }
 
-    fn special_vars2token_stream(
+    fn meta_vars2token_stream(
         &self,
         var_ident: &Ident,
         #[allow(unused)] q_span: Span,
     ) -> syn::Result<TokenStream> {
-        match var_ident.to_string().as_str() {
-            "line" => {
+        match MetaVars::from_str(var_ident.to_string().as_str()) {
+            Ok(MetaVars::Line) => {
                 let line: TokenStream = {
                     let line = q_span.unwrap().line();
 
@@ -103,7 +107,7 @@ impl HookInfo<'_> {
 
                 Ok(line)
             }
-            "column" | "col" => {
+            Ok(MetaVars::Column) => {
                 let col: TokenStream = {
                     let col = q_span.unwrap().column();
 
@@ -114,14 +118,14 @@ impl HookInfo<'_> {
 
                 Ok(col)
             }
-            "path" => {
+            Ok(MetaVars::Path) => {
                 let path = q_span.unwrap().file();
 
                 Ok(parse_quote! {
                     #path
                 })
             }
-            "abspath" | "abs_path" => {
+            Ok(MetaVars::AbsPath) => {
                 // Cargoプロジェクト以下の場合 local_file / file からは相対パスが返る
                 let span_path = q_span.unwrap().local_file().unwrap_or_else(|| {
                     let path = q_span.unwrap().file();
@@ -142,7 +146,7 @@ impl HookInfo<'_> {
                     #path
                 })
             }
-            "file" => {
+            Ok(MetaVars::File) => {
                 let path = q_span.unwrap().file();
                 let file = path.rsplit('/').next().unwrap_or(&path);
 
@@ -150,14 +154,14 @@ impl HookInfo<'_> {
                     #file
                 })
             }
-            "expr" => {
+            Ok(MetaVars::Expr) => {
                 let expr = self.expr;
 
                 Ok(parse_quote! {
                     #expr
                 })
             }
-            "nth" | "count" => {
+            Ok(MetaVars::Count) => {
                 let kind = self.kind;
                 let count = self.counter().borrow().get_count(kind);
                 let val = format!("{count}th {kind}");
@@ -166,7 +170,7 @@ impl HookInfo<'_> {
                     #val
                 })
             }
-            "fn_name" => {
+            Ok(MetaVars::FnName) => {
                 let fn_name = &self
                     .fn_info()
                     .map(|info| info.name())
@@ -176,7 +180,7 @@ impl HookInfo<'_> {
                     #fn_name
                 })
             }
-            "fn_sig" => {
+            Ok(MetaVars::FnSig) => {
                 let fn_sig = &self
                     .fn_info()
                     .map(|info| info.sig())
@@ -186,11 +190,27 @@ impl HookInfo<'_> {
                     #fn_sig
                 })
             }
-            binding => {
-                let Some(expr) = self.get_binding(binding) else {
+            Err(binding) => {
+                let Some(expr) = self.get_binding(&binding) else {
                     return Err(syn::Error::new(
                         var_ident.span(),
-                        format!("unknown special variable or binding: {var_ident}"),
+                        format!(
+                            "unknown meta variable or binding: ${var_ident}
+available bindings:
+{}
+available meta variables:
+{}",
+                            self.available_bindings()
+                                .into_iter()
+                                .map(|v| format!(" - ${v}"))
+                                .collect::<Vec<_>>()
+                                .join("\n"),
+                            META_VARS_LIST
+                                .iter()
+                                .map(|v| format!(" - ${v}"))
+                                .collect::<Vec<_>>()
+                                .join("\n"),
+                        ),
                     ));
                 };
 
@@ -219,7 +239,7 @@ fn default_method() -> TokenStream {
 pub fn method_for_custom() -> TokenStream {
     parse_quote! {
         .hook(|| {
-            ::hooq::HooqInfo {
+            ::hooq::HooqMeta {
                 line: $line,
                 column: $column,
                 path: $path,

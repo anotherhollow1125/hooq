@@ -264,6 +264,15 @@ impl HookInfo<'_> {
         self.hook_context.local_context.method.as_ref()
     }
 
+    pub fn available_bindings(&self) -> Vec<String> {
+        self.hook_context
+            .local_context
+            .bindings
+            .as_ref()
+            .map(|map| map.keys().cloned().collect())
+            .unwrap_or_default()
+    }
+
     pub fn get_binding(&self, key: &str) -> Option<&Expr> {
         self.hook_context
             .local_context

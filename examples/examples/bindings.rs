@@ -14,6 +14,8 @@ use hooq::hooq;
 fn func(val: usize) -> Result<(), usize> {
     #[hooq::threshold = 9]
     if val > 9 {
+        let hoge = "hogehoge";
+
         #[hooq::method(.inspect_err(|e| {
             #[allow(clippy::nonminimal_bool)]
             if *e > $threshold && !$skip {
@@ -25,7 +27,7 @@ fn func(val: usize) -> Result<(), usize> {
                 );
             }
         }))]
-        #[hooq::hoge = "hoge"]
+        #[hooq::hoge = hoge]
         if val > 20 {
             return Err(val);
         }

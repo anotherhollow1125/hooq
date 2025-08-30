@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
+use quote::ToTokens;
 use syn::parse_quote;
 
 use crate::impls::inert_attr::context::HookInfo;
@@ -165,20 +166,6 @@ impl HookInfo<'_> {
                     #val
                 })
             }
-            // TODO: tag 以外の変数も扱えるようにする
-            "tag" => {
-                let res = if let Some(tag) = self.tag() {
-                    parse_quote! {
-                        #tag
-                    }
-                } else {
-                    parse_quote! {
-                        "(no tag)"
-                    }
-                };
-
-                Ok(res)
-            }
             "fn_name" => {
                 let fn_name = &self
                     .fn_info()
@@ -199,10 +186,16 @@ impl HookInfo<'_> {
                     #fn_sig
                 })
             }
-            _ => Err(syn::Error::new(
-                var_ident.span(),
-                format!("Unknown special variable: {var_ident}"),
-            )),
+            binding => {
+                let Some(expr) = self.get_binding(binding) else {
+                    return Err(syn::Error::new(
+                        var_ident.span(),
+                        format!("unknown special variable or binding: {var_ident}"),
+                    ));
+                };
+
+                Ok(expr.to_token_stream())
+            }
         }
     }
 }

@@ -41,9 +41,9 @@
 - [x] trait_use の実装
   - [x] `use XXX as _;` をしかるべき場所に吐き出す
   - [x] マクロ以外も提供できるようにするためにワークスペースとする
-  - [x] `HooqInfo` を提供し、 `custom` でうまく活用できるようにする
+  - [x] `HooqMeta` を提供し、 `custom` でうまく活用できるようにする
     - [ ] 内部では `HashMap<String, (TypeId, Arc<dyn Any>)>` を利用
-  - [ ] `HooqInfo` 自体を受け取れるメタ変数を用意
+  - [ ] `HooqMeta` 自体を受け取れるメタ変数を用意
 - [x] ~~extra_vars~~ 改め bindings
   - `tag` ではなく、 任意の変数と任意のExprをストックできる
   - というかいっそこちらで予約していない変数は自由に入れられるようにするか

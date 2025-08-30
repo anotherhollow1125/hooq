@@ -1,4 +1,5 @@
 mod abs_path;
+mod bindings;
 mod fn_special;
 mod r#macro;
 mod nested;
@@ -13,6 +14,7 @@ fn test_special() {
     crate::mask_project_root("tests/special", crate::UnMask);
 
     macrotest::expand_args("tests/special/abs_path.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/bindings.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/fn_special.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/macro.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/nested.rs", &["--ugly"]);

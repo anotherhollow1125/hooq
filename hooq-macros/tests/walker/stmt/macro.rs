@@ -9,13 +9,14 @@ fn enresult<T>(v: T) -> Result<T, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}, expr: {}", $tag, $expr);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
-    #[hooq::tag("outer")]
+    #[hooq::tag = "outer"]
     println!("{}", enresult(10)?);
 
     println!(
         "{}",
-        #[hooq::tag("inner")]
+        #[hooq::tag = "inner"]
         enresult(20)?
     );
 

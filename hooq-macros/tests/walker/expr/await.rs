@@ -2,7 +2,7 @@ use hooq_macros::hooq;
 use tokio::time::{Duration, sleep};
 
 #[hooq]
-#[hooq::tag("async function")]
+#[hooq::tag = "async function"]
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]

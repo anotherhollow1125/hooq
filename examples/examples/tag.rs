@@ -13,33 +13,33 @@ enum Tag {
     eprintln!("tag: {} @ {} {}", $tag, $line, $expr);
     v
 }))]
-#[hooq::tag("top level tag")]
+#[hooq::tag = "top level tag"]
 fn hoge(flag: bool, tag: Tag) -> Result<(), ()> {
     if flag {
         return Ok(());
     }
 
-    #[hooq::tag("match")]
+    #[hooq::tag = "match"]
     match tag {
         Tag::A =>
         {
-            #[hooq::tag("a")]
+            #[hooq::tag = "a"]
             Ok(())
         }
         Tag::B =>
         {
-            #[hooq::tag("b")]
+            #[hooq::tag = "b"]
             Ok(())
         }
         Tag::C =>
         {
-            #[hooq::tag("c")]
+            #[hooq::tag = "c"]
             Ok(())
         }
         Tag::NoOne => Ok(()),
         Tag::Err =>
         {
-            #[hooq::tag("err")]
+            #[hooq::tag = "err"]
             #[hooq::method(.map_err(|e| {
                 eprintln!("tag: {} @ {}", $tag, $line);
                 e
@@ -58,6 +58,7 @@ fn fuga() -> Result<(), ()> {
     eprintln!("tag: {} @ {} {}", $tag, $line, $expr);
     v
 }))]
+#[hooq::tag = "(no tag)"]
 fn main() -> Result<(), ()> {
     hoge(true, Tag::A)?;
 
@@ -66,7 +67,7 @@ fn main() -> Result<(), ()> {
 
     eprintln!("\n=========\n");
 
-    #[hooq::tag("outer 1")]
+    #[hooq::tag = "outer 1"]
     hoge(false, Tag::B)?;
 
     eprintln!("\n=========\n");
@@ -80,7 +81,7 @@ fn main() -> Result<(), ()> {
 
     eprintln!("\n=========\n");
 
-    #[hooq::tag("outer 2")]
+    #[hooq::tag = "outer 2"]
     hoge(false, Tag::NoOne)?;
 
     eprintln!("\n=========\n");
@@ -91,7 +92,7 @@ fn main() -> Result<(), ()> {
 
     eprintln!("\n=========\n");
 
-    #[hooq::tag("outer 3")]
+    #[hooq::tag = "outer 3"]
     {
         hoge(false, Tag::A)?;
 
@@ -108,7 +109,7 @@ fn main() -> Result<(), ()> {
 
         eprintln!("\n=========\n");
 
-        #[hooq::tag("outer 4")]
+        #[hooq::tag = "outer 4"]
         hoge(false, Tag::C)?;
     }
 
@@ -120,6 +121,6 @@ fn main() -> Result<(), ()> {
 
     eprintln!("\n=========\n");
 
-    #[hooq::tag("tail expr")]
+    #[hooq::tag = "tail expr"]
     Ok(())
 }

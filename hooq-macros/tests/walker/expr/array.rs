@@ -9,11 +9,12 @@ fn hoge() -> Result<u32, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<[u32; 2], ()> {
     Ok([
-        #[hooq::tag("first")]
+        #[hooq::tag = "first"]
         hoge()?,
-        #[hooq::tag("second")]
+        #[hooq::tag = "second"]
         hoge()?,
     ])
 }

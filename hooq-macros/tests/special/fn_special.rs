@@ -7,13 +7,14 @@ use hooq_macros::hooq;
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func(flag: bool, flog: bool) -> Result<(), ()> {
-    #[hooq::tag("return")]
+    #[hooq::tag = "return"]
     if flag {
         return Ok(());
     }
 
-    #[hooq::tag("not result")]
+    #[hooq::tag = "not result"]
     fn hoge(flag: bool) -> u32 {
         if flag {
             return 1;
@@ -23,14 +24,14 @@ fn func(flag: bool, flog: bool) -> Result<(), ()> {
 
     let _ = hoge(flag);
 
-    #[hooq::tag("nest")]
+    #[hooq::tag = "nest"]
     fn fuga(flag: bool) -> u32 {
         let a = |b| if b { Ok(10) } else { Err(()) };
         let b = || -> Result<u32, ()> { Ok(10) };
         let c = || -> Result<u32, ()> { b() };
         let d = || -> Result<u32, ()> {
             if flag {
-                #[hooq::tag("return in deep")]
+                #[hooq::tag = "return in deep"]
                 {
                     return c();
                 }

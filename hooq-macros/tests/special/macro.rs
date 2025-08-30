@@ -13,14 +13,15 @@ fn enresult<T>(t: T) -> Result<T, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}, expr: {}", $tag, $expr);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     // Stmt としてパースされるマクロ
-    #[hooq::tag("outer")]
+    #[hooq::tag = "outer"]
     println!("{}", enresult(10)?);
 
     println!(
         "{}",
-        #[hooq::tag("inner")]
+        #[hooq::tag = "inner"]
         enresult(20)?
     );
 
@@ -47,7 +48,7 @@ fn func() -> Result<(), ()> {
             };
         }
 
-        #[hooq::tag("outer")]
+        #[hooq::tag = "outer"]
         id! {
             #[allow(unused)]
             fn outer() -> Result<(), ()> {
@@ -58,9 +59,9 @@ fn func() -> Result<(), ()> {
         }
 
         id! {
-            #[hooq::tag("const")]
+            #[hooq::tag = "const"]
             const _CONST_VAL: usize = {
-                #[hooq::tag("inner func")]
+                #[hooq::tag = "inner func"]
                 fn _f() -> Result<(), ()> {
                     enresult(())?;
 
@@ -72,7 +73,7 @@ fn func() -> Result<(), ()> {
 
             #[allow(unused)]
             fn inner() -> Result<(), ()> {
-                #[hooq::tag("inner")]
+                #[hooq::tag = "inner"]
                 enresult(())?;
 
                 Ok(())
@@ -81,15 +82,15 @@ fn func() -> Result<(), ()> {
     }
 
     // Expr としてパースされるマクロ
-    let _ = #[hooq::tag("outer")]
+    let _ = #[hooq::tag = "outer"]
     vec![enresult(10)?; enresult(2)?];
 
     let _ = vec![
-        #[hooq::tag("inner 1")]
+        #[hooq::tag = "inner 1"]
         enresult(10)?,
-        #[hooq::tag("inner 2")]
+        #[hooq::tag = "inner 2"]
         enresult(20)?,
-        #[hooq::tag("inner 3")]
+        #[hooq::tag = "inner 3"]
         enresult(30)?,
     ];
 
@@ -104,7 +105,7 @@ fn func() -> Result<(), ()> {
         };
     }
 
-    #[hooq::tag("stmts_with_print")]
+    #[hooq::tag = "stmts_with_print"]
     stmts_with_print!(
         if enresult(true)? {
             println!("It's true");
@@ -121,7 +122,7 @@ fn func() -> Result<(), ()> {
         };
     }
 
-    #[hooq::tag("stmts_with_print")]
+    #[hooq::tag = "stmts_with_print"]
     stmts_with_print_rev!(
         enresult("if let")?, if enresult(true)? {
             println!("It's true");
@@ -139,7 +140,7 @@ fn func() -> Result<(), ()> {
         };
     }
 
-    #[hooq::tag("vecs")]
+    #[hooq::tag = "vecs"]
     let _ = vecs![
         enresult(10)?; enresult(2)?,
         enresult(20)?; enresult(3)?

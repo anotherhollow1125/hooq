@@ -7,15 +7,16 @@ fn enresult<T>(v: T) -> Result<T, ()> {
 #[hooq::method(.inspect(|_| {
     println!("expr: {}, tag: {}", $expr, $tag);
 }))]
+#[hooq::tag = "main"]
 fn main() -> Result<(), ()> {
     let v = vec![
-        #[hooq::tag("first item")]
+        #[hooq::tag = "first item"]
         enresult(1_u32)?,
-        #[hooq::tag("second item")]
+        #[hooq::tag = "second item"]
         enresult(2_u32)?,
     ];
 
-    #[hooq::tag("println")]
+    #[hooq::tag = "println"]
     println!("{:?}", enresult(v)?);
 
     Ok(())

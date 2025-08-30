@@ -9,9 +9,10 @@ fn hoge(v: usize) -> Result<usize, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     if let 11 = hoge(10)?
-        && #[hooq::tag("second let")]
+        && #[hooq::tag = "second let"]
         let 12 = hoge(11)?
     {
         println!("hoge is 10");

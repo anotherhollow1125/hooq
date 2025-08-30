@@ -11,15 +11,16 @@ fn hoge() -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     #[allow(unused)]
     struct S;
 
-    #[hooq::tag("impl")]
+    #[hooq::tag = "impl"]
     impl S {
-        #[hooq::tag("const")]
+        #[hooq::tag = "const"]
         const _CONST_VAL: usize = {
-            #[hooq::tag("inner func")]
+            #[hooq::tag = "inner func"]
             fn _f() -> Result<(), ()> {
                 hoge()?;
 
@@ -30,21 +31,21 @@ fn func() -> Result<(), ()> {
         };
 
         #[allow(unused)]
-        #[hooq::tag("impl related function")]
+        #[hooq::tag = "impl related function"]
         fn g() -> Result<(), ()> {
             hoge()?;
 
             Ok(())
         }
 
-        #[hooq::tag("impl related function 2 (not Result)")]
+        #[hooq::tag = "impl related function 2 (not Result)"]
         #[allow(unused)]
         fn h() -> bool {
             true
         }
 
         #[allow(unused)]
-        #[hooq::tag("impl method")]
+        #[hooq::tag = "impl method"]
         fn i(&self) -> Result<(), ()> {
             let res = Ok(());
 
@@ -53,13 +54,13 @@ fn func() -> Result<(), ()> {
             res
         }
 
-        #[hooq::tag("impl method 2 (not Result)")]
+        #[hooq::tag = "impl method 2 (not Result)"]
         #[allow(unused)]
         fn j(&self) -> bool {
             true
         }
 
-        #[hooq::tag("outer")]
+        #[hooq::tag = "outer"]
         id! {
             #[allow(unused)]
             fn outer() -> Result<(), ()> {
@@ -72,7 +73,7 @@ fn func() -> Result<(), ()> {
         id! {
             #[allow(unused)]
             fn inner() -> Result<(), ()> {
-                #[hooq::tag("inner")]
+                #[hooq::tag = "inner"]
                 hoge()?;
 
                 Ok(())

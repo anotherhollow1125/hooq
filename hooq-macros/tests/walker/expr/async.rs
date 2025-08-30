@@ -8,14 +8,14 @@ async fn hoge() -> Result<usize, ()> {
 }
 
 #[hooq]
-#[hooq::tag("async function")]
+#[hooq::tag = "async function"]
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
 async fn func(n: usize) -> Result<(), ()> {
     let tasks = (0..n)
         .map(|i| {
-            #[hooq::tag("async block")]
+            #[hooq::tag = "async block"]
             tokio::spawn(async move {
                 let _n = hoge().await?;
 

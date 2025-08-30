@@ -4,17 +4,18 @@ use hooq_macros::hooq;
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     #[allow(clippy::redundant_closure_call)]
-    let _ = #[hooq::tag("outer")]
+    let _ = #[hooq::tag = "outer"]
     (|| {
-        #[hooq::tag("inner")]
+        #[hooq::tag = "inner"]
         Ok(true)
     })()?;
 
     let n = 1;
 
-    #[hooq::tag("else")]
+    #[hooq::tag = "else"]
     let 1 = n else {
         return Err(());
     };

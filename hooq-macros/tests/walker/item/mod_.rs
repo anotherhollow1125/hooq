@@ -4,8 +4,9 @@ use hooq_macros::hooq;
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
-    #[hooq::tag("mod")]
+    #[hooq::tag = "mod"]
     mod tmp {
         #[allow(unused)]
         fn func() -> Result<(), ()> {

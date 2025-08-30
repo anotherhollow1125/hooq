@@ -9,6 +9,7 @@ fn index(i: usize) -> Result<usize, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     let _ = index(0)?..index(10)?;
     let _ = index(0)?..=index(10)?;

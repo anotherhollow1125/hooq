@@ -26,14 +26,15 @@ fn hoge() -> Result<u32, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     let _ = Strct { field: hoge()? };
 
     let _ = Strct {
-        #[hooq::tag("field")]
+        #[hooq::tag = "field"]
         field: {
             if hoge()? > 100 {
-                #[hooq::tag("in field expr")]
+                #[hooq::tag = "in field expr"]
                 return Err(());
             }
 

@@ -44,7 +44,7 @@
   - [x] `HooqInfo` を提供し、 `custom` でうまく活用できるようにする
     - [ ] 内部では `HashMap<String, (TypeId, Arc<dyn Any>)>` を利用
   - [ ] `HooqInfo` 自体を受け取れるメタ変数を用意
-- [ ] extra_vars
+- [x] ~~extra_vars~~ 改め bindings
   - `tag` ではなく、 任意の変数と任意のExprをストックできる
   - というかいっそこちらで予約していない変数は自由に入れられるようにするか
   - `#[hooq::hoge("")]` == `#[hooq::var(hoge = "")]` みたいな機能にしてみる
@@ -125,9 +125,11 @@
     - ~~setting~~: setting_file と被るのでなし
     - template
     - 上記のうちどれがよいか決める
-- mdBook の用意
+- [ ] mdBook の用意
 
 # 検討中
 
 - [ ] `$var(xxx)` or `$binding(xxx)`: `line` などもユーザーが自由に設定できるようにする
 - [ ] `$get_or_default(xxx, Expr)`: もし存在しない binding の場合、 `Expr` を適用
+  - 設定ファイルでデフォルト値を設けておくのもあり
+  - だけど、設定ファイルに頼らなくてよいという利点もある

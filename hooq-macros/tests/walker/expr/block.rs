@@ -11,21 +11,21 @@ fn hoge() -> Result<(), ()> {
 }))]
 #[allow(clippy::unit_arg)]
 fn func(flag: bool) -> Result<(), ()> {
-    #[hooq::tag("1")]
+    #[hooq::tag = "1"]
     {
         println!("beep");
 
-        #[hooq::tag("2")]
+        #[hooq::tag = "2"]
         Ok({
-            #[hooq::tag("3")]
+            #[hooq::tag = "3"]
             Ok({
-                #[hooq::tag("4")]
+                #[hooq::tag = "4"]
                 {
                     if flag {
                         return hoge();
                     }
 
-                    #[hooq::tag("5")]
+                    #[hooq::tag = "5"]
                     {
                         if flag {
                             return Err(());
@@ -34,7 +34,7 @@ fn func(flag: bool) -> Result<(), ()> {
                         Ok(())
                     }?;
 
-                    #[hooq::tag("6")]
+                    #[hooq::tag = "6"]
                     {
                         println!("beepbeep");
                     }

@@ -13,27 +13,27 @@ fn b() -> Result<bool, ()> {
     println!("tag: {}", $tag);
 }))]
 fn func() -> Result<(), ()> {
-    #[hooq::tag("closure")]
+    #[hooq::tag = "closure"]
     let f = || {
-        #[hooq::tag("inner")]
+        #[hooq::tag = "inner"]
         Ok(())
     };
 
-    #[hooq::tag("closure 2")]
+    #[hooq::tag = "closure 2"]
     let g = || {
         println!("beep");
 
         true
     };
 
-    #[hooq::tag("in eq binary ops exprs")]
+    #[hooq::tag = "in eq binary ops exprs"]
     {
         let _ = a()? == b()?;
     }
 
     let _ = g();
 
-    #[hooq::tag("tail expr")]
+    #[hooq::tag = "tail expr"]
     f()
 }
 

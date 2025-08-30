@@ -9,6 +9,7 @@ fn hoge() -> Result<usize, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     let _ = [hoge()?; {
         fn _f() -> Result<(), ()> {

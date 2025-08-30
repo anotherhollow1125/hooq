@@ -13,6 +13,7 @@ fn hoge() -> Result<u32, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func(flag: bool) -> Result<(), ()> {
     let _ = (2
         * (3 * hoge()? * (hoge()?) * 5 * {

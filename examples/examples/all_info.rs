@@ -51,6 +51,7 @@ $fn_sig: {}
     );
     e
 }))]
+#[hooq::tag = "func"]
 fn func(n: usize) -> Result<&'static str, &'static str> {
     println!("called func({n})\n");
 

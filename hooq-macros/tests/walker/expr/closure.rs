@@ -17,20 +17,21 @@ fn two() -> Result<u32, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
-    #[hooq::tag("No Result Type (Block)")]
+    #[hooq::tag = "No Result Type (Block)"]
     let _ = |v| {
         minus(v, 1)?;
         minus(v, two()?)
     };
 
-    #[hooq::tag("Result Type Annotated (Block)")]
+    #[hooq::tag = "Result Type Annotated (Block)"]
     let _ = |v: u32| -> Result<u32, ()> {
         minus(v, 1)?;
         minus(v, two()?)
     };
 
-    #[hooq::tag("Expr is Result Type (Block)")]
+    #[hooq::tag = "Expr is Result Type (Block)"]
     let _ = |v| {
         minus(v, 1)?;
         minus(v, two()?)?;
@@ -42,10 +43,10 @@ fn func() -> Result<(), ()> {
         Ok(minus(v, 3)? + 1)
     };
 
-    #[hooq::tag("No Result Type (Single Expr)")]
+    #[hooq::tag = "No Result Type (Single Expr)"]
     let _ = |v| minus(v, two()?);
 
-    #[hooq::tag("Expr is Result Type (Single Expr)")]
+    #[hooq::tag = "Expr is Result Type (Single Expr)"]
     let _ = |v| {
         Ok({
             if v > 100 {

@@ -16,6 +16,7 @@ fn hoge() -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     for i in range(10)? {
         println!("{i} start");

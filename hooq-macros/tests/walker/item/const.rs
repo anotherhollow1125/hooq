@@ -12,9 +12,10 @@ fn hoge() -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     const _STATIC_VAR: u32 = {
-        #[hooq::tag("inner func")]
+        #[hooq::tag = "inner func"]
         fn _f(flag: bool) -> Result<(), ()> {
             if flag {
                 return Err(());
@@ -22,7 +23,7 @@ fn func() -> Result<(), ()> {
 
             hoge()?;
 
-            #[hooq::tag("deep")]
+            #[hooq::tag = "deep"]
             let res = {
                 if flag {
                     return hoge();

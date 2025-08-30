@@ -13,11 +13,12 @@ fn hoge() -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     trait Trit {
-        #[hooq::tag("const")]
+        #[hooq::tag = "const"]
         const _CONST_VAL: usize = {
-            #[hooq::tag("inner func")]
+            #[hooq::tag = "inner func"]
             fn _f() -> Result<(), ()> {
                 hoge()?;
 
@@ -28,21 +29,21 @@ fn func() -> Result<(), ()> {
         };
 
         #[allow(unused)]
-        #[hooq::tag("related function")]
+        #[hooq::tag = "related function"]
         fn g() -> Result<(), ()> {
             hoge()?;
 
             Ok(())
         }
 
-        #[hooq::tag("related function 2 (not Result)")]
+        #[hooq::tag = "related function 2 (not Result)"]
         #[allow(unused)]
         fn h() -> bool {
             true
         }
 
         #[allow(unused)]
-        #[hooq::tag("method")]
+        #[hooq::tag = "method"]
         fn i(&self) -> Result<(), ()> {
             let res = Ok(());
 
@@ -51,13 +52,13 @@ fn func() -> Result<(), ()> {
             res
         }
 
-        #[hooq::tag("method 2 (not Result)")]
+        #[hooq::tag = "method 2 (not Result)"]
         #[allow(unused)]
         fn j(&self) -> bool {
             true
         }
 
-        #[hooq::tag("outer")]
+        #[hooq::tag = "outer"]
         id! {
             #[allow(unused)]
             fn outer() -> Result<(), ()> {
@@ -70,7 +71,7 @@ fn func() -> Result<(), ()> {
         id! {
             #[allow(unused)]
             fn inner() -> Result<(), ()> {
-                #[hooq::tag("inner")]
+                #[hooq::tag = "inner"]
                 hoge()?;
 
                 Ok(())

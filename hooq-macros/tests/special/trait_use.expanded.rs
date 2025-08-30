@@ -16,10 +16,10 @@ mod trait_define {
         }
     }
     pub trait CustomHook {
-        fn hook(self, f: impl FnOnce() -> hooq::HooqInfo) -> Self;
+        fn hook(self, f: impl FnOnce() -> hooq::HooqMeta) -> Self;
     }
     impl<T, E> CustomHook for Result<T, E> {
-        fn hook(self, f: impl FnOnce() -> hooq::HooqInfo) -> Self {
+        fn hook(self, f: impl FnOnce() -> hooq::HooqMeta) -> Self {
             let info = f();
             {
                 ::std::io::_eprint(format_args!("{0:?}\n", info));
@@ -48,7 +48,7 @@ mod custom {
     {
         result
             .hook(|| {
-                ::hooq::HooqInfo {
+                ::hooq::HooqMeta {
                     line: 57usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/trait_use.rs",
@@ -69,7 +69,7 @@ mod custom2 {
     {
         result
             .hook(|| {
-                ::hooq::HooqInfo {
+                ::hooq::HooqMeta {
                     line: 71usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/trait_use.rs",
@@ -86,7 +86,7 @@ mod custom2 {
     {
         result
             .hook(|| {
-                ::hooq::HooqInfo {
+                ::hooq::HooqMeta {
                     line: 79usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/trait_use.rs",
@@ -103,7 +103,7 @@ mod custom2 {
     {
         result
             .hook(|| {
-                ::hooq::HooqInfo {
+                ::hooq::HooqMeta {
                     line: 87usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/trait_use.rs",

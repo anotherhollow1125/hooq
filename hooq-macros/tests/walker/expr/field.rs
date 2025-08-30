@@ -13,12 +13,13 @@ fn hoge() -> Result<Hoge, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     let _ = hoge()?.field;
 
-    let _ = #[hooq::tag("outer")]
+    let _ = #[hooq::tag = "outer"]
     {
-        #[hooq::tag("inner")]
+        #[hooq::tag = "inner"]
         hoge()?
     }
     .field;

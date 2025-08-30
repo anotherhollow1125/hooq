@@ -11,30 +11,31 @@ fn get_bool(i: &mut usize) -> Result<bool, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     let mut i = 0;
 
-    #[hooq::tag("while")]
+    #[hooq::tag = "while"]
     while get_bool(&mut i)? {
         let mut j = 0;
 
         let _ = get_bool(&mut j)?;
 
-        #[hooq::tag("1")]
+        #[hooq::tag = "1"]
         if !get_bool(&mut j)? {
             get_bool(&mut j)?;
 
             return Ok(());
         }
 
-        #[hooq::tag("2")]
+        #[hooq::tag = "2"]
         if !get_bool(&mut j)? {
             get_bool(&mut j)?;
 
             return get_bool(&mut j).map(|_| ());
         }
 
-        #[hooq::tag("3")]
+        #[hooq::tag = "3"]
         if !get_bool(&mut j)? {
             get_bool(&mut j)?;
 

@@ -9,6 +9,7 @@ fn enresult<T>(v: T) -> Result<T, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     let b = !enresult(true)?;
     let v = -enresult({
@@ -24,7 +25,7 @@ fn func() -> Result<(), ()> {
             return enresult(());
         }
 
-        #[hooq::tag("nested")]
+        #[hooq::tag = "nested"]
         enresult(false)?
     })?;
 

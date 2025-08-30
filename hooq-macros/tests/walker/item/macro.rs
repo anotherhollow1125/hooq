@@ -10,6 +10,7 @@ fn enresult<T>(t: T) -> Result<T, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}, expr: {}", $tag, $expr);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     #[allow(unused)]
     mod tmp {
@@ -33,7 +34,7 @@ fn func() -> Result<(), ()> {
             };
         }
 
-        #[hooq::tag("outer")]
+        #[hooq::tag = "outer"]
         id! {
             #[allow(unused)]
             fn outer() -> Result<(), ()> {
@@ -44,9 +45,9 @@ fn func() -> Result<(), ()> {
         }
 
         id! {
-            #[hooq::tag("const")]
+            #[hooq::tag = "const"]
             const _CONST_VAL: usize = {
-                #[hooq::tag("inner func")]
+                #[hooq::tag = "inner func"]
                 fn _f() -> Result<(), ()> {
                     enresult(())?;
 
@@ -58,7 +59,7 @@ fn func() -> Result<(), ()> {
 
             #[allow(unused)]
             fn inner() -> Result<(), ()> {
-                #[hooq::tag("inner")]
+                #[hooq::tag = "inner"]
                 enresult(())?;
 
                 Ok(())

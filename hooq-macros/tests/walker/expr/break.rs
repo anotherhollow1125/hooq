@@ -9,6 +9,7 @@ fn hoge() -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func(flag: bool) -> Result<(), ()> {
     let mut counter = 0;
 
@@ -28,7 +29,7 @@ fn func(flag: bool) -> Result<(), ()> {
         }
     }?;
 
-    #[hooq::tag("label")]
+    #[hooq::tag = "label"]
     'outer: loop {
         counter += 1;
 
@@ -43,17 +44,17 @@ fn func(flag: bool) -> Result<(), ()> {
         }
     }
 
-    #[hooq::tag("check nest")]
+    #[hooq::tag = "check nest"]
     loop {
         counter += 1;
 
         if counter > 10 {
             break {
-                #[hooq::tag("nest")]
+                #[hooq::tag = "nest"]
                 {
                     hoge()?;
 
-                    #[hooq::tag("return")]
+                    #[hooq::tag = "return"]
                     if !flag {
                         return Err(());
                     }

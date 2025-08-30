@@ -82,7 +82,10 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
                 let MetaNameValue { path, value, .. } =
                     syn::parse2::<MetaNameValue>(tokens.clone())?;
 
-                        "invalid hooq::binding or hooq::var attribute format. expect: hooq::binding(name = value) or hooq::var(name = value)",
+                let Some(binding) = path.get_ident() else {
+                    return Err(syn::Error::new_spanned(
+                        path,
+                        "invalid hooq::binding or hooq::var attribute format. expect: hooq::binding(xxx = ...)",
                     ));
                 };
 

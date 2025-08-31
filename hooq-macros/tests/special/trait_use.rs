@@ -49,7 +49,7 @@ mod trait_use_inner {
 mod custom {
     use hooq_macros::hooq;
 
-    #[hooq(custom(super::trait_define::CustomHook))]
+    #[hooq(hook(super::trait_define::CustomHook))]
     pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
     where
         E: std::fmt::Debug,
@@ -63,7 +63,7 @@ mod custom2 {
 
     use super::trait_define::CustomHook;
 
-    #[hooq(custom)]
+    #[hooq(hook)]
     pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
     where
         E: std::fmt::Debug,
@@ -71,7 +71,7 @@ mod custom2 {
         result
     }
 
-    #[hooq(custom = true)]
+    #[hooq(hook = true)]
     pub fn use_hook2<T, E>(result: Result<T, E>) -> Result<T, E>
     where
         E: std::fmt::Debug,
@@ -79,7 +79,7 @@ mod custom2 {
         result
     }
 
-    #[hooq(preset = "custom")]
+    #[hooq(preset = "hook")]
     pub fn use_hook3<T, E>(result: Result<T, E>) -> Result<T, E>
     where
         E: std::fmt::Debug,

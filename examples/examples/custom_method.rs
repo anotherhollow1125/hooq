@@ -18,7 +18,7 @@ fn hogehoge() -> Result<(), String> {
 
 #[hooq]
 #[hooq::method(.map_err(|e| {
-    eprintln!("[] {}@{} {:?}", $line, file!(), e);
+    eprintln!("[{}@{}] {:?}", $line, $file, e);
     e
 }))]
 fn hoge() -> Result<(), String> {
@@ -28,7 +28,7 @@ fn hoge() -> Result<(), String> {
 
 #[hooq]
 #[hooq::method(.map_err(|e| {
-    eprintln!("[] {}@{} {:?}", $line, file!(), e);
+    eprintln!("[{}@{}] {:?}", $line, $file, e);
     e
 }))]
 fn fuga() -> Result<(), String> {
@@ -37,7 +37,7 @@ fn fuga() -> Result<(), String> {
 
 #[hooq]
 #[hooq::method(.map_err(|e| {
-    eprintln!("[] {}@{} {:?}", $line, file!(), e);
+    eprintln!("[{}@{}] {:?}", $line, $file, e);
     e
 }))]
 fn bar() -> Result<(), String> {
@@ -47,7 +47,7 @@ fn bar() -> Result<(), String> {
 
 #[hooq]
 #[hooq::method(.map_err(|e| {
-    eprintln!("[] {}@{} {:?}", $line, file!(), e);
+    eprintln!("[{}@{}] {:?}", $line, $file, e);
     e
 }))]
 fn func() -> Result<(), String> {

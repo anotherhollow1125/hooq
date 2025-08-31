@@ -9,23 +9,23 @@ use crate::impls::root_attr::HooqRootOption;
 impl Parse for HooqRootOption {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut trait_uses = Vec::new();
-        let mut is_custom = false;
+        let mut use_hook_method = false;
 
         for meta in input.parse_terminated(Meta::parse, Token![,])? {
             match meta {
-                Meta::Path(path) => parse_meta_path(path, &mut is_custom)?,
+                Meta::Path(path) => parse_meta_path(path, &mut use_hook_method)?,
                 Meta::List(meta_list) => {
-                    parse_meta_list(meta_list, &mut trait_uses, &mut is_custom)?
+                    parse_meta_list(meta_list, &mut trait_uses, &mut use_hook_method)?
                 }
                 Meta::NameValue(meta_name_value) => {
-                    parse_name_value(meta_name_value, &mut is_custom)?
+                    parse_name_value(meta_name_value, &mut use_hook_method)?
                 }
             }
         }
 
         Ok(HooqRootOption {
             trait_uses,
-            is_custom,
+            use_hook_method,
         })
     }
 }
@@ -33,15 +33,15 @@ impl Parse for HooqRootOption {
 const ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
 
 - trait_use(...)
-- custom(...)
-- custom = true or false
+- hook(...)
+- hook = true or false
 - preset = "..."
 "#;
 
-fn parse_meta_path(input: Path, is_custom: &mut bool) -> syn::Result<()> {
+fn parse_meta_path(input: Path, use_hook_method: &mut bool) -> syn::Result<()> {
     match input.get_ident() {
-        Some(ident) if ident == "custom" => {
-            *is_custom = true;
+        Some(ident) if ident == "hook" => {
+            *use_hook_method = true;
             Ok(())
         }
         _ => Err(syn::Error::new_spanned(input, ATTRIBUTE_ERROR_MESSAGE)),
@@ -66,7 +66,7 @@ fn get_paths(tokens: TokenStream) -> syn::Result<Punctuated<Path, Comma>> {
 fn parse_meta_list(
     MetaList { path, tokens, .. }: MetaList,
     trait_uses: &mut Vec<Path>,
-    is_custom: &mut bool,
+    use_hook_method: &mut bool,
 ) -> syn::Result<()> {
     match path {
         p if p.is_ident("trait_use") => {
@@ -74,8 +74,8 @@ fn parse_meta_list(
 
             Ok(())
         }
-        p if p.is_ident("custom") => {
-            *is_custom = true;
+        p if p.is_ident("hook") => {
+            *use_hook_method = true;
             trait_uses.extend(get_paths(tokens)?);
 
             Ok(())
@@ -84,7 +84,7 @@ fn parse_meta_list(
     }
 }
 
-fn parse_name_value(input: MetaNameValue, is_custom: &mut bool) -> syn::Result<()> {
+fn parse_name_value(input: MetaNameValue, use_hook_method: &mut bool) -> syn::Result<()> {
     match input {
         MetaNameValue {
             path,
@@ -94,8 +94,8 @@ fn parse_name_value(input: MetaNameValue, is_custom: &mut bool) -> syn::Result<(
                     ..
                 }),
             ..
-        } if path.is_ident("custom") => {
-            *is_custom = lit_bool.value();
+        } if path.is_ident("hook") => {
+            *use_hook_method = lit_bool.value();
 
             Ok(())
         }
@@ -107,8 +107,8 @@ fn parse_name_value(input: MetaNameValue, is_custom: &mut bool) -> syn::Result<(
                     ..
                 }),
             ..
-        } if path.is_ident("preset") && lit_str.value() == "custom" => {
-            *is_custom = true;
+        } if path.is_ident("preset") && lit_str.value() == "hook" => {
+            *use_hook_method = true;
 
             Ok(())
         }

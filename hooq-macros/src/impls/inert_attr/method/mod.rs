@@ -308,7 +308,7 @@ fn default_method() -> TokenStream {
     }
 }
 
-pub fn method_for_custom() -> TokenStream {
+pub fn hook_method() -> TokenStream {
     parse_quote! {
         .hook(|| {
             $hooq_meta

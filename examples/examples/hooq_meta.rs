@@ -30,7 +30,7 @@ mod trait_define {
 mod custom {
     use hooq::hooq;
 
-    #[hooq(custom(super::trait_define::CustomHook))]
+    #[hooq(hook(super::trait_define::CustomHook))]
     #[hooq::hoge = "hogehoge"]
     #[hooq::inner_struct = InnerStruct]
     #[hooq::array = [1, 2, 3]]

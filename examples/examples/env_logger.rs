@@ -3,7 +3,7 @@ use hooq::hooq;
 #[hooq]
 #[hooq::method(
     .inspect_err(|e| {
-        ::log::error!("{:?} @ file: {}, line: {}", e, file!(), $line);
+        ::log::error!("{:?} @ file: {}, line: {}", e, $file, $line);
     })
 )]
 fn a() -> Result<(), String> {
@@ -13,7 +13,7 @@ fn a() -> Result<(), String> {
 #[hooq]
 #[hooq::method(
     .inspect_err(|e| {
-        ::log::error!("{:?} @ file: {}, line: {}", e, file!(), $line);
+        ::log::error!("{:?} @ file: {}, line: {}", e, $file, $line);
     })
 )]
 fn b() -> Result<(), String> {
@@ -24,7 +24,7 @@ fn b() -> Result<(), String> {
 #[hooq]
 #[hooq::method(
     .inspect_err(|e| {
-        ::log::error!("{:?} @ file: {}, line: {}", e, file!(), $line);
+        ::log::error!("{:?} @ file: {}, line: {}", e, $file, $line);
     })
 )]
 fn c() -> Result<(), String> {
@@ -35,7 +35,7 @@ fn c() -> Result<(), String> {
 #[hooq]
 #[hooq::method(
     .inspect_err(|e| {
-        ::log::error!("{:?} @ file: {}, line: {}", e, file!(), $line);
+        ::log::error!("{:?} @ file: {}, line: {}", e, $file, $line);
     })
 )]
 fn main() -> Result<(), std::io::Error> {

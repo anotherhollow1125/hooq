@@ -6,7 +6,7 @@ use proc_macro2::TokenStream;
 use syn::{Expr, Signature};
 
 use crate::impls::inert_attr::InertAttrOption;
-use crate::impls::inert_attr::method::method_for_custom;
+use crate::impls::inert_attr::method::hook_method;
 use crate::impls::root_attr::HooqRootOption;
 use crate::impls::utils::function_info::FunctionInfo;
 
@@ -153,8 +153,8 @@ pub struct HookContext<'a> {
 
 impl<'a> HookContext<'a> {
     pub fn new<'b: 'a>(root_option: &HooqRootOption) -> Self {
-        let method = if root_option.is_custom {
-            LocalContextField::Override(method_for_custom())
+        let method = if root_option.use_hook_method {
+            LocalContextField::Override(hook_method())
         } else {
             LocalContextField::None
         };
@@ -273,7 +273,7 @@ impl HookInfo<'_> {
             .map(|map| map.iter().map(|(k, v)| (k.clone(), Rc::clone(v))).collect())
             .unwrap_or_default();
 
-        // Note:
+        // NOTE:
         // スナップショットテスト通過のために出力が一意になるようソート
         // パフォーマンス的に行いたくないという気持ちもあるが、
         // そもそもマクロの実行結果が実行ごとに異なるのも良くないため、行ってよい処理と判断

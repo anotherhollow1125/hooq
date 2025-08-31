@@ -30,7 +30,7 @@ impl Parse for HooqRootOption {
     }
 }
 
-const ATTRIBUTE_ERROR_MESSAGE: &str = r#"Expected attribute formats are below:
+const ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
 
 - trait_use(...)
 - custom(...)

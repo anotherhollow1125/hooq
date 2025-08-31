@@ -67,7 +67,7 @@ impl HookInfo<'_> {
             match tt {
                 TokenTree::Punct(punct) => {
                     if next_is_replace_target {
-                        return Err(syn::Error::new(punct.span(), "Unexpected token after `$`"));
+                        return Err(syn::Error::new(punct.span(), "unexpected token after `$`"));
                     }
 
                     if punct.as_char() == '$' {
@@ -88,7 +88,7 @@ impl HookInfo<'_> {
                 }
                 TokenTree::Group(group) => {
                     if next_is_replace_target {
-                        return Err(syn::Error::new(group.span(), "Unexpected token after `$`"));
+                        return Err(syn::Error::new(group.span(), "unexpected token after `$`"));
                     }
 
                     let mut res_for_group = TokenStream::new();
@@ -102,7 +102,7 @@ impl HookInfo<'_> {
                     if next_is_replace_target {
                         return Err(syn::Error::new(
                             literal.span(),
-                            "Unexpected token after `$`",
+                            "unexpected token after `$`",
                         ));
                     }
 

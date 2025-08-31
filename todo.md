@@ -42,8 +42,8 @@
   - [x] `use XXX as _;` をしかるべき場所に吐き出す
   - [x] マクロ以外も提供できるようにするためにワークスペースとする
   - [x] `HooqMeta` を提供し、 `custom` でうまく活用できるようにする
-    - [ ] 内部では `HashMap<String, (TypeId, Arc<dyn Any>)>` を利用
-  - [ ] `HooqMeta` 自体を受け取れるメタ変数を用意
+    - [x] 内部では `HashMap<String, Rc<dyn Any>>` を利用
+  - [x] `HooqMeta` 自体を受け取れるメタ変数を用意
 - [x] ~~extra_vars~~ 改め bindings
   - `tag` ではなく、 任意の変数と任意のExprをストックできる
   - というかいっそこちらで予約していない変数は自由に入れられるようにするか
@@ -106,7 +106,7 @@
     - `default-method = """..."""`: Pythonと同様、複数行にできるらしい
   - `#[hooq(setting_file = "rel_file/to/hooq.toml")]` でも設定可能にする
 
-# 急がないTODO
+# 急がないtodo
 
 - [ ] `$parent_method` でメソッド上書き時に元のメソッドも活用できるようにする
 - [ ] examples 以下の内容も expand 自動化

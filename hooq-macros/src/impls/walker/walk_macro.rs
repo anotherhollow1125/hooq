@@ -124,7 +124,7 @@ impl Parse for Evaluable {
 
         Err(syn::Error::new(
             input.span(),
-            "Failed to parse as Evaluable (File, Expr, Item, or Stmt)",
+            "failed to parse as Evaluable (File, Expr, Item, or Stmt)",
         ))
     }
 }

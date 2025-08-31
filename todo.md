@@ -105,6 +105,7 @@
     - `hooq-target`
     - `default-method = """..."""`: Pythonと同様、複数行にできるらしい
   - `#[hooq(setting_file = "rel_file/to/hooq.toml")]` でも設定可能にする
+  - [ ] `hook(path::to::Trait)` 記法 ( 旧 `custom` 機能 ) をほかのプリセットでも可能とする
 
 # 急がないtodo
 
@@ -116,7 +117,9 @@
 - [ ] 足りないテストを追加し、examplesも機能を十分表せるように拡充する
   - [ ] examples 以下の内容も expand 自動化
 - [ ] プリセットの用意
-  - [ ] * `custom` -> `hooq` にリネーム
+  - [ ] `default`
+    - 何も指定しない場合のデフォルト。
+  - [x] * `custom` -> `hook` にリネーム
   - [ ] `log`
   - [ ] `anyhow`
   - [ ] `eyre`

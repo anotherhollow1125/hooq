@@ -142,6 +142,33 @@ impl HookInfo<'_> {
             .unwrap_or_else(|| "<unknown>".to_string())
     }
 
+    fn get_bindings_token_stream(&self) -> TokenStream {
+        let tuples = self
+            .available_bindings()
+            .into_iter()
+            .map(|(k, v)| -> TokenStream {
+                let expr = v.to_token_stream().to_string();
+
+                parse_quote! {
+                    (::std::string::ToString::to_string(#k), {
+                        let expr = ::std::string::ToString::to_string(#expr);
+                        let value: ::std::rc::Rc<dyn ::std::any::Any> = ::std::rc::Rc::new(#v);
+
+                        ::hooq::BindingPayload {
+                            expr,
+                            value,
+                        }
+                    })
+                }
+            });
+
+        parse_quote! {
+            ::std::collections::HashMap::from([
+                #(#tuples),*
+            ])
+        }
+    }
+
     fn meta_vars2token_stream(
         &self,
         var_ident: &Ident,
@@ -211,6 +238,7 @@ impl HookInfo<'_> {
                     #fn_sig
                 })
             }
+            Ok(MetaVars::Bindings) => Ok(self.get_bindings_token_stream()),
             Ok(MetaVars::HooqMeta) => {
                 let line = q_span.unwrap().line();
                 let column = q_span.unwrap().column();
@@ -219,6 +247,7 @@ impl HookInfo<'_> {
                 let file = get_file_name(q_span);
                 let expr = self.expr;
                 let count = self.get_count();
+                let bindings = self.get_bindings_token_stream();
 
                 Ok(parse_quote! {
                     ::hooq::HooqMeta {
@@ -229,9 +258,7 @@ impl HookInfo<'_> {
                         file: #file,
                         expr: #expr,
                         count: #count,
-                        // TODO: 任意の型の値を任意の変数名に格納した
-                        // HashMap<String, (TypeId, Box<dyn Any>)> (仮) 型のextra_varsも
-                        // 参照可能にする
+                        bindings: #bindings,
                     }
                 })
             }
@@ -247,12 +274,12 @@ available meta variables:
 {}",
                             self.available_bindings()
                                 .into_iter()
-                                .map(|v| format!(" - ${v}"))
+                                .map(|(k, _v)| format!(" - ${k}"))
                                 .collect::<Vec<_>>()
                                 .join("\n"),
                             META_VARS_LIST
                                 .iter()
-                                .map(|v| format!(" - ${v}"))
+                                .map(|m| format!(" - ${m}"))
                                 .collect::<Vec<_>>()
                                 .join("\n"),
                         ),

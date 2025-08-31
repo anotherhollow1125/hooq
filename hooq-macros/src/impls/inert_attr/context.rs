@@ -264,13 +264,22 @@ impl HookInfo<'_> {
         self.hook_context.local_context.method.as_ref()
     }
 
-    pub fn available_bindings(&self) -> Vec<String> {
-        self.hook_context
+    pub fn available_bindings(&self) -> Vec<(String, Rc<Expr>)> {
+        let mut v: Vec<_> = self
+            .hook_context
             .local_context
             .bindings
             .as_ref()
-            .map(|map| map.keys().cloned().collect())
-            .unwrap_or_default()
+            .map(|map| map.iter().map(|(k, v)| (k.clone(), Rc::clone(v))).collect())
+            .unwrap_or_default();
+
+        // Note:
+        // スナップショットテスト通過のために出力が一意になるようソート
+        // パフォーマンス的に行いたくないという気持ちもあるが、
+        // そもそもマクロの実行結果が実行ごとに異なるのも良くないため、行ってよい処理と判断
+        v.sort_by(|(k1, _), (k2, _)| k1.cmp(k2));
+
+        v
     }
 
     pub fn get_binding(&self, key: &str) -> Option<&Expr> {

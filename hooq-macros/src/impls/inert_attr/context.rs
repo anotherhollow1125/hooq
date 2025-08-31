@@ -1,8 +1,9 @@
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use proc_macro2::TokenStream;
-use syn::Signature;
+use syn::{Expr, Signature};
 
 use crate::impls::inert_attr::InertAttrOption;
 use crate::impls::inert_attr::method::method_for_custom;
@@ -92,6 +93,44 @@ impl<'a, 'b: 'a, T> LocalContextField<'a, T> {
     }
 }
 
+impl<'a, 'b: 'a, K, V> LocalContextField<'a, HashMap<K, Rc<V>>>
+where
+    K: std::hash::Hash + Eq + Clone,
+{
+    fn merged_from_parent(
+        new_map: HashMap<K, Rc<V>>,
+        parent: &'b LocalContextField<'b, HashMap<K, Rc<V>>>,
+    ) -> Self {
+        if new_map.is_empty() {
+            return match parent {
+                Self::None => Self::None,
+                Self::Inherit(original) => Self::Inherit(original),
+                Self::Override(val) => Self::Inherit(val),
+            };
+        }
+
+        let merged_map = match parent {
+            Self::None => new_map,
+            Self::Inherit(original) => {
+                let mut map: HashMap<_, _> = original
+                    .iter()
+                    .map(|(k, v)| (k.clone(), v.clone()))
+                    .collect();
+                map.extend(new_map);
+                map
+            }
+            Self::Override(val) => {
+                let mut map: HashMap<_, _> =
+                    val.iter().map(|(k, v)| (k.clone(), v.clone())).collect();
+                map.extend(new_map);
+                map
+            }
+        };
+
+        Self::Override(merged_map)
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub enum SkipStatus {
     SkipSameScope,
@@ -101,9 +140,9 @@ pub enum SkipStatus {
 #[derive(Debug, Clone)]
 pub struct LocalContext<'a> {
     pub skip_status: LocalContextField<'a, SkipStatus>,
-    pub tag: LocalContextField<'a, String>,
     pub method: LocalContextField<'a, TokenStream>,
     pub fn_info: LocalContextField<'a, FunctionInfo>,
+    pub bindings: LocalContextField<'a, HashMap<String, Rc<Expr>>>,
 }
 
 #[derive(Debug, Clone)]
@@ -124,9 +163,9 @@ impl<'a> HookContext<'a> {
             counter: Rc::new(RefCell::new(Counter::new())),
             local_context: LocalContext {
                 skip_status: LocalContextField::None,
-                tag: LocalContextField::None,
                 method,
                 fn_info: LocalContextField::None,
+                bindings: LocalContextField::None,
             },
         }
     }
@@ -139,20 +178,25 @@ impl<'a> HookContext<'a> {
             new_option.get_skip_status(),
             &parent_context.local_context.skip_status,
         );
-        let InertAttrOption { tag, method, .. } = new_option;
+        let InertAttrOption {
+            method, bindings, ..
+        } = new_option;
 
-        let tag = LocalContextField::from_parent(tag, &parent_context.local_context.tag);
         let method = LocalContextField::from_parent(method, &parent_context.local_context.method);
         // fn_info の更新は別タイミングで行う
         let fn_info = LocalContextField::from_parent(None, &parent_context.local_context.fn_info);
+        let bindings = LocalContextField::merged_from_parent(
+            bindings.into_iter().map(|(k, v)| (k, Rc::new(v))).collect(),
+            &parent_context.local_context.bindings,
+        );
 
         Self {
             counter: Rc::clone(&parent_context.counter),
             local_context: LocalContext {
                 skip_status,
-                tag,
                 method,
                 fn_info,
+                bindings,
             },
         }
     }
@@ -182,40 +226,9 @@ impl<'a> HookContext<'a> {
         }
     }
 
-    /*
-    pub fn update_is_skiped_all(&mut self, is_skiped_all: bool) {
-        self.local_context.is_skiped_all =
-            LocalContextField::Override(is_skiped_all);
-    }
-    */
-
-    /*
-    pub fn update_tag(&mut self, tag: String) {
-        self.local_context.tag = LocalContextField::Override(tag);
-    }
-    */
-
-    /*
-    pub fn update_method(&mut self, method: TokenStream) {
-        self.local_context.method = LocalContextField::Override(method);
-    }
-    */
-
     pub fn update_fn_info(&mut self, sig: &Signature) {
         self.local_context.fn_info = LocalContextField::Override(FunctionInfo::new(sig.clone()));
     }
-
-    /*
-    pub fn tag(&self) -> Option<&String> {
-        self.local_context.tag.as_ref()
-    }
-    */
-
-    /*
-    pub fn method(&self) -> Option<&TokenStream> {
-        self.local_context.method.as_ref()
-    }
-    */
 
     pub fn is_skiped(&self) -> bool {
         self.local_context.skip_status.is_some()
@@ -247,11 +260,24 @@ impl HookInfo<'_> {
         self.hook_context.local_context.fn_info.as_ref()
     }
 
-    pub fn tag(&self) -> Option<&String> {
-        self.hook_context.local_context.tag.as_ref()
-    }
-
     pub fn method(&self) -> Option<&TokenStream> {
         self.hook_context.local_context.method.as_ref()
+    }
+
+    pub fn available_bindings(&self) -> Vec<String> {
+        self.hook_context
+            .local_context
+            .bindings
+            .as_ref()
+            .map(|map| map.keys().cloned().collect())
+            .unwrap_or_default()
+    }
+
+    pub fn get_binding(&self, key: &str) -> Option<&Expr> {
+        self.hook_context
+            .local_context
+            .bindings
+            .as_ref()
+            .and_then(|map| map.get(key).map(|rc| rc.as_ref()))
     }
 }

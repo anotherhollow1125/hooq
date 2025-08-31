@@ -10,9 +10,10 @@ fn hoge() -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     const _N: usize = const {
-        #[hooq::tag("in const block")]
+        #[hooq::tag = "in const block"]
         fn _f() -> Result<(), ()> {
             hoge()?;
             Ok(())

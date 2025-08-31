@@ -21,11 +21,11 @@ mod trait_define {
     }
 
     pub trait CustomHook {
-        fn hook(self, f: impl FnOnce() -> hooq::HooqInfo) -> Self;
+        fn hook(self, f: impl FnOnce() -> hooq::HooqMeta) -> Self;
     }
 
     impl<T, E> CustomHook for Result<T, E> {
-        fn hook(self, f: impl FnOnce() -> hooq::HooqInfo) -> Self {
+        fn hook(self, f: impl FnOnce() -> hooq::HooqMeta) -> Self {
             let info = f();
             eprintln!("{info:?}");
             self

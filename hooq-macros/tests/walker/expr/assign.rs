@@ -9,6 +9,7 @@ fn hoge(v: usize) -> Result<usize, ()> {
 #[hooq::method(.inspect(|_| {
     println!("{}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {
     let mut x;
 
@@ -16,10 +17,10 @@ fn func() -> Result<(), ()> {
 
     let _ = x;
 
-    #[hooq::tag("outer")]
+    #[hooq::tag = "outer"]
     #[allow(clippy::let_unit_value)]
     let _ = {
-        x = #[hooq::tag("inner")]
+        x = #[hooq::tag = "inner"]
         hoge(2)?
     };
 

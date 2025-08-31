@@ -1,6 +1,7 @@
+use std::collections::HashMap;
+
 use proc_macro2::TokenStream;
-use syn::parse::Parse;
-use syn::{Attribute, Meta, MetaList, parse_quote};
+use syn::{Attribute, Expr, Meta, MetaList, MetaNameValue, Path, parse_quote};
 
 use crate::impls::inert_attr::context::{HookContext, SkipStatus};
 
@@ -11,8 +12,8 @@ pub mod method;
 pub struct InertAttrOption {
     pub is_skiped: bool,
     pub is_skiped_all: bool,
-    pub tag: Option<String>,
     pub method: Option<TokenStream>,
+    pub bindings: HashMap<String, Expr>,
 }
 
 impl InertAttrOption {
@@ -25,16 +26,40 @@ impl InertAttrOption {
     }
 }
 
+fn get_binding_name(path: &Path) -> syn::Result<Option<String>> {
+    let mut segs = path.segments.iter();
+
+    let Some(maybe_hooq) = segs.next() else {
+        return Ok(None);
+    };
+
+    if maybe_hooq.ident != "hooq" {
+        return Ok(None);
+    }
+
+    let maybe_binding = segs.next();
+
+    if segs.next().is_some() {
+        return Err(syn::Error::new_spanned(
+            path,
+            "invalid hooq attribute format. expected: hooq::xxx = ...",
+        ));
+    }
+
+    Ok(maybe_binding.map(|s| s.ident.to_string()))
+}
+
 pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttrOption> {
     let hooq_skip = parse_quote!(hooq::skip);
     let hooq_skip_all = parse_quote!(hooq::skip_all);
-    let hooq_tag = parse_quote!(hooq::tag);
     let hooq_method = parse_quote!(hooq::method);
+    let hooq_binding = parse_quote!(hooq::binding);
+    let hooq_var = parse_quote!(hooq::var);
 
     let mut is_skiped = false;
     let mut is_skiped_all = false;
-    let mut tag: Option<String> = None;
     let mut method: Option<TokenStream> = None;
+    let mut bindings: HashMap<String, Expr> = HashMap::new();
 
     let mut keeps = Vec::with_capacity(attrs.len());
     for attr in attrs.iter_mut() {
@@ -51,19 +76,30 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
                 method = Some(tokens.clone());
                 keeps.push(false);
             }
-            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_tag => {
-                struct Tag(String);
+            Meta::List(MetaList { path, tokens, .. })
+                if path == &hooq_binding || path == &hooq_var =>
+            {
+                let MetaNameValue { path, value, .. } =
+                    syn::parse2::<MetaNameValue>(tokens.clone())?;
 
-                impl Parse for Tag {
-                    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-                        let tag = input.parse::<syn::LitStr>()?;
-                        Ok(Self(tag.value()))
-                    }
-                }
+                let Some(binding) = path.get_ident() else {
+                    return Err(syn::Error::new_spanned(
+                        path,
+                        "invalid hooq::binding or hooq::var attribute format. expected: hooq::binding(name = value) or hooq::var(name = value)",
+                    ));
+                };
 
-                let t = syn::parse2::<Tag>(tokens.clone())?;
-                tag = Some(t.0);
+                bindings.insert(binding.to_string(), value.clone());
+
                 keeps.push(false);
+            }
+            Meta::NameValue(MetaNameValue { path, value, .. }) => {
+                if let Some(binding) = get_binding_name(path)? {
+                    bindings.insert(binding, value.clone());
+                    keeps.push(false);
+                } else {
+                    keeps.push(true);
+                }
             }
             _ => {
                 keeps.push(true);
@@ -78,8 +114,8 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     Ok(InertAttrOption {
         is_skiped,
         is_skiped_all,
-        tag,
         method,
+        bindings,
     })
 }
 

@@ -4,13 +4,14 @@ use hooq_macros::hooq;
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func(flag: bool) -> Result<(), ()> {
-    #[hooq::tag("return")]
+    #[hooq::tag = "return"]
     if flag {
         return Ok(());
     }
 
-    #[hooq::tag("not result")]
+    #[hooq::tag = "not result"]
     fn hoge(flag: bool) -> u32 {
         if flag {
             return 1;

@@ -4,7 +4,7 @@ use hooq::hooq;
 #[hooq::method(.inspect(|_| {
     println!("{}", $tag);
 }))]
-#[hooq::tag("root")]
+#[hooq::tag = "root"]
 fn hoge(flag: bool, flog: bool) -> Result<usize, ()> {
     #[hooq::skip]
     if flag {
@@ -35,7 +35,7 @@ fn hoge(flag: bool, flog: bool) -> Result<usize, ()> {
             println!("aaa");
             println!("bbb");
 
-            #[hooq::tag("tag A")]
+            #[hooq::tag = "tag A"]
             if flog {
                 return Ok(0);
             }
@@ -62,7 +62,7 @@ fn hoge(flag: bool, flog: bool) -> Result<usize, ()> {
             println!("aaa");
             println!("bbb");
 
-            #[hooq::tag("tag B")]
+            #[hooq::tag = "tag B"]
             if flog {
                 return Ok(2);
             }

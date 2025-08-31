@@ -1,5 +1,5 @@
 #[derive(Debug)]
-pub struct HooqInfo {
+pub struct HooqMeta {
     pub line: usize,
     pub column: usize,
     pub path: &'static str,

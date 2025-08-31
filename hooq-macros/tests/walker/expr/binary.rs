@@ -14,11 +14,12 @@ fn c() -> Result<u32, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tag = "(no tag)"]
 fn func() -> Result<u32, ()> {
-    #[hooq::tag("add")]
+    #[hooq::tag = "add"]
     let mut a = b()? + c()?;
 
-    #[hooq::tag("add_assign")]
+    #[hooq::tag = "add_assign"]
     {
         a += b()?;
     }

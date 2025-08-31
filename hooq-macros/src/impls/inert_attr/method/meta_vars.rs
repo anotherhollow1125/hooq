@@ -11,9 +11,11 @@ pub enum MetaVars {
     Count,
     FnName,
     FnSig,
+    Bindings,
+    HooqMeta,
 }
 
-pub const META_VARS_LIST: [MetaVars; 9] = [
+pub const META_VARS_LIST: [MetaVars; 11] = [
     MetaVars::Line,
     MetaVars::Column,
     MetaVars::Path,
@@ -23,6 +25,8 @@ pub const META_VARS_LIST: [MetaVars; 9] = [
     MetaVars::Count,
     MetaVars::FnName,
     MetaVars::FnSig,
+    MetaVars::Bindings,
+    MetaVars::HooqMeta,
 ];
 
 impl FromStr for MetaVars {
@@ -39,6 +43,8 @@ impl FromStr for MetaVars {
             "nth" | "count" => Ok(MetaVars::Count),
             "fnname" | "fn_name" => Ok(MetaVars::FnName),
             "fnsig" | "fn_sig" => Ok(MetaVars::FnSig),
+            "bindings" | "vars" => Ok(MetaVars::Bindings),
+            "hooqmeta" | "hooq_meta" => Ok(MetaVars::HooqMeta),
             binding => Err(binding.to_string()),
         }
     }
@@ -59,6 +65,8 @@ impl Display for MetaVars {
                 MetaVars::Count => "count",
                 MetaVars::FnName => "fn_name",
                 MetaVars::FnSig => "fn_sig",
+                MetaVars::Bindings => "bindings",
+                MetaVars::HooqMeta => "hooq_meta",
             }
         )
     }

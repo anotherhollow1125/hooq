@@ -55,7 +55,8 @@ mod custom {
                     abs_path: "<hooq_root>/tests/special/trait_use.rs",
                     file: "trait_use.rs",
                     expr: "result",
-                    count: "1th tail expr",
+                    count: "1st tail expr",
+                    bindings: ::std::collections::HashMap::from([]),
                 }
             })
     }
@@ -76,7 +77,8 @@ mod custom2 {
                     abs_path: "<hooq_root>/tests/special/trait_use.rs",
                     file: "trait_use.rs",
                     expr: "result",
-                    count: "1th tail expr",
+                    count: "1st tail expr",
+                    bindings: ::std::collections::HashMap::from([]),
                 }
             })
     }
@@ -93,7 +95,8 @@ mod custom2 {
                     abs_path: "<hooq_root>/tests/special/trait_use.rs",
                     file: "trait_use.rs",
                     expr: "result",
-                    count: "1th tail expr",
+                    count: "1st tail expr",
+                    bindings: ::std::collections::HashMap::from([]),
                 }
             })
     }
@@ -110,7 +113,8 @@ mod custom2 {
                     abs_path: "<hooq_root>/tests/special/trait_use.rs",
                     file: "trait_use.rs",
                     expr: "result",
-                    count: "1th tail expr",
+                    count: "1st tail expr",
+                    bindings: ::std::collections::HashMap::from([]),
                 }
             })
     }

@@ -9,7 +9,7 @@ use syn::{
 
 use crate::impls::inert_attr::context::{HookContext, HookTargetKind};
 use crate::impls::inert_attr::{HandleInertAttrsResult, handle_inert_attrs};
-use crate::impls::utils::{closure_signature, get_attrs_from_expr, path_is_special_call_like_err};
+use crate::impls::utils::{closure_signature, get_attrs_from_expr};
 
 mod walk_macro;
 
@@ -77,7 +77,7 @@ fn handle_tail_expr(
     // Ok or Err の時にフック
     if let Expr::Call(ExprCall { func, .. }) = expr
         && let Expr::Path(ExprPath { path, .. }) = *func.clone()
-        && path_is_special_call_like_err(&path)
+        && context.path_is_special_call_like_err(&path)
     {
         let q_span = path.span();
 
@@ -393,6 +393,10 @@ fn hook_expr(
     context.counter.borrow_mut().count_up(kind);
     let context = context.as_hook_info(expr_field_for_display, kind);
 
+    if !context.is_hook_target() {
+        return Ok(());
+    }
+
     let method = context.generate_method(q_span)?;
     let original_expr = expr_field.clone();
 
@@ -442,9 +446,9 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
 
                 let q_span = expr_return.return_token.span();
 
-                let is_ok_or_err = if let Expr::Call(ExprCall { func, .. }) = &**expr
+                let is_like_ok_or_err = if let Expr::Call(ExprCall { func, .. }) = &**expr
                     && let Expr::Path(ExprPath { path, .. }) = *func.clone()
-                    && path_is_special_call_like_err(&path)
+                    && context.path_is_special_call_like_err(&path)
                 {
                     true
                 } else {
@@ -452,7 +456,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                 };
 
                 // 返り値型がResultの時 or OkやErrの時フック
-                if is_ok_or_err || context.return_type_is_result() {
+                if is_like_ok_or_err || context.return_type_is_result() {
                     hook_expr(
                         !is_skiped,
                         expr,

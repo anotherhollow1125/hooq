@@ -19,6 +19,13 @@ pub fn walk_macro(
         new_context: context,
     } = handle_inert_attrs(attrs, context)?;
 
+    // パフォーマンス向上のため
+    // マクロの中身は見ない設定に
+    // なっている際は飛ばす
+    if !context.hook_in_macros() {
+        return Ok(());
+    }
+
     if let Some(new_token_stream) = handle_token_stream(&mac.tokens, &context)? {
         mac.tokens = new_token_stream;
     }
@@ -77,8 +84,6 @@ fn handle_token_stream(
 // NOTE: syn::parse::discouraged::Speculative の利用について
 // - パフォーマンス面: この処理が走るのはマクロを見る時だけとはいえ、かなり読み込んでから巻き戻しているので注意が必要
 // - エラーメッセージ面: パースできないときはエラーにせず諦めるため考慮の必要なし
-//
-// TODO: マクロ呼び出しの中身は見ないオプションfeatureを設ける
 
 #[derive(Debug)]
 enum Evaluable {

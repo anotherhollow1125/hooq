@@ -4,9 +4,9 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Expr, ExprLit, Lit, Meta, MetaList, MetaNameValue, Path, Token};
 
-use crate::impls::root_attr::HooqRootOption;
+use crate::impls::root_attr::RootAttribute;
 
-impl Parse for HooqRootOption {
+impl Parse for RootAttribute {
     fn parse(input: ParseStream) -> syn::Result<Self> {
         let mut trait_uses = Vec::new();
         let mut use_hook_method = false;
@@ -23,8 +23,10 @@ impl Parse for HooqRootOption {
             }
         }
 
-        Ok(HooqRootOption {
+        Ok(RootAttribute {
             trait_uses,
+            // TODO: flavor 指定を取り込むようにする
+            flavor: None,
             use_hook_method,
         })
     }

@@ -30,7 +30,9 @@ mod trait_define {
 }
 mod trait_use_inner {
     use hooq_macros::hooq;
+    #[allow(unused)]
     use super::trait_define::Hook1 as _;
+    #[allow(unused)]
     use super::trait_define::Hook2 as _;
     pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
     where
@@ -41,6 +43,7 @@ mod trait_use_inner {
 }
 mod custom {
     use hooq_macros::hooq;
+    #[allow(unused)]
     use super::trait_define::CustomHook as _;
     pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
     where

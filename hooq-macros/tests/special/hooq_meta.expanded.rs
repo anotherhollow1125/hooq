@@ -25,6 +25,7 @@ mod trait_define {
 }
 mod custom {
     use hooq_macros::hooq;
+    #[allow(unused)]
     use super::trait_define::CustomHook as _;
     pub fn use_hook(result: Result<i32, ()>) -> Result<i32, ()> {
         if let Ok(val) = result && val >= 100 {

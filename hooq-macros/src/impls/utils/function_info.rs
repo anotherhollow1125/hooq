@@ -21,16 +21,16 @@ impl FunctionInfo {
         self.0.to_token_stream().to_string()
     }
 
-    pub fn return_type_is_result(&self) -> bool {
-        return_type_is_result_inner(&self.0.output)
+    pub fn return_type_is_result(&self, result_types: &[String]) -> bool {
+        return_type_is_result_inner(&self.0.output, result_types)
     }
 }
 
-fn return_type_is_result_inner(rt: &ReturnType) -> bool {
+fn return_type_is_result_inner(rt: &ReturnType, result_types: &[String]) -> bool {
     if let ReturnType::Type(_, t) = rt
         && let Type::Path(TypePath { path, .. }) = t.deref()
     {
-        path_is_end_of(path, "Result")
+        result_types.iter().any(|s| path_is_end_of(path, s))
     } else {
         false
     }
@@ -49,20 +49,29 @@ mod tests {
                 Ok(())
             }
         };
-        assert!(return_type_is_result_inner(&item_fn.sig.output));
+        assert!(return_type_is_result_inner(
+            &item_fn.sig.output,
+            &["Result".to_string()]
+        ));
 
         let item_fn: ItemFn = parse_quote! {
             fn bar() -> ::std::result::Result<(), ()> {
                 Ok(())
             }
         };
-        assert!(return_type_is_result_inner(&item_fn.sig.output));
+        assert!(return_type_is_result_inner(
+            &item_fn.sig.output,
+            &["Result".to_string()]
+        ));
 
         let item_fn: ItemFn = parse_quote! {
             fn baz() -> i32 {
                 42
             }
         };
-        assert!(!return_type_is_result_inner(&item_fn.sig.output));
+        assert!(!return_type_is_result_inner(
+            &item_fn.sig.output,
+            &["Result".to_string()]
+        ));
     }
 }

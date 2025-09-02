@@ -9,7 +9,7 @@ use crate::impls::inert_attr::context::HookTargetSwitch;
 mod parse;
 
 #[derive(Debug)]
-pub struct RootOption {
+pub struct RootContext {
     // root_attr でないと設定不可能なフィールド
     pub trait_uses: Vec<Path>,
 
@@ -25,7 +25,7 @@ pub struct RootOption {
     pub use_hook_method: bool, // TODO: 削除
 }
 
-impl RootOption {
+impl RootContext {
     pub fn trait_uses_token_stream(&self) -> TokenStream {
         self.trait_uses
             .iter()
@@ -43,7 +43,7 @@ pub struct RootAttribute {
     pub use_hook_method: bool, // TODO: 削除
 }
 
-impl RootOption {
+impl RootContext {
     pub fn load(
         RootAttribute {
             trait_uses,

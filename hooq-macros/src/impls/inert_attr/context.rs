@@ -6,8 +6,8 @@ use std::rc::Rc;
 use proc_macro2::TokenStream;
 use syn::{Expr, Path, Signature};
 
-use crate::impls::inert_attr::InertAttrOption;
-use crate::impls::root_attr::{RootOption, hook_method};
+use crate::impls::inert_attr::InertAttribute;
+use crate::impls::root_attr::{RootContext, hook_method};
 use crate::impls::utils::function_info::FunctionInfo;
 use crate::impls::utils::path_is_end_of;
 
@@ -163,7 +163,7 @@ pub struct HookContext<'a> {
 
 impl<'a> HookContext<'a> {
     pub fn new<'b: 'a>(
-        RootOption {
+        RootContext {
             trait_uses: _,
             method,
             hook_targets,
@@ -172,7 +172,7 @@ impl<'a> HookContext<'a> {
             hook_in_macros,
             bindings,
             use_hook_method,
-        }: RootOption,
+        }: RootContext,
     ) -> Self {
         let method = if use_hook_method {
             LocalContextField::Override(hook_method())
@@ -198,31 +198,37 @@ impl<'a> HookContext<'a> {
 
     pub fn updated_by_inert_attr<'b: 'a>(
         parent_context: &'b HookContext<'b>,
-        new_option: InertAttrOption,
+        inert_attr: InertAttribute,
     ) -> Self {
         let skip_status = LocalContextField::from_parent(
-            new_option.get_skip_status().map(Option::Some),
+            inert_attr.get_skip_status().map(Option::Some),
             &parent_context.local_context.skip_status,
         );
-        let InertAttrOption {
-            method, bindings, ..
-        } = new_option;
+        let InertAttribute {
+            method,
+            hook_targets,
+            tail_expr_idents,
+            result_types,
+            hook_in_macros,
+            bindings,
+            ..
+        } = inert_attr;
 
         let method = LocalContextField::from_parent(method, &parent_context.local_context.method);
         let hook_targets = LocalContextField::from_parent(
-            None, // FIXME
+            hook_targets,
             &parent_context.local_context.hook_targets,
         );
         let tail_expr_idents = LocalContextField::from_parent(
-            None, // FIXME
+            tail_expr_idents,
             &parent_context.local_context.tail_expr_idents,
         );
         let result_types = LocalContextField::from_parent(
-            None, // FIXME
+            result_types,
             &parent_context.local_context.result_types,
         );
         let hook_in_macros = LocalContextField::from_parent(
-            None, // FIXME
+            hook_in_macros,
             &parent_context.local_context.hook_in_macros,
         );
         let bindings = LocalContextField::merged_from_parent(

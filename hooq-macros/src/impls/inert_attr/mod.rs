@@ -49,7 +49,7 @@ fn get_binding_name(path: &Path) -> syn::Result<Option<String>> {
     if segs.next().is_some() {
         return Err(syn::Error::new_spanned(
             path,
-            "invalid hooq attribute format. expected: hooq::xxx = ...",
+            "invalid hooq attribute format. expected: hooq::xxx, hooq::xxx(...) or hooq::xxx = ...",
         ));
     }
 
@@ -97,6 +97,19 @@ impl TryFrom<Strings> for HookTargetSwitch {
         Ok(switch)
     }
 }
+
+const INERT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
+
+- #[hooq::method(...)]
+- #[hooq::hook_targets(...)]
+- #[hooq::tail_expr_idents(...)]
+- #[hooq::result_types(...)]
+- #[hooq::hook_in_macros(...)]
+- #[hooq::binding(xxx = ...)]
+    - #[hooq::xxx = ...]
+- #[hooq::skip]
+- #[hooq::skip_all]
+"#;
 
 pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttribute> {
     // #[hooq::method(...)]
@@ -213,8 +226,21 @@ expected: "?", "return", "tail_expr""#,
                     keeps.push(true);
                 }
             }
-            _ => {
-                keeps.push(true);
+
+            // 以降は hooq::xxx という形式になっていたらエラーとした
+            Meta::List(MetaList { path, .. }) => {
+                if get_binding_name(path)?.is_some() {
+                    return Err(syn::Error::new_spanned(path, INERT_ATTRIBUTE_ERROR_MESSAGE));
+                } else {
+                    keeps.push(true);
+                };
+            }
+            Meta::Path(path) => {
+                if get_binding_name(path)?.is_some() {
+                    return Err(syn::Error::new_spanned(path, INERT_ATTRIBUTE_ERROR_MESSAGE));
+                } else {
+                    keeps.push(true);
+                };
             }
         }
     }

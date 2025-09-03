@@ -32,7 +32,7 @@ impl Parse for RootAttribute {
     }
 }
 
-const ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
+const ROOT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
 
 - trait_use(...)
 - hook(...)
@@ -46,7 +46,7 @@ fn parse_meta_path(input: Path, use_hook_method: &mut bool) -> syn::Result<()> {
             *use_hook_method = true;
             Ok(())
         }
-        _ => Err(syn::Error::new_spanned(input, ATTRIBUTE_ERROR_MESSAGE)),
+        _ => Err(syn::Error::new_spanned(input, ROOT_ATTRIBUTE_ERROR_MESSAGE)),
     }
 }
 
@@ -82,7 +82,7 @@ fn parse_meta_list(
 
             Ok(())
         }
-        p => Err(syn::Error::new_spanned(p, ATTRIBUTE_ERROR_MESSAGE)),
+        p => Err(syn::Error::new_spanned(p, ROOT_ATTRIBUTE_ERROR_MESSAGE)),
     }
 }
 
@@ -114,6 +114,6 @@ fn parse_name_value(input: MetaNameValue, use_hook_method: &mut bool) -> syn::Re
 
             Ok(())
         }
-        else_ => Err(syn::Error::new_spanned(else_, ATTRIBUTE_ERROR_MESSAGE)),
+        else_ => Err(syn::Error::new_spanned(else_, ROOT_ATTRIBUTE_ERROR_MESSAGE)),
     }
 }

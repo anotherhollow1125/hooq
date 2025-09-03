@@ -17,6 +17,7 @@ fn enresult<T>(t: T) -> Result<T, ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn skip_stmts() -> Result<(), ()> {
     #[hooq::tag = "local"]
     #[hooq::skip]
@@ -79,6 +80,7 @@ fn skip_stmts() -> Result<(), ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn skip_item() -> Result<(), ()> {
     // item fn は別な箇所で検証済みなので飛ばす
 
@@ -218,6 +220,7 @@ fn skip_item() -> Result<(), ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn skip_expr() -> Result<(), ()> {
     #[hooq::tag = "try"]
     let _ = {
@@ -570,6 +573,7 @@ fn skip_expr() -> Result<(), ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 async fn skip_expr_async_await() -> Result<(), ()> {
     #[hooq::tag = "async & await"]
     #[hooq::skip]
@@ -599,6 +603,7 @@ async fn skip_expr_async_await() -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn skip_last_ok() -> Result<(), ()> {
     let _: Result<(), ()> = #[hooq::tag = "last ok 1"]
     #[hooq::skip]

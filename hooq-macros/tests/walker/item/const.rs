@@ -13,6 +13,7 @@ fn hoge() -> Result<(), ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn func() -> Result<(), ()> {
     const _STATIC_VAR: u32 = {
         #[hooq::tag = "inner func"]

@@ -8,6 +8,7 @@ use hooq_macros::hooq;
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn func(flag: bool, flog: bool) -> Result<(), ()> {
     #[hooq::tag = "return"]
     if flag {

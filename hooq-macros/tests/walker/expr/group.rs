@@ -14,6 +14,7 @@ fn hoge() -> Result<u32, ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn func(flag: bool) -> Result<(), ()> {
     let _ = (2
         * (3 * hoge()? * (hoge()?) * 5 * {

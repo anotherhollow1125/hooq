@@ -54,10 +54,7 @@ impl RootContext {
             return_: true,
             tail_expr: true,
         };
-        let tail_expr_idents = vec![
-            "Ok".to_string(), // TODO: デフォルトからは外す
-            "Err".to_string(),
-        ];
+        let tail_expr_idents = vec!["Err".to_string()];
         let result_types = vec!["Result".to_string()];
         let hook_in_macros = true;
         let bindings = HashMap::new();

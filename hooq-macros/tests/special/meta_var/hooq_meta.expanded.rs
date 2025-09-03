@@ -214,7 +214,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
         Ok(())
             .inspect(|_| {
                 let meta = ::hooq::HooqMeta {
-                    line: 71usize,
+                    line: 72usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -250,7 +250,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
         Ok(())
             .inspect(|_| {
                 let meta = ::hooq::HooqMeta {
-                    line: 74usize,
+                    line: 75usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -300,7 +300,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
     }
         .inspect(|_| {
             let meta = ::hooq::HooqMeta {
-                line: 70usize,
+                line: 71usize,
                 column: 5usize,
                 path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                 abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",

@@ -6,6 +6,7 @@ use tokio::time::{Duration, sleep};
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tail_expr_idents("Ok", "Err")]
 async fn func() -> Result<(), ()> {
     let res = tokio::spawn(async {
         sleep(Duration::from_millis(10)).await;

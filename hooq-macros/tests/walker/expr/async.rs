@@ -12,6 +12,7 @@ async fn hoge() -> Result<usize, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tail_expr_idents("Ok", "Err")]
 async fn func(n: usize) -> Result<(), ()> {
     let tasks = (0..n)
         .map(|i| {

@@ -66,6 +66,7 @@ mod custom {
     }
 }))]
 #[hooq::var(hoge = "hoge")]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn using_hooq_meta(flag: bool) -> Result<(), ()> {
     if flag {
         Ok(())

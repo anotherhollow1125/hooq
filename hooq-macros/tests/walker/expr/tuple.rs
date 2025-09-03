@@ -10,6 +10,7 @@ fn hoge() -> Result<(), ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn func(flag: bool) -> Result<(), ()> {
     let _: ((), usize, Result<(), ()>) = (
         hoge()?,

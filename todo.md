@@ -83,7 +83,7 @@
 - [x] `TraitItem` と `Item::Const` への対応
   - [x] 実装
   - [x] テスト
-- [ ] inert_attr 機能の強化
+- [x] inert_attr 機能の強化
   - [x] デフォルトでは debug 時のみ出力とし、 release 時出力を指定するためのオプションを設ける
     - `#[cfg_attr(debug_assertions, hooq)]` で目的通りになったので機能自体不要と判明
       - チュートリアルや examples にこれの使用例を記載したい
@@ -98,7 +98,11 @@
       - [x] 関数の返り値型が `Result` ではない( `MyResult` などである)時にもフックするといった設定ができるか
       - [x] マクロの中身まで見るか (デフォルト: 見る)
     - feature だと複雑なのでやめる
-  - [ ] テストを用意する
+  - [x] テストを用意する
+- [x] `use_hook_method` の削除
+  - flavor で入れるため削除する
+  - [x] ついでにflavorはすでに受け入れるようにした
+- [x] デフォルトの `tail_expr_idents` から `"Ok"` を削除し、テストを更新する
 - [x] `cargo sort` をCIに入れる
 - [x] `cargo build --timings html` の検討及び良さそうであればCIに入れる
 - [ ] tomlで設定可能にする機能
@@ -130,6 +134,7 @@
       - **複雑になりすぎるのでやめる** 。
       - [ ] `hook` だけ特別扱いしようかとも思ったけどそれもやめる
       - `#[hooq(trait_use = "...", flavor = "hook")]` 等はあり
+        - [ ] flavor 実装後、上記のように書けるようにする
   - **`trait_use` を消す** ...？
     - もともと `dev` / `release` での付与切り替えに付随させるつもりで考えた機能だった
     - `dev` / `release` はユーザー側で付け替えることとしたので不要になった

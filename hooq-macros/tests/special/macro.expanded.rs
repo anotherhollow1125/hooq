@@ -326,3 +326,27 @@ fn func() -> Result<(), ()> {
             };
         })
 }
+fn no_hooks_to_macros() -> Result<(), ()> {
+    let _ = <[_]>::into_vec(
+        ::alloc::boxed::box_new([enresult(1)?, enresult(2)?, enresult(3)?]),
+    );
+    enresult(())
+        .inspect_err(|e| {
+            let path = "<hooq_root>/tests/special/macro.rs";
+            let line = 172usize;
+            {
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+            };
+        })?;
+    {
+        ::std::io::_print(format_args!("{0}\n", enresult("beep") ?));
+    };
+    Ok(())
+        .inspect_err(|e| {
+            let path = "<hooq_root>/tests/special/macro.rs";
+            let line = 176usize;
+            {
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+            };
+        })
+}

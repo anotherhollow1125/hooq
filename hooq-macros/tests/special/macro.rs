@@ -164,7 +164,20 @@ fn func() -> Result<(), ()> {
     Ok(())
 }
 
+#[hooq]
+#[hooq::hook_in_macros(false)]
+fn no_hooks_to_macros() -> Result<(), ()> {
+    let _ = vec![enresult(1)?, enresult(2)?, enresult(3)?];
+
+    enresult(())?;
+
+    println!("{}", enresult("beep")?);
+
+    Ok(())
+}
+
 #[test]
 fn test() {
     func().unwrap();
+    no_hooks_to_macros().unwrap();
 }

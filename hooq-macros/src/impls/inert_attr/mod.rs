@@ -3,8 +3,7 @@ use std::collections::HashMap;
 use proc_macro2::TokenStream;
 use syn::parse::Parse;
 use syn::{
-    Attribute, Expr, ExprLit, Lit, LitBool, LitStr, Meta, MetaList, MetaNameValue, Path, Token,
-    parse_quote,
+    Attribute, Expr, LitBool, LitStr, Meta, MetaList, MetaNameValue, Path, Token, parse_quote,
 };
 
 use crate::impls::inert_attr::context::{HookContext, HookTargetSwitch, SkipStatus};
@@ -102,13 +101,13 @@ impl TryFrom<Strings> for HookTargetSwitch {
 pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttribute> {
     // #[hooq::method(...)]
     let hooq_method = parse_quote!(hooq::method);
-    // #[hooq::hook_targets("return", "?", ...)] or #[hooq::hook_targets = ["return", "?", ...]]
+    // #[hooq::hook_targets("return", "?", ...)]
     let hooq_hook_targets = parse_quote!(hooq::hook_targets);
-    // #[hooq::tail_expr_idents("Ok", ...)] or #[hooq::tail_expr_idents = ["Ok", ...]]
+    // #[hooq::tail_expr_idents("Ok", ...)]
     let hooq_tail_expr_idents = parse_quote!(hooq::tail_expr_idents);
-    // #[hooq::result_types("XxxResult", ...)] or #[hooq::result_types = ["XxxResult", ...]]
+    // #[hooq::result_types("XxxResult", ...)]
     let hooq_result_types = parse_quote!(hooq::result_types);
-    // #[hooq::hook_in_macros(true | false)] or #[hooq::hook_in_macros = true | false]
+    // #[hooq::hook_in_macros(true | false)]
     let hooq_hook_in_macros = parse_quote!(hooq::hook_in_macros);
     // #[hooq::binding(xxx = ...)]
     let hooq_binding = parse_quote!(hooq::binding);
@@ -172,22 +171,9 @@ expected: "?", "return", "tail_expr""#,
             }
 
             // hook_in_macros
-            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_hook_in_macros => {
-                let Expr::Lit(ExprLit {
-                    lit: Lit::Bool(LitBool { value, .. }),
-                    ..
-                }) = value
-                else {
-                    return Err(syn::Error::new_spanned(
-                        path,
-                        "invalid hooq::hook_in_macros attribute value. expected: true or false",
-                    ));
-                };
-                hook_in_macros = Some(*value);
-                keeps.push(false);
-            }
-            Meta::Path(p) if p == &hooq_hook_in_macros => {
-                hook_in_macros = Some(true);
+            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_hook_in_macros => {
+                let hook = syn::parse2::<LitBool>(tokens.clone())?;
+                hook_in_macros = Some(hook.value());
                 keeps.push(false);
             }
 

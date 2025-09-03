@@ -54,8 +54,8 @@ mod custom {
                 ::hooq::HooqMeta {
                     line: 57usize,
                     column: 9usize,
-                    path: "<hooq_root>/tests/special/trait_use.rs",
-                    abs_path: "<hooq_root>/tests/special/trait_use.rs",
+                    path: "<hooq_root>/tests/special/inert_attr_setting/trait_use.rs",
+                    abs_path: "<hooq_root>/tests/special/inert_attr_setting/trait_use.rs",
                     file: "trait_use.rs",
                     expr: "result",
                     count: "1st tail expr",
@@ -76,8 +76,8 @@ mod custom2 {
                 ::hooq::HooqMeta {
                     line: 71usize,
                     column: 9usize,
-                    path: "<hooq_root>/tests/special/trait_use.rs",
-                    abs_path: "<hooq_root>/tests/special/trait_use.rs",
+                    path: "<hooq_root>/tests/special/inert_attr_setting/trait_use.rs",
+                    abs_path: "<hooq_root>/tests/special/inert_attr_setting/trait_use.rs",
                     file: "trait_use.rs",
                     expr: "result",
                     count: "1st tail expr",
@@ -94,8 +94,8 @@ mod custom2 {
                 ::hooq::HooqMeta {
                     line: 79usize,
                     column: 9usize,
-                    path: "<hooq_root>/tests/special/trait_use.rs",
-                    abs_path: "<hooq_root>/tests/special/trait_use.rs",
+                    path: "<hooq_root>/tests/special/inert_attr_setting/trait_use.rs",
+                    abs_path: "<hooq_root>/tests/special/inert_attr_setting/trait_use.rs",
                     file: "trait_use.rs",
                     expr: "result",
                     count: "1st tail expr",
@@ -112,8 +112,8 @@ mod custom2 {
                 ::hooq::HooqMeta {
                     line: 87usize,
                     column: 9usize,
-                    path: "<hooq_root>/tests/special/trait_use.rs",
-                    abs_path: "<hooq_root>/tests/special/trait_use.rs",
+                    path: "<hooq_root>/tests/special/inert_attr_setting/trait_use.rs",
+                    abs_path: "<hooq_root>/tests/special/inert_attr_setting/trait_use.rs",
                     file: "trait_use.rs",
                     expr: "result",
                     count: "1st tail expr",

@@ -1,11 +1,10 @@
 use std::collections::HashMap;
 
 use proc_macro2::TokenStream;
-use quote::ToTokens;
 use syn::parse::Parse;
 use syn::{
     Attribute, Expr, ExprLit, Lit, LitBool, LitStr, Meta, MetaList, MetaNameValue, Path, Token,
-    bracketed, parse_quote,
+    parse_quote,
 };
 
 use crate::impls::inert_attr::context::{HookContext, HookTargetSwitch, SkipStatus};
@@ -69,17 +68,6 @@ impl Parse for Strings {
                 .map(|lit| lit.value())
                 .collect::<Vec<_>>(),
         ))
-    }
-}
-
-struct StringArray(Strings);
-
-impl Parse for StringArray {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let strings;
-        let _ = bracketed!(strings in input);
-        let strings: Strings = strings.parse()?;
-        Ok(StringArray(strings))
     }
 }
 
@@ -168,24 +156,6 @@ expected: "?", "return", "tail_expr""#,
                     }
                 }
             }
-            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_hook_targets => {
-                let strings = syn::parse2::<StringArray>(value.to_token_stream())?;
-                match HookTargetSwitch::try_from(strings.0) {
-                    Ok(switch) => {
-                        hook_targets = Some(switch);
-                        keeps.push(false);
-                    }
-                    Err(e) => {
-                        return Err(syn::Error::new_spanned(
-                            path,
-                            format!(
-                                r#"invalid hooq::hook_targets attribute value. got: {e}
-expected: "?", "return", "tail_expr""#,
-                            ),
-                        ));
-                    }
-                }
-            }
 
             // tail_expr_idents
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_tail_expr_idents => {
@@ -193,23 +163,11 @@ expected: "?", "return", "tail_expr""#,
                 tail_expr_idents = Some(strings.0);
                 keeps.push(false);
             }
-            Meta::NameValue(MetaNameValue { path, value, .. })
-                if path == &hooq_tail_expr_idents =>
-            {
-                let strings = syn::parse2::<StringArray>(value.to_token_stream())?;
-                tail_expr_idents = Some(strings.0.0);
-                keeps.push(false);
-            }
 
             // result_types
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_result_types => {
                 let strings = syn::parse2::<Strings>(tokens.clone())?;
                 result_types = Some(strings.0);
-                keeps.push(false);
-            }
-            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_result_types => {
-                let strings = syn::parse2::<StringArray>(value.to_token_stream())?;
-                result_types = Some(strings.0.0);
                 keeps.push(false);
             }
 

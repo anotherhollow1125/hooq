@@ -21,8 +21,6 @@ pub struct RootContext {
     pub result_types: Vec<String>,
     pub hook_in_macros: bool,
     pub bindings: HashMap<String, Rc<Expr>>,
-
-    pub use_hook_method: bool, // TODO: 削除
 }
 
 impl RootContext {
@@ -39,8 +37,6 @@ pub struct RootAttribute {
     pub trait_uses: Vec<Path>,
     #[allow(unused)] // FIXME
     pub flavor: Option<String>,
-
-    pub use_hook_method: bool, // TODO: 削除
 }
 
 impl RootContext {
@@ -49,8 +45,6 @@ impl RootContext {
             trait_uses,
             // TODO: 利用
             flavor: _,
-            // TODO: 削除
-            use_hook_method,
         }: RootAttribute,
     ) -> Self {
         // TODO: default 値は flavor 側に置く
@@ -78,8 +72,6 @@ impl RootContext {
             result_types,
             hook_in_macros,
             bindings,
-
-            use_hook_method,
         }
     }
 }
@@ -102,6 +94,7 @@ fn default_method() -> TokenStream {
     }
 }
 
+/*
 pub fn hook_method() -> TokenStream {
     parse_quote! {
         .hook(|| {
@@ -109,3 +102,4 @@ pub fn hook_method() -> TokenStream {
         })
     }
 }
+*/

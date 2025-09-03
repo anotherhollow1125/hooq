@@ -30,7 +30,11 @@ mod trait_define {
 mod custom {
     use hooq::hooq;
 
-    #[hooq(hook(super::trait_define::CustomHook))]
+    // TODO: flavor 導入後修正
+    #[hooq(trait_use(super::trait_define::CustomHook))]
+    #[hooq::method(.hook(|| {
+        $hooq_meta
+    }))]
     #[hooq::hoge = "hogehoge"]
     #[hooq::inner_struct = InnerStruct]
     #[hooq::array = [1, 2, 3]]

@@ -7,7 +7,7 @@ use proc_macro2::TokenStream;
 use syn::{Expr, Path, Signature};
 
 use crate::impls::inert_attr::InertAttribute;
-use crate::impls::root_attr::{RootContext, hook_method};
+use crate::impls::root_attr::RootContext;
 use crate::impls::utils::function_info::FunctionInfo;
 use crate::impls::utils::path_is_end_of;
 
@@ -171,14 +171,9 @@ impl<'a> HookContext<'a> {
             result_types,
             hook_in_macros,
             bindings,
-            use_hook_method,
         }: RootContext,
     ) -> Self {
-        let method = if use_hook_method {
-            LocalContextField::Override(hook_method())
-        } else {
-            LocalContextField::Override(method)
-        };
+        let method = LocalContextField::Override(method);
 
         Self {
             counter: Rc::new(RefCell::new(Counter::new())),

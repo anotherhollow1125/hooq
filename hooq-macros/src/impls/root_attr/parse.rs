@@ -27,9 +27,9 @@ const ROOT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are bel
 
 - trait_use(...)
 - FLAVOR_NAME
-    - hook
-    - log
-    - ...
+  - hook
+  - log
+  - ...
 - flavor = "FLAVOR_NAME"
 "#;
 

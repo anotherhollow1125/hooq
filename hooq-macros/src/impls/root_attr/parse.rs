@@ -23,6 +23,7 @@ impl Parse for RootAttribute {
     }
 }
 
+// TODO: flavor 実装後、動的に存在するflavorをサジェストできるようにする
 const ROOT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
 
 - trait_use(...)

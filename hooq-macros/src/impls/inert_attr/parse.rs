@@ -82,7 +82,7 @@ const INERT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are be
 - #[hooq::result_types(...)]
 - #[hooq::hook_in_macros(...)]
 - #[hooq::binding(xxx = ...)]
-  - #[hooq::xxx = ...]
+- #[hooq::xxx = ...] // alternative syntax for binding
 - #[hooq::skip]
 - #[hooq::skip_all]
 "#;

@@ -45,6 +45,7 @@ fn skip_target() -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn complex_skip() -> Result<(), ()> {
     let gen_bools = || enresult(true);
 

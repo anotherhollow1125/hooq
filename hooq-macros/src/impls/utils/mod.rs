@@ -5,22 +5,11 @@ use syn::{ExprClosure, Ident, Path, Signature};
 pub mod function_info;
 mod get_attrs;
 
-fn path_is_end_of(path: &Path, target: &str) -> bool {
+pub fn path_is_end_of(path: &Path, target: &str) -> bool {
     path.segments
         .iter()
         .next_back()
         .is_some_and(|segment| segment.ident == target)
-}
-
-pub fn path_is_special_call_like_err(path: &Path) -> bool {
-    #[cfg(not(feature = "err-only"))]
-    {
-        path_is_end_of(path, "Err") || path_is_end_of(path, "Ok")
-    }
-    #[cfg(feature = "err-only")]
-    {
-        path_is_end_of(path, "Err")
-    }
 }
 
 pub fn closure_signature(expr_closure: &ExprClosure) -> Signature {

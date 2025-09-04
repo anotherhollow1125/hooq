@@ -38,10 +38,7 @@ impl HookInfo<'_> {
     pub fn generate_method(&self, q_span: Span) -> syn::Result<TokenStream> {
         let mut res = TokenStream::new();
 
-        let method = match self.method() {
-            Some(method) => method.clone(),
-            None => default_method(),
-        };
+        let method = self.method().clone();
         self.expand_meta_vars(method, &mut res, q_span)?;
 
         let res = res
@@ -289,29 +286,5 @@ available meta variables:
                 Ok(expr.to_token_stream())
             }
         }
-    }
-}
-
-fn default_method() -> TokenStream {
-    // NOTE:
-    // $path や $line は eprintln! に直接埋め込みたいところだが、
-    // CI側のテストの関係でこのようになっている
-    // (恨むならeprintln!の仕様を恨んでください)
-
-    parse_quote! {
-        .inspect_err(|e| {
-            let path = $path;
-            let line = $line;
-
-            ::std::eprintln!("[{path}:L{line}] {e:?}");
-        })
-    }
-}
-
-pub fn hook_method() -> TokenStream {
-    parse_quote! {
-        .hook(|| {
-            $hooq_meta
-        })
     }
 }

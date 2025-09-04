@@ -25,16 +25,17 @@ mod trait_define {
 }
 mod custom {
     use hooq_macros::hooq;
+    #[allow(unused)]
     use super::trait_define::CustomHook as _;
     pub fn use_hook(result: Result<i32, ()>) -> Result<i32, ()> {
         if let Ok(val) = result && val >= 100 {
             return Ok(100)
                 .hook(|| {
                     ::hooq::HooqMeta {
-                        line: 42usize,
+                        line: 46usize,
                         column: 13usize,
-                        path: "<hooq_root>/tests/special/hooq_meta.rs",
-                        abs_path: "<hooq_root>/tests/special/hooq_meta.rs",
+                        path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                        abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                         file: "hooq_meta.rs",
                         expr: "Ok(100)",
                         count: "1st return",
@@ -110,10 +111,10 @@ mod custom {
         result
             .hook(|| {
                 ::hooq::HooqMeta {
-                    line: 51usize,
+                    line: 55usize,
                     column: 9usize,
-                    path: "<hooq_root>/tests/special/hooq_meta.rs",
-                    abs_path: "<hooq_root>/tests/special/hooq_meta.rs",
+                    path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                    abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     file: "hooq_meta.rs",
                     expr: "result",
                     count: "1st tail expr",
@@ -213,10 +214,10 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
         Ok(())
             .inspect(|_| {
                 let meta = ::hooq::HooqMeta {
-                    line: 67usize,
+                    line: 72usize,
                     column: 9usize,
-                    path: "<hooq_root>/tests/special/hooq_meta.rs",
-                    abs_path: "<hooq_root>/tests/special/hooq_meta.rs",
+                    path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                    abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     file: "hooq_meta.rs",
                     expr: "Ok(())",
                     count: "1st tail expr",
@@ -249,10 +250,10 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
         Ok(())
             .inspect(|_| {
                 let meta = ::hooq::HooqMeta {
-                    line: 70usize,
+                    line: 75usize,
                     column: 9usize,
-                    path: "<hooq_root>/tests/special/hooq_meta.rs",
-                    abs_path: "<hooq_root>/tests/special/hooq_meta.rs",
+                    path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                    abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     file: "hooq_meta.rs",
                     expr: "Ok(())",
                     count: "2nd tail expr",
@@ -299,10 +300,10 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
     }
         .inspect(|_| {
             let meta = ::hooq::HooqMeta {
-                line: 66usize,
+                line: 71usize,
                 column: 5usize,
-                path: "<hooq_root>/tests/special/hooq_meta.rs",
-                abs_path: "<hooq_root>/tests/special/hooq_meta.rs",
+                path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                 file: "hooq_meta.rs",
                 expr: "if flag { Ok(()) } else { #[hooq :: fuga = \"fugafuga\"] Ok(()) }",
                 count: "3rd tail expr",

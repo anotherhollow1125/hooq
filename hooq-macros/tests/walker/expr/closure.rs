@@ -18,6 +18,7 @@ fn two() -> Result<u32, ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn func() -> Result<(), ()> {
     #[hooq::tag = "No Result Type (Block)"]
     let _ = |v| {

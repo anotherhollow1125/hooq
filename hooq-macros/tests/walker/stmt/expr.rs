@@ -12,6 +12,7 @@ fn b() -> Result<bool, ()> {
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
+#[hooq::tail_expr_idents("Ok", "Err")]
 fn func() -> Result<(), ()> {
     #[hooq::tag = "closure"]
     let f = || {

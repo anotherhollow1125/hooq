@@ -5,6 +5,7 @@ use syn::Item;
 use crate::impls::inert_attr::context::HookContext;
 use crate::impls::root_attr::{RootAttribute, RootContext};
 
+pub mod flavor;
 pub mod inert_attr;
 pub mod root_attr;
 pub mod utils;

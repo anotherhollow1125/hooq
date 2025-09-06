@@ -46,34 +46,6 @@ impl Parse for Strings {
     }
 }
 
-impl TryFrom<Strings> for HookTargetSwitch {
-    type Error = String;
-
-    fn try_from(value: Strings) -> Result<Self, Self::Error> {
-        let mut switch = HookTargetSwitch {
-            question: false,
-            return_: false,
-            tail_expr: false,
-        };
-
-        for s in value.0.iter() {
-            match s.as_str() {
-                "?" | "question" => switch.question = true,
-                "return" => switch.return_ = true,
-                "tail_expr" | "tail expr" | "tailexpr" | "tailExpr" => switch.tail_expr = true,
-                "all" => {
-                    switch.question = true;
-                    switch.return_ = true;
-                    switch.tail_expr = true;
-                }
-                e => return Err(e.to_string()),
-            }
-        }
-
-        Ok(switch)
-    }
-}
-
 const INERT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
 
 - #[hooq::method(...)]
@@ -128,7 +100,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
             // hook_targets
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_hook_targets => {
                 let strings = syn::parse2::<Strings>(tokens.clone())?;
-                match HookTargetSwitch::try_from(strings) {
+                match HookTargetSwitch::try_from(strings.0) {
                     Ok(switch) => {
                         hook_targets = Some(switch);
                         keeps.push(false);

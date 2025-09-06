@@ -140,6 +140,34 @@ pub struct HookTargetSwitch {
     pub tail_expr: bool,
 }
 
+impl TryFrom<Vec<String>> for HookTargetSwitch {
+    type Error = String;
+
+    fn try_from(value: Vec<String>) -> Result<Self, Self::Error> {
+        let mut switch = HookTargetSwitch {
+            question: false,
+            return_: false,
+            tail_expr: false,
+        };
+
+        for s in value {
+            match s.as_str() {
+                "?" | "question" => switch.question = true,
+                "return" => switch.return_ = true,
+                "tail_expr" | "tail expr" | "tailexpr" | "tailExpr" => switch.tail_expr = true,
+                "all" => {
+                    switch.question = true;
+                    switch.return_ = true;
+                    switch.tail_expr = true;
+                }
+                e => return Err(e.to_string()),
+            }
+        }
+
+        Ok(switch)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct LocalContext<'a> {
     // ユーザー設定値

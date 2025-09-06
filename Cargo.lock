@@ -347,9 +347,11 @@ dependencies = [
  "macrotest",
  "proc-macro2",
  "quote",
+ "serde",
  "serde_json",
  "syn",
  "tokio",
+ "toml",
  "util_macros",
 ]
 

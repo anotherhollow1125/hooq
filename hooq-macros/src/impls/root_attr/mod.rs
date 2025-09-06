@@ -4,6 +4,7 @@ use std::rc::Rc;
 use proc_macro2::TokenStream;
 use syn::{Expr, Path, parse_quote};
 
+use crate::impls::flavor::{FLAVORS, Flavor};
 use crate::impls::inert_attr::context::HookTargetSwitch;
 
 mod parse;
@@ -35,31 +36,42 @@ impl RootContext {
 #[derive(Debug)]
 pub struct RootAttribute {
     pub trait_uses: Vec<Path>,
-    #[allow(unused)] // FIXME
-    pub flavor: Option<String>,
+    pub flavor: Option<Vec<String>>,
 }
 
 impl RootContext {
     pub fn load(
         RootAttribute {
-            trait_uses,
-            // TODO: 利用
-            flavor: _,
+            mut trait_uses,
+            flavor,
         }: RootAttribute,
     ) -> Self {
-        // TODO: default 値は flavor 側に置く
-        let method = default_method();
-        let hook_targets = HookTargetSwitch {
-            question: true,
-            return_: true,
-            tail_expr: true,
-        };
-        let tail_expr_idents = vec!["Err".to_string()];
-        let result_types = vec!["Result".to_string()];
-        let hook_in_macros = true;
-        let bindings = HashMap::new();
+        // NOTE:
+        // default への上書きが存在する可能性があるので
+        // 未指定時でもあくまでも FlavorStore から取得する必要あり
+        //
+        // この後の (★) の `unwrap_or_default` に関連s
+        let flavor = flavor.unwrap_or(vec!["default".to_string()]);
 
-        // TODO: flavor を読み込む
+        todo!();
+
+        let Flavor {
+            trait_uses: trait_uses_of_flavor,
+            method,
+            hook_targets,
+            tail_expr_idents,
+            result_types,
+            hook_in_macros,
+            bindings,
+            sub_flavors: _,
+        } = FLAVORS.with(|flavors| {
+            flavors
+                .get_flavor(&flavor)
+                // (★) Unreachable のはず
+                .unwrap_or_default()
+        });
+
+        trait_uses.extend(trait_uses_of_flavor);
 
         Self {
             trait_uses,

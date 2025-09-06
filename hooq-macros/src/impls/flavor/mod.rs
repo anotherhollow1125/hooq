@@ -1,4 +1,3 @@
-use std::cell::LazyCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::OnceLock;
@@ -76,10 +75,6 @@ pub struct CheckedHooqToml {
 
 pub static LOADED_HOOQ_TOML: OnceLock<CheckedHooqToml> = OnceLock::new();
 
-thread_local! {
-    pub static FLAVORS: LazyCell<FlavorStore> = LazyCell::new(FlavorStore::with_hooq_toml);
-}
-
 impl FlavorStore {
     fn new() -> Self {
         let flavors = presets::preset_flavors();
@@ -87,7 +82,7 @@ impl FlavorStore {
         Self { flavors }
     }
 
-    fn with_hooq_toml() -> Self {
+    pub fn with_hooq_toml() -> Self {
         let mut flavors = Self::new();
 
         // toml_load()! 経由でHooqTomlがロードされていれば読み込む

@@ -2,9 +2,9 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use proc_macro2::TokenStream;
-use syn::{Expr, Path, parse_quote};
+use syn::{Expr, Path};
 
-use crate::impls::flavor::{FLAVORS, Flavor};
+use crate::impls::flavor::{Flavor, FlavorStore};
 use crate::impls::inert_attr::context::HookTargetSwitch;
 
 mod parse;
@@ -53,8 +53,6 @@ impl RootContext {
         // この後の (★) の `unwrap_or_default` に関連s
         let flavor = flavor.unwrap_or(vec!["default".to_string()]);
 
-        todo!();
-
         let Flavor {
             trait_uses: trait_uses_of_flavor,
             method,
@@ -64,12 +62,10 @@ impl RootContext {
             hook_in_macros,
             bindings,
             sub_flavors: _,
-        } = FLAVORS.with(|flavors| {
-            flavors
-                .get_flavor(&flavor)
-                // (★) Unreachable のはず
-                .unwrap_or_default()
-        });
+        } = FlavorStore::with_hooq_toml()
+            .get_flavor(&flavor)
+            // (★) Unreachable のはず
+            .unwrap_or_default();
 
         trait_uses.extend(trait_uses_of_flavor);
 
@@ -85,23 +81,7 @@ impl RootContext {
     }
 }
 
-// TODO: 以下2つは flavor に移動する
-
-fn default_method() -> TokenStream {
-    // NOTE:
-    // $path や $line は eprintln! に直接埋め込みたいところだが、
-    // CI側のテストの関係でこのようになっている
-    // (恨むならeprintln!の仕様を恨んでください)
-
-    parse_quote! {
-        .inspect_err(|e| {
-            let path = $path;
-            let line = $line;
-
-            ::std::eprintln!("[{path}:L{line}] {e:?}");
-        })
-    }
-}
+// TODO: 以下を flavor に移動する
 
 /*
 pub fn hook_method() -> TokenStream {

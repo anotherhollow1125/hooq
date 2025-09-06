@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::TokenStream;
 use syn::{Expr, Path};
 
 use crate::impls::flavor::Flavor;
@@ -10,7 +10,7 @@ use crate::impls::flavor::toml_load::{FlavorTable, HooqToml};
 pub fn update_flavors(
     flavors: &mut HashMap<String, Flavor>,
     hooq_toml: HooqToml,
-) -> syn::Result<()> {
+) -> Result<(), String> {
     update_flavor_inner(flavors, hooq_toml.flavors, &Flavor::default())?;
 
     Ok(())
@@ -20,7 +20,7 @@ fn update_flavor_inner(
     flavors: &mut HashMap<String, Flavor>,
     flavor_tables: HashMap<String, FlavorTable>,
     base_flavor: &Flavor,
-) -> syn::Result<()> {
+) -> Result<(), String> {
     for (
         flavor_name,
         FlavorTable {
@@ -36,19 +36,13 @@ fn update_flavor_inner(
     ) in flavor_tables
     {
         if flavor_name.is_empty() {
-            return Err(syn::Error::new(
-                Span::call_site(),
-                "flavor name must not be empty",
-            ));
+            return Err("flavor name must not be empty".to_string());
         }
 
         // ↑↓ ややこしいw
 
         if flavor_name == "empty" {
-            return Err(syn::Error::new(
-                Span::call_site(),
-                r#"special flavor `empty` can't be overriden"#,
-            ));
+            return Err("special flavor `empty` can't be overriden".to_string());
         }
 
         // NOTE:
@@ -69,23 +63,22 @@ fn update_flavor_inner(
         let trait_uses = trait_uses
             .into_iter()
             .map(|path| syn::parse_str::<Path>(&path))
-            .collect::<syn::Result<Vec<_>>>()?;
+            .collect::<syn::Result<Vec<_>>>()
+            .map_err(|e| format!("failed to parse trait_uses: {e}"))?;
         flavor.trait_uses.extend(trait_uses);
 
         if let Some(method) = method {
-            let method_stream = syn::parse_str::<TokenStream>(&method)?;
+            let method_stream = syn::parse_str::<TokenStream>(&method)
+                .map_err(|e| format!("failed to parse method: {e}"))?;
 
             flavor.method = method_stream;
         }
 
         if let Some(hook_targets) = hook_targets {
             let hook_target_switch = hook_targets.try_into().map_err(|e| {
-                syn::Error::new(
-                    Span::call_site(),
-                    format!(
-                        r#"invalid hook_targets value. got: {e}
+                format!(
+                    r#"invalid hook_targets value. got: {e}
 expected: "?", "return", "tail_expr""#,
-                    ),
                 )
             })?;
 
@@ -111,7 +104,8 @@ expected: "?", "return", "tail_expr""#,
 
                 Ok((k, Rc::new(v)))
             })
-            .collect::<syn::Result<Vec<_>>>()?;
+            .collect::<syn::Result<Vec<_>>>()
+            .map_err(|e| format!("failed to parse bindings: {e}"))?;
         flavor.bindings.extend(bindings);
 
         if !sub_flavors.is_empty() {

@@ -88,7 +88,7 @@ impl FlavorStore {
         // toml_load()! 経由でHooqTomlがロードされていれば読み込む
         if let Some(hooq_toml) = LOADED_HOOQ_TOML.get() {
             // 変換が成功することはCheckedHooqTomlの生成時に確認済み
-            toml_load::parse::update_flavors(&mut flavors.flavors, hooq_toml.inner.clone())
+            toml_load::apply::update_flavors(&mut flavors.flavors, hooq_toml.inner.clone())
                 .unwrap();
         }
 
@@ -129,19 +129,19 @@ impl FlavorStore {
 }
 
 impl TryFrom<HooqToml> for FlavorStore {
-    type Error = syn::Error;
+    type Error = String;
 
     fn try_from(value: HooqToml) -> Result<Self, Self::Error> {
         let mut flavors = Self::new();
 
-        toml_load::parse::update_flavors(&mut flavors.flavors, value)?;
+        toml_load::apply::update_flavors(&mut flavors.flavors, value)?;
 
         Ok(flavors)
     }
 }
 
 impl TryFrom<HooqToml> for CheckedHooqToml {
-    type Error = syn::Error;
+    type Error = String;
 
     // ロード時に変換可能かをあらかじめ確認する
     fn try_from(value: HooqToml) -> Result<Self, Self::Error> {

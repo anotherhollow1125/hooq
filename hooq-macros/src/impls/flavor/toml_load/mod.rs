@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::Deserialize;
 
-pub mod parse;
+pub mod apply;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct HooqToml {

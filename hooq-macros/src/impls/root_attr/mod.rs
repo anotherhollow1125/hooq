@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use proc_macro2::TokenStream;
+use proc_macro2::{Span, TokenStream};
 use syn::{Expr, Path};
 
 use crate::impls::flavor::{Flavor, FlavorStore};
@@ -37,6 +37,7 @@ impl RootContext {
 pub struct RootAttribute {
     pub trait_uses: Vec<Path>,
     pub flavor: Option<Vec<String>>,
+    pub span: Span,
 }
 
 impl RootContext {
@@ -44,13 +45,12 @@ impl RootContext {
         RootAttribute {
             mut trait_uses,
             flavor,
+            span,
         }: RootAttribute,
-    ) -> Self {
+    ) -> syn::Result<Self> {
         // NOTE:
         // default への上書きが存在する可能性があるので
         // 未指定時でもあくまでも FlavorStore から取得する必要あり
-        //
-        // この後の (★) の `unwrap_or_default` に関連s
         let flavor = flavor.unwrap_or(vec!["default".to_string()]);
 
         let Flavor {
@@ -64,12 +64,13 @@ impl RootContext {
             sub_flavors: _,
         } = FlavorStore::with_hooq_toml()
             .get_flavor(&flavor)
-            // (★) Unreachable のはず
-            .unwrap_or_default();
+            .ok_or_else(|| {
+                syn::Error::new(span, format!("flavor `{}` is not found", flavor.join("::")))
+            })?;
 
         trait_uses.extend(trait_uses_of_flavor);
 
-        Self {
+        Ok(Self {
             trait_uses,
             method,
             hook_targets,
@@ -77,18 +78,6 @@ impl RootContext {
             result_types,
             hook_in_macros,
             bindings,
-        }
-    }
-}
-
-// TODO: 以下を flavor に移動する
-
-/*
-pub fn hook_method() -> TokenStream {
-    parse_quote! {
-        .hook(|| {
-            $hooq_meta
         })
     }
 }
-*/

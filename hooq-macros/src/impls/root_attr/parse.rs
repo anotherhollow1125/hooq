@@ -8,6 +8,7 @@ use crate::impls::root_attr::RootAttribute;
 
 impl Parse for RootAttribute {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let span = input.span();
         let mut trait_uses = Vec::new();
         let mut flavor = None;
 
@@ -19,7 +20,11 @@ impl Parse for RootAttribute {
             }
         }
 
-        Ok(RootAttribute { trait_uses, flavor })
+        Ok(RootAttribute {
+            trait_uses,
+            flavor,
+            span,
+        })
     }
 }
 

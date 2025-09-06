@@ -35,6 +35,13 @@ fn update_flavor_inner(
         },
     ) in flavor_tables
     {
+        if flavor_name == "empty" {
+            return Err(syn::Error::new(
+                Span::call_site(),
+                r#"special flavor `empty` can't be overriden"#,
+            ));
+        }
+
         // NOTE:
         // or_insert_with(|| base_flavor.clone()) で
         // デフォルト値としているが、

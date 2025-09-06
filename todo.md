@@ -140,7 +140,7 @@
       - `flavor(trait_use(path::to::Trait, path::to::Trait2, ...))` がよさそう？
       - **複雑になりすぎるのでやめる** 。
       - [ ] `hook` だけ特別扱いしようかとも思ったけどそれもやめる
-      - `#[hooq(trait_use = "...", flavor = "hook")]` 等はあり
+      - `#[hooq(trait_use(...), flavor = "hook")]` 等はあり
         - [ ] flavor 実装後、上記のように書けるようにする
   - **`trait_use` を消す** ...？
     - もともと `dev` / `release` での付与切り替えに付随させるつもりで考えた機能だった
@@ -149,6 +149,23 @@
   - `inert_attr` へのflavor導入について
     - わかりやすさのため & 実装の容易さのために一旦対応しないこととする
     - 「検討中」を参照のこと
+  - [x] special flavors
+    - [x] `__base__` (便宜上このように表しているだけで名前指定なし)
+      - すべてのflavorの基礎となるflavor
+      - 依存関係ツリーとしてはすべてのflavor `xxx` は実質 `__base__.xxx` みたいな関係になっている
+        - すべてのflavorは `__base__` の上書きである
+        - 上書き不可 (しようにも名前はないのでできない)
+    - [x] `default`
+      - `#[hooq]` とした際のデフォルト
+      - `hooq.toml` では上書きして利用する想定
+      - `default` のデフォルト(ややこしい)は `__base__`
+    - [x] `empty`
+      - **上書き不可** (エラーにする)
+      - `method` が空のフレーバー
+      - その他も空
+      - 不活性アトリビュートを取り除く目的で指定
+        - release ビルドなどで活躍
+      - `#[cfg_attr(not(debug_assertions), hooq(empty))]` みたいな使い方を想定
 
 # 急がないtodo
 
@@ -159,30 +176,13 @@
 - [ ] * `$parent_method` でメソッド上書き時に元のメソッドも活用できるようにする
 - [ ] `$expr` の出力する情報が多いので、出力を控えたものも用意する
 - [ ] `fn_info` におけるクロージャの出力について、どの関数の中のクロージャであるか明記できるようにする
-- [ ] フレーバーの用意
-  - [ ] special flavors
-    - [ ] * `__base__` (便宜上このように表しているだけで名前指定なし)
-      - すべてのflavorの基礎となるflavor
-      - 依存関係ツリーとしてはすべてのflavor `xxx` は実質 `__base__.xxx` みたいな関係になっている
-        - すべてのflavorは `__base__` の上書きである
-        - 上書き不可 (しようにも名前はないのでできない)
-    - [ ] * `default`
-      - `#[hooq]` とした際のデフォルト
-      - `hooq.toml` では上書きして利用する想定
-      - `default` のデフォルト(ややこしい)は `__base__`
-    - [ ] * `empty`
-      - **上書き不可** (エラーにする)
-      - `method` が空のフレーバー
-      - その他も空
-      - 不活性アトリビュートを取り除く目的で指定
-        - release ビルドなどで活躍
-      - `#[cfg_attr(not(debug_assertions), hooq(empty))]` みたいな使い方を想定
+- [ ] 残りのフレーバーの用意
   - preset flavors
     - preset flavor は上書き可能
     - [x] * `custom` -> `hook` にリネーム
-      - [ ] 改めて `hook` flavor 用意
+      - [x] * 改めて `hook` flavor 用意
     - [ ] * `log`
-    - [ ] `anyhow`
+    - [ ] * `anyhow`
     - [ ] `eyre`
     - [ ] `tracing`
   - 名前について、

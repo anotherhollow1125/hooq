@@ -105,6 +105,27 @@ impl FlavorStore {
 
         Some(current.clone())
     }
+
+    pub fn all_flavor_names(&self) -> Vec<String> {
+        fn collect_names(flavor: &Flavor, prefix: &str, names: &mut Vec<String>) {
+            let current_name = format!("{prefix}::");
+
+            for (sub_name, sub_flavor) in &flavor.sub_flavors {
+                let full_name = format!("{current_name}{sub_name}");
+                names.push(full_name.clone());
+                collect_names(sub_flavor, &full_name, names);
+            }
+        }
+
+        let mut names = Vec::new();
+
+        for (name, flavor) in &self.flavors {
+            names.push(name.clone());
+            collect_names(flavor, name, &mut names);
+        }
+
+        names
+    }
 }
 
 impl TryFrom<HooqToml> for FlavorStore {

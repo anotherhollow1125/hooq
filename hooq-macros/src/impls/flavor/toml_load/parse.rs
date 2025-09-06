@@ -35,6 +35,15 @@ fn update_flavor_inner(
         },
     ) in flavor_tables
     {
+        if flavor_name.is_empty() {
+            return Err(syn::Error::new(
+                Span::call_site(),
+                "flavor name must not be empty",
+            ));
+        }
+
+        // ↑↓ ややこしいw
+
         if flavor_name == "empty" {
             return Err(syn::Error::new(
                 Span::call_site(),

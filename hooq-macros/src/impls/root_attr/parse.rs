@@ -4,6 +4,7 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Expr, ExprLit, Lit, Meta, MetaList, MetaNameValue, Path, Token};
 
+use crate::impls::flavor::FlavorStore;
 use crate::impls::root_attr::RootAttribute;
 
 impl Parse for RootAttribute {
@@ -28,16 +29,24 @@ impl Parse for RootAttribute {
     }
 }
 
-// TODO: flavor 実装後、動的に存在するflavorをサジェストできるようにする
-const ROOT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
+fn root_attribute_error_message() -> String {
+    let flavor_names = FlavorStore::with_hooq_toml()
+        .all_flavor_names()
+        .into_iter()
+        .map(|name| format!("  - {name}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    format!(
+        r#"expected attribute formats are below:
 
 - trait_use(...)
 - FLAVOR_NAME
-  - hook
-  - log
-  - ...
+{flavor_names}
 - flavor = "FLAVOR_NAME"
-"#;
+"#
+    )
+}
 
 fn parse_meta_path(input: Path, flavor: &mut Option<Vec<String>>) -> syn::Result<()> {
     let idents = input
@@ -51,7 +60,16 @@ fn parse_meta_path(input: Path, flavor: &mut Option<Vec<String>>) -> syn::Result
                 ));
             }
 
-            Ok(seg.ident.to_string())
+            let flavor_name = seg.ident.to_string();
+
+            if flavor_name.is_empty() {
+                return Err(syn::Error::new_spanned(
+                    seg,
+                    "flavor names must not include empty one",
+                ));
+            }
+
+            Ok(flavor_name)
         })
         .collect::<syn::Result<Vec<_>>>()?;
 
@@ -87,7 +105,7 @@ fn parse_meta_list(
 
             Ok(())
         }
-        p => Err(syn::Error::new_spanned(p, ROOT_ATTRIBUTE_ERROR_MESSAGE)),
+        p => Err(syn::Error::new_spanned(p, root_attribute_error_message())),
     }
 }
 
@@ -102,17 +120,31 @@ fn parse_name_value(input: MetaNameValue, flavor: &mut Option<Vec<String>>) -> s
                 }),
             ..
         } if path.is_ident("flavor") => {
-            *flavor = Some(
-                lit_str
-                    .value()
-                    .split('.')
-                    .flat_map(|s| s.split("::"))
-                    .map(ToString::to_string)
-                    .collect(),
-            );
+            let span = lit_str.span();
+
+            let flavor_names = lit_str
+                .value()
+                .split('.')
+                .flat_map(|s| s.split("::"))
+                .map(|s| {
+                    if s.is_empty() {
+                        return Err(syn::Error::new(
+                            span,
+                            "flavor names must not include empty one",
+                        ));
+                    }
+
+                    Ok(s.to_string())
+                })
+                .collect::<syn::Result<Vec<_>>>()?;
+
+            *flavor = Some(flavor_names);
 
             Ok(())
         }
-        else_ => Err(syn::Error::new_spanned(else_, ROOT_ATTRIBUTE_ERROR_MESSAGE)),
+        else_ => Err(syn::Error::new_spanned(
+            else_,
+            root_attribute_error_message(),
+        )),
     }
 }

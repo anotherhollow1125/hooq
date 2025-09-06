@@ -3,19 +3,18 @@ use hooq_macros::hooq;
 // const.rs とほぼ中身は同じ
 
 #[hooq]
-#[allow(unused)]
-fn hoge() -> Result<(), ()> {
-    Ok(())
-}
-
-#[hooq]
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
 #[hooq::tail_expr_idents("Ok", "Err")]
-fn func() -> Result<(), ()> {
-    static _STATIC_VAR: u32 = {
+mod tmp {
+    #[allow(unused)]
+    fn hoge() -> Result<(), ()> {
+        Ok(())
+    }
+
+    pub static STATIC_VAR: u32 = {
         #[hooq::tag = "inner func"]
         fn _f(flag: bool) -> Result<(), ()> {
             if flag {
@@ -38,11 +37,9 @@ fn func() -> Result<(), ()> {
 
         10
     };
-
-    Ok(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    let _ = tmp::STATIC_VAR;
 }

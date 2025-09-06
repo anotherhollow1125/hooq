@@ -1,5 +1,4 @@
 use hooq_macros::hooq;
-use util_macros::id;
 
 #[hooq]
 #[allow(unused)]
@@ -12,9 +11,12 @@ fn hoge() -> Result<(), ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
-fn func() -> Result<(), ()> {
-    #[allow(unused)]
-    struct S;
+mod tmp {
+    use util_macros::id;
+
+    use super::hoge;
+
+    pub struct S;
 
     #[hooq::tag = "impl"]
     impl S {
@@ -30,17 +32,15 @@ fn func() -> Result<(), ()> {
             10
         };
 
-        #[allow(unused)]
         #[hooq::tag = "impl related function"]
-        fn g() -> Result<(), ()> {
+        pub fn g() -> Result<(), ()> {
             hoge()?;
 
             Ok(())
         }
 
         #[hooq::tag = "impl related function 2 (not Result)"]
-        #[allow(unused)]
-        fn h() -> bool {
+        pub fn h() -> bool {
             true
         }
 
@@ -62,8 +62,7 @@ fn func() -> Result<(), ()> {
 
         #[hooq::tag = "outer"]
         id! {
-            #[allow(unused)]
-            fn outer() -> Result<(), ()> {
+            pub fn outer() -> Result<(), ()> {
                 hoge()?;
 
                 Ok(())
@@ -71,8 +70,7 @@ fn func() -> Result<(), ()> {
         }
 
         id! {
-            #[allow(unused)]
-            fn inner() -> Result<(), ()> {
+            pub fn inner() -> Result<(), ()> {
                 #[hooq::tag = "inner"]
                 hoge()?;
 
@@ -80,11 +78,12 @@ fn func() -> Result<(), ()> {
             }
         }
     }
-
-    Ok(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    tmp::S::g().unwrap();
+    let _ = tmp::S::h();
+    tmp::S::outer().unwrap();
+    tmp::S::inner().unwrap();
 }

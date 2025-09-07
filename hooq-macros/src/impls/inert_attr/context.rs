@@ -307,7 +307,7 @@ impl<'a> HookContext<'a> {
             LocalContextField::Override(Some(FunctionInfo::new(sig.clone())));
     }
 
-    pub fn is_skiped(&self) -> bool {
+    pub fn is_skipped(&self) -> bool {
         self.local_context.skip_status.as_ref().is_some()
     }
 

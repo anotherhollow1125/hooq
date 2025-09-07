@@ -1,0 +1,9 @@
+[my-flavor-path]
+method = """
+.inspect(|_| $checker.call())
+"""
+
+[my-flavor-path.err]
+method = """
+.inspect_err(|_| $checker.call())
+"""

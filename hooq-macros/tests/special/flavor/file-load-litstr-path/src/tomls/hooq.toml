@@ -1,0 +1,9 @@
+[my-flavor-litstr]
+method = """
+.inspect(|_| $checker.call())
+"""
+
+[my-flavor-litstr.err]
+method = """
+.inspect_err(|_| $checker.call())
+"""

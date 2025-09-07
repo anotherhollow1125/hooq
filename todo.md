@@ -166,15 +166,15 @@
       - 不活性アトリビュートを取り除く目的で指定
         - release ビルドなどで活躍
       - `#[cfg_attr(not(debug_assertions), hooq(empty))]` みたいな使い方を想定
-  - [ ] 関係するテストを実装する
+  - [x] 関係するテストを実装する
     - [x] スペシャルflavor
       - `__base__`
       - [x] `default`
       - [x] `empty`
-    - [ ] カスタムflavor
-      - [ ] `hooq.toml` ロード周り
+    - [x] カスタムflavor
+      - [x] `hooq.toml` ロード周り
         - [x] 直接埋め込んだりできるか？
-        - [ ] ちゃんとロードされるか？
+        - [x] ちゃんとロードされるか？
           - macrotest だとうまく行かなかったので macrotest は諦める
       - [x] サブflavor
       - [x] エラー時の flavor サジェスト (確認のみ)

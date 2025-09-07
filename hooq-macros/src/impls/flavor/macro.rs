@@ -30,31 +30,33 @@ const UNEPXECTED_EXPRESSION_ERROR_MSG: &str = r#"unexpected expression. expected
 - toml_load!(file = "(file path)")
 - toml_load!(path = "(file path)")
 - toml_load!(content = "(toml content)")
+
+file path must be absolute or relative to the Cargo.toml.
 "#;
 
 impl Parse for FlavorLoadMethod {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        // 相対パスを input からの絶対パスに変換する
-        let span = input.span().unwrap();
-        let file_path = PathBuf::from(span.file());
-        let file_dir = &file_path
-            .parent()
-            .unwrap_or_else(|| std::path::Path::new("."));
+        let cargo_dir =
+            PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string()));
 
+        // 相対パスを Cargo.toml からの絶対パスに変換する
         fn convert_rel2abs(
             path: impl Into<PathBuf>,
-            file_dir: &std::path::Path,
+            cargo_dir: &std::path::Path,
         ) -> Result<PathBuf, String> {
             let path: PathBuf = path.into();
             if path.is_absolute() {
                 return Ok(path);
             }
 
-            let current_path = PathBuf::from(file_dir);
-            current_path
-                .join(path)
-                .canonicalize()
-                .map_err(|e| format!("failed to canonicalize path: {e}"))
+            let res = cargo_dir.join(path);
+            let res_for_debug = res.display().to_string();
+
+            // ここでついでにファイルの存在も確かめられるため、
+            // 相対パスが与えられた場合はこの後のファイル存在チェックは冗長ではある
+            // 絶対パスの場合を考えそのままとする
+            res.canonicalize()
+                .map_err(|e| format!("failed to canonicalize path `{res_for_debug}`: {e}"))
         }
 
         // 空の場合はプロジェクトルート直下かカレントディレクトリの hooq.toml を読む
@@ -63,7 +65,7 @@ impl Parse for FlavorLoadMethod {
             let dir_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string());
             let path = PathBuf::from(dir_path).join("hooq.toml");
             let path =
-                convert_rel2abs(path, file_dir).map_err(|s| syn::Error::new(input.span(), s))?;
+                convert_rel2abs(path, &cargo_dir).map_err(|s| syn::Error::new(input.span(), s))?;
 
             if let Ok(false) | Err(_) = path.try_exists() {
                 return Err(syn::Error::new(input.span(), "hooq.toml not found"));
@@ -74,7 +76,7 @@ impl Parse for FlavorLoadMethod {
 
         fn toml_or_file_path(
             s: &str,
-            file_dir: &std::path::Path,
+            cargo_dir: &std::path::Path,
         ) -> Result<FlavorLoadMethod, Option<String>> {
             let toml_err_msg = match toml::from_str(s) {
                 Ok(toml) => return Ok(FlavorLoadMethod::Content(toml)),
@@ -89,7 +91,7 @@ impl Parse for FlavorLoadMethod {
 
             // ファイルが存在する場合パスとみる
             // canonicalize 失敗時のみ Some のエラーを返す
-            let path = convert_rel2abs(s, file_dir).map_err(Some)?;
+            let path = convert_rel2abs(s, cargo_dir).map_err(Some)?;
             if let Ok(true) = path.try_exists() {
                 return Ok(FlavorLoadMethod::File(path));
             }
@@ -103,7 +105,7 @@ impl Parse for FlavorLoadMethod {
             let lit: LitStr = input.parse()?;
             let s = lit.value();
 
-            return toml_or_file_path(&s, file_dir).map_err(|opt_e| {
+            return toml_or_file_path(&s, &cargo_dir).map_err(|opt_e| {
                 syn::Error::new_spanned(
                     lit,
                     match opt_e {
@@ -137,7 +139,7 @@ impl Parse for FlavorLoadMethod {
                     }),
                 ..
             } if path.is_ident("toml") => {
-                toml_or_file_path(&lit.value(), file_dir).map_err(|opt_e| {
+                toml_or_file_path(&lit.value(), &cargo_dir).map_err(|opt_e| {
                     syn::Error::new_spanned(
                         lit,
                         match opt_e {
@@ -158,7 +160,7 @@ impl Parse for FlavorLoadMethod {
                     }),
                 ..
             } if path.is_ident("file") || path.is_ident("path") => {
-                let path = convert_rel2abs(lit.value(), file_dir)
+                let path = convert_rel2abs(lit.value(), &cargo_dir)
                     .map_err(|e| syn::Error::new(lit.span(), e))?;
                 match path.try_exists() {
                     Ok(true) => Ok(FlavorLoadMethod::File(path)),

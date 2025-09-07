@@ -34,11 +34,36 @@ const UNEPXECTED_EXPRESSION_ERROR_MSG: &str = r#"unexpected expression. expected
 
 impl Parse for FlavorLoadMethod {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        // 相対パスを input からの絶対パスに変換する
+        let span = input.span().unwrap();
+        let file_path = PathBuf::from(span.file());
+        let file_dir = &file_path
+            .parent()
+            .unwrap_or_else(|| std::path::Path::new("."));
+
+        fn convert_rel2abs(
+            path: impl Into<PathBuf>,
+            file_dir: &std::path::Path,
+        ) -> Result<PathBuf, String> {
+            let path: PathBuf = path.into();
+            if path.is_absolute() {
+                return Ok(path);
+            }
+
+            let current_path = PathBuf::from(file_dir);
+            current_path
+                .join(path)
+                .canonicalize()
+                .map_err(|e| format!("failed to canonicalize path: {e}"))
+        }
+
         // 空の場合はプロジェクトルート直下かカレントディレクトリの hooq.toml を読む
 
         if input.is_empty() {
             let dir_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string());
             let path = PathBuf::from(dir_path).join("hooq.toml");
+            let path =
+                convert_rel2abs(path, file_dir).map_err(|s| syn::Error::new(input.span(), s))?;
 
             if let Ok(false) | Err(_) = path.try_exists() {
                 return Err(syn::Error::new(input.span(), "hooq.toml not found"));
@@ -47,7 +72,10 @@ impl Parse for FlavorLoadMethod {
             return Ok(Self::File(path));
         }
 
-        fn toml_or_file_path(s: &str) -> Result<FlavorLoadMethod, Option<String>> {
+        fn toml_or_file_path(
+            s: &str,
+            file_dir: &std::path::Path,
+        ) -> Result<FlavorLoadMethod, Option<String>> {
             let toml_err_msg = match toml::from_str(s) {
                 Ok(toml) => return Ok(FlavorLoadMethod::Content(toml)),
                 Err(e) => e.message().to_string(),
@@ -60,7 +88,8 @@ impl Parse for FlavorLoadMethod {
             }
 
             // ファイルが存在する場合パスとみる
-            let path = PathBuf::from(s);
+            // canonicalize 失敗時のみ Some のエラーを返す
+            let path = convert_rel2abs(s, file_dir).map_err(Some)?;
             if let Ok(true) = path.try_exists() {
                 return Ok(FlavorLoadMethod::File(path));
             }
@@ -74,7 +103,7 @@ impl Parse for FlavorLoadMethod {
             let lit: LitStr = input.parse()?;
             let s = lit.value();
 
-            return toml_or_file_path(&s).map_err(|opt_e| {
+            return toml_or_file_path(&s, file_dir).map_err(|opt_e| {
                 syn::Error::new_spanned(
                     lit,
                     match opt_e {
@@ -107,17 +136,19 @@ impl Parse for FlavorLoadMethod {
                         lit: Lit::Str(lit), ..
                     }),
                 ..
-            } if path.is_ident("toml") => toml_or_file_path(&lit.value()).map_err(|opt_e| {
-                syn::Error::new_spanned(
-                    lit,
-                    match opt_e {
-                        Some(e) => e,
-                        None => {
-                            "failed to parse as toml or file path (file must exist)".to_string()
-                        }
-                    },
-                )
-            }),
+            } if path.is_ident("toml") => {
+                toml_or_file_path(&lit.value(), file_dir).map_err(|opt_e| {
+                    syn::Error::new_spanned(
+                        lit,
+                        match opt_e {
+                            Some(e) => e,
+                            None => {
+                                "failed to parse as toml or file path (file must exist)".to_string()
+                            }
+                        },
+                    )
+                })
+            }
             // path = "..." | file = "..." の場合はファイルパスのみ検討
             MetaNameValue {
                 path,
@@ -127,7 +158,8 @@ impl Parse for FlavorLoadMethod {
                     }),
                 ..
             } if path.is_ident("file") || path.is_ident("path") => {
-                let path = PathBuf::from(lit.value());
+                let path = convert_rel2abs(lit.value(), file_dir)
+                    .map_err(|e| syn::Error::new(lit.span(), e))?;
                 match path.try_exists() {
                     Ok(true) => Ok(FlavorLoadMethod::File(path)),
                     _ => Err(syn::Error::new_spanned(lit, "file not found")),

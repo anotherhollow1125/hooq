@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::sync::OnceLock;
+use std::sync::{LazyLock, Mutex};
 
 use proc_macro2::TokenStream;
 use syn::{Expr, Path, parse_quote};
@@ -59,6 +59,7 @@ fn default_method() -> TokenStream {
     }
 }
 
+#[derive(Debug)]
 pub struct FlavorStore {
     flavors: HashMap<String, Flavor>,
 }
@@ -68,12 +69,28 @@ pub struct FlavorStore {
 // TokenStreamを使っているFlavorsはそのままでは保持できない
 // そのため変換確認だけ行った状態でHooqTomlをグローバルに保持し、
 // 実際にFlavorsが必要な時にはunwrapを許可することにした
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CheckedHooqToml {
     pub inner: HooqToml,
 }
 
-pub static LOADED_HOOQ_TOML: OnceLock<CheckedHooqToml> = OnceLock::new();
+pub struct TomlStore {
+    inner: Mutex<Option<CheckedHooqToml>>,
+}
+
+impl TomlStore {
+    pub fn set(&self, checked_hooq_toml: CheckedHooqToml) {
+        self.inner.lock().unwrap().replace(checked_hooq_toml);
+    }
+
+    fn get(&self) -> Option<CheckedHooqToml> {
+        self.inner.lock().unwrap().clone()
+    }
+}
+
+pub static LOADED_HOOQ_TOML: LazyLock<TomlStore> = LazyLock::new(|| TomlStore {
+    inner: Mutex::new(None),
+});
 
 impl FlavorStore {
     fn new() -> Self {
@@ -88,8 +105,7 @@ impl FlavorStore {
         // toml_load()! 経由でHooqTomlがロードされていれば読み込む
         if let Some(hooq_toml) = LOADED_HOOQ_TOML.get() {
             // 変換が成功することはCheckedHooqTomlの生成時に確認済み
-            toml_load::apply::update_flavors(&mut flavors.flavors, hooq_toml.inner.clone())
-                .unwrap();
+            toml_load::apply::update_flavors(&mut flavors.flavors, hooq_toml.inner).unwrap();
         }
 
         flavors

@@ -174,11 +174,7 @@ fn inner_for_path_buf(path: &std::path::Path) -> Result<TokenStream, String> {
 
     let checked_hooq_toml = CheckedHooqToml::try_from(hooq_toml)?;
 
-    LOADED_HOOQ_TOML.set(checked_hooq_toml).map_err(|_| {
-        "toml file and flavors are already loaded.
-Did you call toml_load macro more than twice?"
-            .to_string()
-    })?;
+    LOADED_HOOQ_TOML.set(checked_hooq_toml);
 
     let path_display = path.display().to_string();
 
@@ -190,11 +186,7 @@ Did you call toml_load macro more than twice?"
 fn inner_for_content(hooq_toml: HooqToml) -> Result<(), String> {
     let checked_hooq_toml = CheckedHooqToml::try_from(hooq_toml)?;
 
-    LOADED_HOOQ_TOML.set(checked_hooq_toml).map_err(|_| {
-        "toml file and flavors are already loaded.
-Did you call toml_load macro more than twice?"
-            .to_string()
-    })?;
+    LOADED_HOOQ_TOML.set(checked_hooq_toml);
 
     Ok(())
 }

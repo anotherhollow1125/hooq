@@ -110,7 +110,7 @@ expected: "?", "return", "tail_expr""#,
 
         if !sub_flavors.is_empty() {
             let base_flavor = flavor.clone();
-            update_flavor_inner(flavors, sub_flavors, &base_flavor)?;
+            update_flavor_inner(&mut flavor.sub_flavors, sub_flavors, &base_flavor)?;
         }
     }
 

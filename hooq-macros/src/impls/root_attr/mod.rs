@@ -53,6 +53,8 @@ impl RootContext {
         // 未指定時でもあくまでも FlavorStore から取得する必要あり
         let flavor = flavor.unwrap_or(vec!["default".to_string()]);
 
+        let flavor_store = FlavorStore::with_hooq_toml();
+
         let Flavor {
             trait_uses: trait_uses_of_flavor,
             method,
@@ -62,11 +64,22 @@ impl RootContext {
             hook_in_macros,
             bindings,
             sub_flavors: _,
-        } = FlavorStore::with_hooq_toml()
-            .get_flavor(&flavor)
-            .ok_or_else(|| {
-                syn::Error::new(span, format!("flavor `{}` is not found", flavor.join("::")))
-            })?;
+        } = flavor_store.get_flavor(&flavor).ok_or_else(|| {
+            syn::Error::new(
+                span,
+                format!(
+                    "flavor `{}` is not found. available flavors:
+{}",
+                    flavor.join("::"),
+                    flavor_store
+                        .all_flavor_names()
+                        .into_iter()
+                        .map(|name| format!("  - {name}"))
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                ),
+            )
+        })?;
 
         trait_uses.extend(trait_uses_of_flavor);
 

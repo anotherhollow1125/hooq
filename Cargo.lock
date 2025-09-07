@@ -77,6 +77,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.99"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0674a1ddeecb70197781e945de4b3b8ffb61fa939a5597bcf48503737663100"
+
+[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -405,9 +411,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "hooq-anyhow"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "hooq",
+ "macrotest",
+ "test-helpers",
+]
+
+[[package]]
 name = "hooq-examples"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "clap",
  "env_logger",
  "hooq",
@@ -417,6 +434,17 @@ dependencies = [
 [[package]]
 name = "hooq-helpers"
 version = "0.1.0"
+
+[[package]]
+name = "hooq-log"
+version = "0.1.0"
+dependencies = [
+ "env_logger",
+ "hooq",
+ "log",
+ "macrotest",
+ "test-helpers",
+]
 
 [[package]]
 name = "hooq-macros"
@@ -511,9 +539,9 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.27"
+version = "0.4.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13dc2df351e3202783a1fe0d44375f7295ffb4049267b0f3018346dc122a1d94"
+checksum = "34080505efa8e45a4b816c349525ebe327ceaa8559756f0356cba97ef3bf7432"
 
 [[package]]
 name = "macrotest"

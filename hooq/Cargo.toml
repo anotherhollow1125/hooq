@@ -4,6 +4,12 @@ version = "0.1.0"
 edition = "2024"
 rust-version = { workspace = true }
 
+[features]
+default = ["log"]
+full = ["anyhow", "log"]
+log = ["hooq-macros/log"]
+anyhow = ["hooq-macros/anyhow"]
+
 [dependencies]
 hooq-helpers = { path = "../hooq-helpers" }
-hooq-macros = { path = "../hooq-macros" }
+hooq-macros = { path = "../hooq-macros", default-features = false }

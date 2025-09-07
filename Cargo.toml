@@ -1,3 +1,13 @@
 [workspace]
 resolver = "2"
-members = ["examples", "hooq", "hooq-helpers", "hooq-macros"]
+members = [
+    "examples",
+    "hooq",
+    "hooq-helpers",
+    "hooq-macros",
+    "hooq-macros/tests/special/flavor/*",
+    "test-helpers"
+]
+
+[workspace.package]
+rust-version = "1.88.0"

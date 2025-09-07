@@ -162,6 +162,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
 
 [[package]]
+name = "custom"
+version = "0.1.0"
+dependencies = [
+ "hooq",
+ "macrotest",
+ "test-helpers",
+]
+
+[[package]]
+name = "default"
+version = "0.1.0"
+dependencies = [
+ "hooq",
+ "macrotest",
+ "test-helpers",
+]
+
+[[package]]
 name = "diff"
 version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -201,6 +219,15 @@ name = "fastrand"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
+
+[[package]]
+name = "file-load"
+version = "0.1.0"
+dependencies = [
+ "hooq",
+ "macrotest",
+ "test-helpers",
+]
 
 [[package]]
 name = "futures"
@@ -342,7 +369,6 @@ name = "hooq-macros"
 version = "0.1.0"
 dependencies = [
  "futures",
- "glob",
  "hooq",
  "macrotest",
  "proc-macro2",
@@ -350,6 +376,7 @@ dependencies = [
  "serde",
  "serde_json",
  "syn",
+ "test-helpers",
  "tokio",
  "toml",
  "util_macros",
@@ -713,6 +740,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "test-helpers"
+version = "0.1.0"
+dependencies = [
+ "glob",
 ]
 
 [[package]]

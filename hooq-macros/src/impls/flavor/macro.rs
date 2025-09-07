@@ -23,7 +23,7 @@ enum FlavorLoadMethod {
     Content(HooqToml),
 }
 
-const UNEPXECTED_EXPRESSION_ERROR_MSG: &str = r#"unexpected expression. expected:
+const UNEXPECTED_EXPRESSION_ERROR_MSG: &str = r#"unexpected expression. expected:
 - toml_load!()
 - toml_load!("(file path or toml content)")
 - toml_load!(toml = "(file path or toml content)")
@@ -124,7 +124,7 @@ impl Parse for FlavorLoadMethod {
         if !(input.peek(Ident) && input.peek2(syn::Token![=]) && input.peek3(LitStr)) {
             return Err(syn::Error::new(
                 input.span(),
-                UNEPXECTED_EXPRESSION_ERROR_MSG,
+                UNEXPECTED_EXPRESSION_ERROR_MSG,
             ));
         }
 
@@ -181,7 +181,7 @@ impl Parse for FlavorLoadMethod {
             )),
             _ => Err(syn::Error::new(
                 input.span(),
-                UNEPXECTED_EXPRESSION_ERROR_MSG,
+                UNEXPECTED_EXPRESSION_ERROR_MSG,
             )),
         }
     }

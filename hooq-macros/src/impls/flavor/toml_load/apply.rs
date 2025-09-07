@@ -42,7 +42,7 @@ fn update_flavor_inner(
         // ↑↓ ややこしいw
 
         if flavor_name == "empty" {
-            return Err("special flavor `empty` can't be overriden".to_string());
+            return Err("special flavor `empty` can't be overridden".to_string());
         }
 
         // NOTE:

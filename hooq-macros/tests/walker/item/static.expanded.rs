@@ -1,17 +1,15 @@
 use hooq_macros::hooq;
-#[allow(unused)]
-fn hoge() -> Result<(), ()> {
-    Ok(())
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/item/static.rs";
-            let line = 8usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
-}
-fn func() -> Result<(), ()> {
-    static _STATIC_VAR: u32 = {
+mod tmp {
+    #[allow(unused)]
+    fn hoge() -> Result<(), ()> {
+        Ok(())
+            .inspect(|_| {
+                {
+                    ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
+                };
+            })
+    }
+    pub static STATIC_VAR: u32 = {
         fn _f(flag: bool) -> Result<(), ()> {
             if flag {
                 return Err(())
@@ -51,10 +49,4 @@ fn func() -> Result<(), ()> {
         }
         10
     };
-    Ok(())
-        .inspect(|_| {
-            {
-                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
-            };
-        })
 }

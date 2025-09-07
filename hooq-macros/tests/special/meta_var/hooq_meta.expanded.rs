@@ -32,7 +32,7 @@ mod custom {
             return Ok(100)
                 .hook(|| {
                     ::hooq::HooqMeta {
-                        line: 46usize,
+                        line: 42usize,
                         column: 13usize,
                         path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                         abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -111,7 +111,7 @@ mod custom {
         result
             .hook(|| {
                 ::hooq::HooqMeta {
-                    line: 55usize,
+                    line: 51usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -208,13 +208,47 @@ mod custom {
                 }
             })
     }
+    #[allow(unused)]
+    use super::trait_define::CustomHook as _;
+    pub fn use_hook2() -> Result<i32, ()> {
+        Ok(42)
+            .hook(|| {
+                ::hooq::HooqMeta {
+                    line: 57usize,
+                    column: 9usize,
+                    path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                    abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                    file: "hooq_meta.rs",
+                    expr: "Ok(42)",
+                    count: "1st tail expr",
+                    bindings: ::std::collections::HashMap::from([]),
+                }
+            })
+    }
+    #[allow(unused)]
+    use super::trait_define::CustomHook as _;
+    pub fn use_hook3() -> Result<i32, ()> {
+        Ok(42)
+            .hook(|| {
+                ::hooq::HooqMeta {
+                    line: 63usize,
+                    column: 9usize,
+                    path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                    abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
+                    file: "hooq_meta.rs",
+                    expr: "Ok(42)",
+                    count: "1st tail expr",
+                    bindings: ::std::collections::HashMap::from([]),
+                }
+            })
+    }
 }
 fn using_hooq_meta(flag: bool) -> Result<(), ()> {
     if flag {
         Ok(())
             .inspect(|_| {
                 let meta = ::hooq::HooqMeta {
-                    line: 72usize,
+                    line: 80usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -250,7 +284,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
         Ok(())
             .inspect(|_| {
                 let meta = ::hooq::HooqMeta {
-                    line: 75usize,
+                    line: 83usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -300,7 +334,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
     }
         .inspect(|_| {
             let meta = ::hooq::HooqMeta {
-                line: 71usize,
+                line: 79usize,
                 column: 5usize,
                 path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                 abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",

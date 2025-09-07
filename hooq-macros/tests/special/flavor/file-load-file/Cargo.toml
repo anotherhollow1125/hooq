@@ -1,0 +1,11 @@
+[package]
+name = "file-load-file"
+version = "0.1.0"
+edition = "2024"
+rust-version = { workspace = true }
+
+[dependencies]
+hooq = { path = "../../../../../hooq" }
+macrotest = "1.2.0"
+test-helpers = { path = "../../../../../test-helpers" }
+

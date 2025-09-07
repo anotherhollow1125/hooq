@@ -4,9 +4,12 @@ mod result_types;
 mod tail_expr_idents;
 mod trait_use;
 
+use test_helpers::MaskMode::*;
+use test_helpers::mask_project_root;
+
 #[test]
 fn test_special_inert_attr_setting() {
-    crate::mask_project_root("tests/special/inert_attr_setting", crate::UnMask);
+    mask_project_root("tests/special/inert_attr_setting", UnMask);
 
     macrotest::expand_args(
         "tests/special/inert_attr_setting/hook_targets.rs",
@@ -23,5 +26,5 @@ fn test_special_inert_attr_setting() {
     );
     macrotest::expand_args("tests/special/inert_attr_setting/trait_use.rs", &["--ugly"]);
 
-    crate::mask_project_root("tests/special/inert_attr_setting", crate::Mask);
+    mask_project_root("tests/special/inert_attr_setting", Mask);
 }

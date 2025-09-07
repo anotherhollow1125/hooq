@@ -11,3 +11,10 @@ pub fn hooq(attr: TokenStream, item: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro]
+pub fn toml_load(input: TokenStream) -> TokenStream {
+    impls::flavor::r#macro::toml_load(input.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

@@ -30,11 +30,7 @@ mod trait_define {
 mod custom {
     use hooq_macros::hooq;
 
-    // TODO: flavor 導入後修正
-    #[hooq(trait_use(super::trait_define::CustomHook))]
-    #[hooq::method(.hook(|| {
-        $hooq_meta
-    }))]
+    #[hooq(hook, trait_use(super::trait_define::CustomHook))]
     #[hooq::hoge = "hogehoge"]
     #[hooq::inner_struct = InnerStruct]
     #[hooq::array = [1, 2, 3]]
@@ -53,6 +49,18 @@ mod custom {
         #[hooq::fuga = 10]
         #[hooq::bool_val = true]
         result
+    }
+
+    #[hooq(trait_use(super::trait_define::CustomHook), hook)]
+    #[hooq::tail_expr_idents("Ok", "Err")]
+    pub fn use_hook2() -> Result<i32, ()> {
+        Ok(42)
+    }
+
+    #[hooq(trait_use(super::trait_define::CustomHook), flavor = "hook")]
+    #[hooq::tail_expr_idents("Ok", "Err")]
+    pub fn use_hook3() -> Result<i32, ()> {
+        Ok(42)
     }
 }
 
@@ -80,6 +88,8 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
 fn test() {
     custom::use_hook(Ok(42)).unwrap();
     custom::use_hook(Ok(150)).unwrap();
+    custom::use_hook2().unwrap();
+    custom::use_hook3().unwrap();
     using_hooq_meta(true).unwrap();
     using_hooq_meta(false).unwrap();
 }

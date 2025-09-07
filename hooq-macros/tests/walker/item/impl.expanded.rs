@@ -1,19 +1,19 @@
 use hooq_macros::hooq;
-use util_macros::id;
 #[allow(unused)]
 fn hoge() -> Result<(), ()> {
     Ok(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/walker/item/impl.rs";
-            let line = 7usize;
+            let line = 6usize;
             {
                 ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
         })
 }
-fn func() -> Result<(), ()> {
-    #[allow(unused)]
-    struct S;
+mod tmp {
+    use util_macros::id;
+    use super::hoge;
+    pub struct S;
     impl S {
         const _CONST_VAL: usize = {
             fn _f() -> Result<(), ()> {
@@ -32,8 +32,7 @@ fn func() -> Result<(), ()> {
             }
             10
         };
-        #[allow(unused)]
-        fn g() -> Result<(), ()> {
+        pub fn g() -> Result<(), ()> {
             hoge()
                 .inspect(|_| {
                     {
@@ -51,8 +50,7 @@ fn func() -> Result<(), ()> {
                     };
                 })
         }
-        #[allow(unused)]
-        fn h() -> bool {
+        pub fn h() -> bool {
             true
         }
         #[allow(unused)]
@@ -74,8 +72,7 @@ fn func() -> Result<(), ()> {
         fn j(&self) -> bool {
             true
         }
-        #[allow(unused)]
-        fn outer() -> Result<(), ()> {
+        pub fn outer() -> Result<(), ()> {
             hoge()
                 .inspect(|_| {
                     {
@@ -89,8 +86,7 @@ fn func() -> Result<(), ()> {
                     };
                 })
         }
-        #[allow(unused)]
-        fn inner() -> Result<(), ()> {
+        pub fn inner() -> Result<(), ()> {
             hoge()
                 .inspect(|_| {
                     {
@@ -105,10 +101,4 @@ fn func() -> Result<(), ()> {
                 })
         }
     }
-    Ok(())
-        .inspect(|_| {
-            {
-                ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
-            };
-        })
 }

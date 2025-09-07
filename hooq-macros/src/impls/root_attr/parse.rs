@@ -4,10 +4,12 @@ use syn::punctuated::Punctuated;
 use syn::token::Comma;
 use syn::{Expr, ExprLit, Lit, Meta, MetaList, MetaNameValue, Path, Token};
 
+use crate::impls::flavor::FlavorStore;
 use crate::impls::root_attr::RootAttribute;
 
 impl Parse for RootAttribute {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let span = input.span();
         let mut trait_uses = Vec::new();
         let mut flavor = None;
 
@@ -19,29 +21,63 @@ impl Parse for RootAttribute {
             }
         }
 
-        Ok(RootAttribute { trait_uses, flavor })
+        Ok(RootAttribute {
+            trait_uses,
+            flavor,
+            span,
+        })
     }
 }
 
-// TODO: flavor 実装後、動的に存在するflavorをサジェストできるようにする
-const ROOT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
+fn root_attribute_error_message() -> String {
+    let flavor_names = FlavorStore::with_hooq_toml()
+        .all_flavor_names()
+        .into_iter()
+        .map(|name| format!("  - {name}"))
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    format!(
+        r#"expected attribute formats are below:
 
 - trait_use(...)
 - FLAVOR_NAME
-  - hook
-  - log
-  - ...
+{flavor_names}
 - flavor = "FLAVOR_NAME"
-"#;
+"#
+    )
+}
 
-fn parse_meta_path(input: Path, flavor: &mut Option<String>) -> syn::Result<()> {
-    match input.get_ident() {
-        Some(ident) => {
-            *flavor = Some(ident.to_string());
-            Ok(())
-        }
-        _ => Err(syn::Error::new_spanned(input, ROOT_ATTRIBUTE_ERROR_MESSAGE)),
+fn parse_meta_path(input: Path, flavor: &mut Option<Vec<String>>) -> syn::Result<()> {
+    let idents = input
+        .segments
+        .into_iter()
+        .map(|seg| {
+            if !seg.arguments.is_none() {
+                return Err(syn::Error::new_spanned(
+                    seg,
+                    "path with generic arguments is not supported here",
+                ));
+            }
+
+            let flavor_name = seg.ident.to_string();
+
+            if flavor_name.is_empty() {
+                return Err(syn::Error::new_spanned(
+                    seg,
+                    "flavor names must not include empty one",
+                ));
+            }
+
+            Ok(flavor_name)
+        })
+        .collect::<syn::Result<Vec<_>>>()?;
+
+    if !idents.is_empty() {
+        *flavor = Some(idents);
     }
+
+    Ok(())
 }
 
 fn get_paths(tokens: TokenStream) -> syn::Result<Punctuated<Path, Comma>> {
@@ -69,11 +105,11 @@ fn parse_meta_list(
 
             Ok(())
         }
-        p => Err(syn::Error::new_spanned(p, ROOT_ATTRIBUTE_ERROR_MESSAGE)),
+        p => Err(syn::Error::new_spanned(p, root_attribute_error_message())),
     }
 }
 
-fn parse_name_value(input: MetaNameValue, flavor: &mut Option<String>) -> syn::Result<()> {
+fn parse_name_value(input: MetaNameValue, flavor: &mut Option<Vec<String>>) -> syn::Result<()> {
     match input {
         MetaNameValue {
             path,
@@ -84,10 +120,31 @@ fn parse_name_value(input: MetaNameValue, flavor: &mut Option<String>) -> syn::R
                 }),
             ..
         } if path.is_ident("flavor") => {
-            *flavor = Some(lit_str.value());
+            let span = lit_str.span();
+
+            let flavor_names = lit_str
+                .value()
+                .split('.')
+                .flat_map(|s| s.split("::"))
+                .map(|s| {
+                    if s.is_empty() {
+                        return Err(syn::Error::new(
+                            span,
+                            "flavor names must not include empty one",
+                        ));
+                    }
+
+                    Ok(s.to_string())
+                })
+                .collect::<syn::Result<Vec<_>>>()?;
+
+            *flavor = Some(flavor_names);
 
             Ok(())
         }
-        else_ => Err(syn::Error::new_spanned(else_, ROOT_ATTRIBUTE_ERROR_MESSAGE)),
+        else_ => Err(syn::Error::new_spanned(
+            else_,
+            root_attribute_error_message(),
+        )),
     }
 }

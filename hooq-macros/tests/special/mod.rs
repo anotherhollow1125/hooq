@@ -1,3 +1,4 @@
+mod flavor;
 mod fn_special;
 mod inert_attr_setting;
 mod r#macro;
@@ -8,9 +9,12 @@ mod skip_detail;
 
 // ほかのテストでは不十分と考えられるケースをテスト
 
+use test_helpers::MaskMode::*;
+use test_helpers::mask_project_root;
+
 #[test]
 fn test_special() {
-    crate::mask_project_root("tests/special", crate::UnMask);
+    mask_project_root("tests/special", UnMask);
 
     macrotest::expand_args("tests/special/fn_special.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/macro.rs", &["--ugly"]);
@@ -18,5 +22,5 @@ fn test_special() {
     macrotest::expand_args("tests/special/skip.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/skip_detail.rs", &["--ugly"]);
 
-    crate::mask_project_root("tests/special", crate::Mask);
+    mask_project_root("tests/special", Mask);
 }

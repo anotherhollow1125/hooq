@@ -1,21 +1,21 @@
 use hooq_macros::hooq;
-use util_macros::id;
 
 // 確認内容は impl.rs と同じ
-
-#[hooq]
-#[allow(unused)]
-fn hoge() -> Result<(), ()> {
-    Ok(())
-}
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
-fn func() -> Result<(), ()> {
-    trait Trit {
+mod tmp {
+    use util_macros::id;
+
+    #[allow(unused)]
+    fn hoge() -> Result<(), ()> {
+        Ok(())
+    }
+
+    pub trait Trit {
         #[hooq::tag = "const"]
         const _CONST_VAL: usize = {
             #[hooq::tag = "inner func"]
@@ -28,7 +28,6 @@ fn func() -> Result<(), ()> {
             10
         };
 
-        #[allow(unused)]
         #[hooq::tag = "related function"]
         fn g() -> Result<(), ()> {
             hoge()?;
@@ -37,7 +36,6 @@ fn func() -> Result<(), ()> {
         }
 
         #[hooq::tag = "related function 2 (not Result)"]
-        #[allow(unused)]
         fn h() -> bool {
             true
         }
@@ -78,11 +76,14 @@ fn func() -> Result<(), ()> {
             }
         }
     }
-
-    Ok(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    struct T;
+
+    impl tmp::Trit for T {}
+
+    <T as tmp::Trit>::g().unwrap();
+    let _ = <T as tmp::Trit>::h();
 }

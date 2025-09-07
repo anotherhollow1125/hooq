@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use proc_macro2::TokenStream;
-use syn::{Expr, Path, parse_quote};
+use proc_macro2::{Span, TokenStream};
+use syn::{Expr, Path};
 
+use crate::impls::flavor::{Flavor, FlavorStore};
 use crate::impls::inert_attr::context::HookTargetSwitch;
 
 mod parse;
@@ -35,33 +36,54 @@ impl RootContext {
 #[derive(Debug)]
 pub struct RootAttribute {
     pub trait_uses: Vec<Path>,
-    #[allow(unused)] // FIXME
-    pub flavor: Option<String>,
+    pub flavor: Option<Vec<String>>,
+    pub span: Span,
 }
 
 impl RootContext {
     pub fn load(
         RootAttribute {
-            trait_uses,
-            // TODO: 利用
-            flavor: _,
+            mut trait_uses,
+            flavor,
+            span,
         }: RootAttribute,
-    ) -> Self {
-        // TODO: default 値は flavor 側に置く
-        let method = default_method();
-        let hook_targets = HookTargetSwitch {
-            question: true,
-            return_: true,
-            tail_expr: true,
-        };
-        let tail_expr_idents = vec!["Err".to_string()];
-        let result_types = vec!["Result".to_string()];
-        let hook_in_macros = true;
-        let bindings = HashMap::new();
+    ) -> syn::Result<Self> {
+        // NOTE:
+        // default への上書きが存在する可能性があるので
+        // 未指定時でもあくまでも FlavorStore から取得する必要あり
+        let flavor = flavor.unwrap_or(vec!["default".to_string()]);
 
-        // TODO: flavor を読み込む
+        let flavor_store = FlavorStore::with_hooq_toml();
 
-        Self {
+        let Flavor {
+            trait_uses: trait_uses_of_flavor,
+            method,
+            hook_targets,
+            tail_expr_idents,
+            result_types,
+            hook_in_macros,
+            bindings,
+            sub_flavors: _,
+        } = flavor_store.get_flavor(&flavor).ok_or_else(|| {
+            syn::Error::new(
+                span,
+                format!(
+                    "flavor `{}` is not found. available flavors:
+{}",
+                    flavor.join("::"),
+                    flavor_store
+                        .all_flavor_names()
+                        .into_iter()
+                        .map(|name| format!("  - {name}"))
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                ),
+            )
+        })?;
+
+        trait_uses.extend(trait_uses_of_flavor);
+
+        Ok(Self {
             trait_uses,
             method,
             hook_targets,
@@ -69,34 +91,6 @@ impl RootContext {
             result_types,
             hook_in_macros,
             bindings,
-        }
-    }
-}
-
-// TODO: 以下2つは flavor に移動する
-
-fn default_method() -> TokenStream {
-    // NOTE:
-    // $path や $line は eprintln! に直接埋め込みたいところだが、
-    // CI側のテストの関係でこのようになっている
-    // (恨むならeprintln!の仕様を恨んでください)
-
-    parse_quote! {
-        .inspect_err(|e| {
-            let path = $path;
-            let line = $line;
-
-            ::std::eprintln!("[{path}:L{line}] {e:?}");
         })
     }
 }
-
-/*
-pub fn hook_method() -> TokenStream {
-    parse_quote! {
-        .hook(|| {
-            $hooq_meta
-        })
-    }
-}
-*/

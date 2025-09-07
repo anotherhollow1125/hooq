@@ -217,7 +217,7 @@
 - [ ] 足りないテストを追加し、examplesも機能を十分表せるように拡充する
   - [ ] examples 以下の内容も expand 自動化
 - [x] エラーメッセージの開始が大文字小文字で表記ゆれしているので、小文字始まりで統一する
-- [ ] @ 誤字修正: `skiped` -> `skipped`
+- [x] 誤字修正: `skiped` -> `skipped`
 - [ ] dependabot の挙動調査および必要なら修正
 - [ ] 軽量化のため、 syn の feature を見直す
 - [ ] cargo プロジェクトではないrustcでコンパイルする場合でも `toml_load!()` でカレントディレクトリの `hooq.toml` を読み込むことの確認

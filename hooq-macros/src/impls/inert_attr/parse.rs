@@ -85,8 +85,8 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     let mut result_types: Option<Vec<String>> = None;
     let mut hook_in_macros: Option<bool> = None;
     let mut bindings: HashMap<String, Expr> = HashMap::new();
-    let mut is_skiped = false;
-    let mut is_skiped_all = false;
+    let mut is_skipped = false;
+    let mut is_skipped_all = false;
 
     let mut keeps = Vec::with_capacity(attrs.len());
     for attr in attrs.iter_mut() {
@@ -138,14 +138,14 @@ expected: "?", "return", "tail_expr""#,
                 keeps.push(false);
             }
 
-            // is_skiped
+            // is_skipped
             Meta::Path(p) if p == &hooq_skip => {
-                is_skiped = true;
+                is_skipped = true;
                 keeps.push(false);
             }
-            // is_skiped_all
+            // is_skipped_all
             Meta::Path(p) if p == &hooq_skip_all => {
-                is_skiped_all = true;
+                is_skipped_all = true;
                 keeps.push(false);
             }
             // 残りは bindings
@@ -204,7 +204,7 @@ expected: "?", "return", "tail_expr""#,
         result_types,
         hook_in_macros,
         bindings,
-        is_skiped,
-        is_skiped_all,
+        is_skipped,
+        is_skipped_all,
     })
 }

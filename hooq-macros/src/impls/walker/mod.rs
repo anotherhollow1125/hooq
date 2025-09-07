@@ -43,7 +43,7 @@ fn handle_tail_expr(
         return Ok(());
     };
     let HandleInertAttrsResult {
-        is_skiped,
+        is_skipped,
         new_context: context,
     } = handle_inert_attrs(attrs, context)?;
 
@@ -63,7 +63,7 @@ fn handle_tail_expr(
         let q_span = expr.span();
 
         hook_expr(
-            !is_skiped,
+            !is_skipped,
             expr,
             &expr_for_display,
             HookTargetKind::TailExpr,
@@ -82,7 +82,7 @@ fn handle_tail_expr(
         let q_span = path.span();
 
         hook_expr(
-            !is_skiped,
+            !is_skipped,
             expr,
             &expr_for_display,
             HookTargetKind::TailExpr,
@@ -108,7 +108,7 @@ fn walk_stmt(
             ..
         }) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(attrs, context)?;
 
@@ -151,7 +151,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
     match item {
         Item::Fn(item_fn) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: mut context,
             } = handle_inert_attrs(&mut item_fn.attrs, context)?;
 
@@ -180,7 +180,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
         }
         Item::Impl(item_impl) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut item_impl.attrs, context)?;
 
@@ -191,7 +191,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                     match impl_item {
                         ImplItem::Fn(impl_item_fn) => {
                             let HandleInertAttrsResult {
-                                is_skiped: _,
+                                is_skipped: _,
                                 new_context: mut context,
                             } = handle_inert_attrs(&mut impl_item_fn.attrs, &context)?;
 
@@ -221,7 +221,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
 
                         ImplItem::Const(ImplItemConst { attrs, expr, .. }) => {
                             let HandleInertAttrsResult {
-                                is_skiped: _,
+                                is_skipped: _,
                                 new_context: context,
                             } = handle_inert_attrs(attrs, &context)?;
 
@@ -248,7 +248,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
             ..
         }) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(attrs, context)?;
 
@@ -263,7 +263,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
         Item::Const(ItemConst { attrs, expr, .. })
         | Item::Static(ItemStatic { attrs, expr, .. }) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(attrs, context)?;
 
@@ -272,7 +272,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
 
         Item::Trait(item_trait) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut item_trait.attrs, context)?;
 
@@ -287,7 +287,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                             ..
                         }) => {
                             let HandleInertAttrsResult {
-                                is_skiped: _,
+                                is_skipped: _,
                                 new_context: context,
                             } = handle_inert_attrs(attrs, &context)?;
 
@@ -300,7 +300,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                             ..
                         }) => {
                             let HandleInertAttrsResult {
-                                is_skiped: _,
+                                is_skipped: _,
                                 new_context: mut context,
                             } = handle_inert_attrs(attrs, &context)?;
 
@@ -412,7 +412,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         // 置換対象となるバリアント
         Expr::Try(expr_try) => {
             let HandleInertAttrsResult {
-                is_skiped,
+                is_skipped,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_try.attrs, context)?;
 
@@ -423,7 +423,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
             let q_span = expr_try.question_token.span();
 
             hook_expr(
-                !is_skiped,
+                !is_skipped,
                 &mut expr_try.expr,
                 &expr_for_display,
                 HookTargetKind::Question,
@@ -435,7 +435,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Return(expr_return) => {
             let HandleInertAttrsResult {
-                is_skiped,
+                is_skipped,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_return.attrs, context)?;
 
@@ -458,7 +458,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                 // 返り値型がResultの時 or OkやErrの時フック
                 if is_like_ok_or_err || context.return_type_is_result() {
                     hook_expr(
-                        !is_skiped,
+                        !is_skipped,
                         expr,
                         &expr_for_display,
                         HookTargetKind::Return,
@@ -474,7 +474,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         // ネストの中身を見る必要があるバリアント
         Expr::Array(expr_array) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_array.attrs, context)?;
 
@@ -488,7 +488,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Assign(expr_assign) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_assign.attrs, context)?;
 
@@ -496,7 +496,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Async(expr_async) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_async.attrs, context)?;
 
@@ -523,7 +523,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Await(expr_await) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_await.attrs, context)?;
 
@@ -531,7 +531,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Binary(expr_binary) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_binary.attrs, context)?;
 
@@ -540,7 +540,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Block(expr_block) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_block.attrs, context)?;
 
@@ -567,7 +567,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Break(expr_break) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_break.attrs, context)?;
 
@@ -579,7 +579,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Call(expr_call) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_call.attrs, context)?;
 
@@ -594,7 +594,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Cast(expr_cast) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_cast.attrs, context)?;
 
@@ -602,7 +602,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Closure(expr_closure) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: mut context,
             } = handle_inert_attrs(&mut expr_closure.attrs, context)?;
 
@@ -611,7 +611,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
             match &mut *expr_closure.body {
                 Expr::Block(expr_block) => {
                     let HandleInertAttrsResult {
-                        is_skiped: _,
+                        is_skipped: _,
                         new_context: context,
                     } = handle_inert_attrs(&mut expr_block.attrs, &context)?;
 
@@ -641,7 +641,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Const(expr_const) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_const.attrs, context)?;
 
@@ -668,7 +668,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Field(expr_field) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_field.attrs, context)?;
 
@@ -676,7 +676,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::ForLoop(expr_for_loop) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_for_loop.attrs, context)?;
 
@@ -705,7 +705,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Group(expr_group) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_group.attrs, context)?;
 
@@ -713,7 +713,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::If(expr_if) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_if.attrs, context)?;
 
@@ -747,7 +747,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Index(expr_index) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_index.attrs, context)?;
 
@@ -756,7 +756,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Let(expr_let) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_let.attrs, context)?;
 
@@ -764,7 +764,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Loop(expr_loop) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_loop.attrs, context)?;
 
@@ -791,7 +791,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Match(expr_match) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_match.attrs, context)?;
 
@@ -813,7 +813,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::MethodCall(expr_method_call) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_method_call.attrs, context)?;
 
@@ -828,7 +828,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Paren(expr_paren) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_paren.attrs, context)?;
 
@@ -836,7 +836,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Range(expr_range) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_range.attrs, context)?;
 
@@ -851,7 +851,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::RawAddr(expr_raw_addr) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_raw_addr.attrs, context)?;
 
@@ -859,7 +859,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Reference(expr_reference) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_reference.attrs, context)?;
 
@@ -867,7 +867,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Repeat(expr_repeat) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_repeat.attrs, context)?;
 
@@ -876,7 +876,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Struct(expr_struct) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_struct.attrs, context)?;
 
@@ -885,7 +885,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                 .iter_mut()
                 .map(|field| {
                     let HandleInertAttrsResult {
-                        is_skiped: _,
+                        is_skipped: _,
                         new_context: context,
                     } = handle_inert_attrs(&mut field.attrs, &context)?;
 
@@ -900,7 +900,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::TryBlock(expr_try_block) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_try_block.attrs, context)?;
 
@@ -929,7 +929,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Tuple(expr_tuple) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_tuple.attrs, context)?;
 
@@ -943,7 +943,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Unary(expr_unary) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_unary.attrs, context)?;
 
@@ -951,7 +951,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Unsafe(expr_unsafe) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_unsafe.attrs, context)?;
 
@@ -978,7 +978,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::While(expr_while) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_while.attrs, context)?;
 
@@ -1007,7 +1007,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
         }
         Expr::Yield(expr_yield) => {
             let HandleInertAttrsResult {
-                is_skiped: _,
+                is_skipped: _,
                 new_context: context,
             } = handle_inert_attrs(&mut expr_yield.attrs, context)?;
 

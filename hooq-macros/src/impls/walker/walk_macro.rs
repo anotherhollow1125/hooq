@@ -15,7 +15,7 @@ pub fn walk_macro(
     context: &HookContext,
 ) -> syn::Result<()> {
     let HandleInertAttrsResult {
-        is_skiped: _,
+        is_skipped: _,
         new_context: context,
     } = handle_inert_attrs(attrs, context)?;
 

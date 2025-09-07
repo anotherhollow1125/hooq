@@ -21,7 +21,7 @@ pub struct HooqMeta {
     pub path: &'static str,
     pub abs_path: &'static str,
     pub file: &'static str,
-    pub expr: &'static str,
+    pub expr_str: &'static str,
     pub count: &'static str,
     pub bindings: HashMap<String, BindingPayload>,
 }

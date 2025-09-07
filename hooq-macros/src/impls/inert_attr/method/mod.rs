@@ -207,11 +207,11 @@ impl HookInfo<'_> {
                     #file
                 })
             }
-            Ok(MetaVars::Expr) => {
-                let expr = self.expr;
+            Ok(MetaVars::ExprStr) => {
+                let expr_str = self.expr_str;
 
                 Ok(parse_quote! {
-                    #expr
+                    #expr_str
                 })
             }
             Ok(MetaVars::Count) => {
@@ -242,7 +242,7 @@ impl HookInfo<'_> {
                 let path = q_span.unwrap().file();
                 let abs_path = get_abs_path(q_span);
                 let file = get_file_name(q_span);
-                let expr = self.expr;
+                let expr_str = self.expr_str;
                 let count = self.get_count();
                 let bindings = self.get_bindings_token_stream();
 
@@ -253,7 +253,7 @@ impl HookInfo<'_> {
                         path: #path,
                         abs_path: #abs_path,
                         file: #file,
-                        expr: #expr,
+                        expr_str: #expr_str,
                         count: #count,
                         bindings: #bindings,
                     }

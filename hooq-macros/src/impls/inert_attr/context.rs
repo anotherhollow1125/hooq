@@ -279,7 +279,7 @@ impl<'a> HookContext<'a> {
 
     pub fn as_hook_info(&'a self, expr: &'a str, kind: HookTargetKind) -> HookInfo<'a> {
         HookInfo {
-            expr,
+            expr_str: expr,
             kind,
 
             hook_context: self,
@@ -335,7 +335,7 @@ impl<'a> HookContext<'a> {
 
 #[derive(Debug)]
 pub struct HookInfo<'a> {
-    pub expr: &'a str,
+    pub expr_str: &'a str,
     pub kind: HookTargetKind,
 
     pub hook_context: &'a HookContext<'a>,

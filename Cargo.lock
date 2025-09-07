@@ -275,6 +275,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "flavor-in-sub-mod"
+version = "0.1.0"
+dependencies = [
+ "hooq",
+ "macrotest",
+ "test-helpers",
+]
+
+[[package]]
 name = "futures"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"

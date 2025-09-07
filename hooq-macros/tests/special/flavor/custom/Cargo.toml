@@ -5,5 +5,5 @@ edition = "2024"
 
 [dev-dependencies]
 hooq = { path = "../../../../../hooq" }
-test-helpers = { path = "../../../../../test-helpers" }
 macrotest = "1.2.0"
+test-helpers = { path = "../../../../../test-helpers" }

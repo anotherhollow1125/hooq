@@ -6,7 +6,7 @@ members = [
     "hooq-helpers",
     "hooq-macros",
     "hooq-macros/tests/special/flavor/*",
-    "test-helpers"
+    "test-helpers",
 ]
 
 [workspace.package]

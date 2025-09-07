@@ -19,6 +19,6 @@ futures = "0.3.31"
 hooq = { path = "../hooq" }
 macrotest = "1.2.0"
 serde_json = "1.0.143"
+test-helpers = { path = "../test-helpers" }
 tokio = { version = "1.47.1", features = ["full"] }
 util_macros = { path = "tests/util_macros" }
-test-helpers = { path = "../test-helpers" }

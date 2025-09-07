@@ -75,21 +75,31 @@ pub struct CheckedHooqToml {
 }
 
 pub struct TomlStore {
-    inner: Mutex<Option<CheckedHooqToml>>,
+    inner: Mutex<HashMap<String, CheckedHooqToml>>,
 }
 
 impl TomlStore {
+    // NOTE:
+    // 異なるCargoプロジェクトを同じタイミングでVSCodeで開いていた時に
+    // 違うTomlStoreの内容が違うプロジェクトに供給されている事象が見られた
+    //
+    // 効果がどれぐらいあるかは懐疑的であるが、少しでも軽減すべく
+    // プロジェクトごとに保存領域を分けるようにした
     pub fn set(&self, checked_hooq_toml: CheckedHooqToml) {
-        self.inner.lock().unwrap().replace(checked_hooq_toml);
+        let key = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string());
+
+        self.inner.lock().unwrap().insert(key, checked_hooq_toml);
     }
 
     fn get(&self) -> Option<CheckedHooqToml> {
-        self.inner.lock().unwrap().clone()
+        let key = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string());
+
+        self.inner.lock().unwrap().get(&key).cloned()
     }
 }
 
 pub static LOADED_HOOQ_TOML: LazyLock<TomlStore> = LazyLock::new(|| TomlStore {
-    inner: Mutex::new(None),
+    inner: Mutex::new(HashMap::new()),
 });
 
 impl FlavorStore {

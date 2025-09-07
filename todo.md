@@ -201,8 +201,8 @@
     - preset flavor は上書き可能
     - [x] `custom` -> `hook` にリネーム
       - [x] 改めて `hook` flavor 用意
-    - [ ] @ `log`
-    - [ ] @ `anyhow`
+    - [x] `log`
+    - [x] `anyhow`
     - [ ] `eyre`
     - [ ] `tracing`
   - 名前について、

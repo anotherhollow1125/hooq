@@ -7,6 +7,12 @@ rust-version = { workspace = true }
 [lib]
 proc-macro = true
 
+[features]
+default = ["log"]
+full = ["anyhow", "log"]
+log = []
+anyhow = []
+
 [dependencies]
 proc-macro2 = { version = "1.0.101", features = ["span-locations"] }
 quote = "1.0.40"

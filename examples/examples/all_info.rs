@@ -8,7 +8,7 @@ use hooq::hooq;
 $flle: {}
 $path: {}
 $abs_path: {}
-$expr: {}
+$expr_str: {}
 $nth: {} ($count: {})
 $tag: {}
 $fn_name: {}
@@ -18,7 +18,7 @@ $fn_sig: {}
     $file,
     $path,
     $abs_path,
-    $expr,
+    $expr_str,
     $nth,
     $count,
     $tag,
@@ -32,7 +32,7 @@ $fn_sig: {}
 $file: {}
 $path: {}
 $abspath: {}
-$expr: {}
+$expr_str: {}
 $nth: {} ($count: {})
 $tag: {}
 $fn_name: {}
@@ -42,7 +42,7 @@ $fn_sig: {}
     $file,
     $path,
     $abspath,
-    $expr,
+    $expr_str,
     $nth,
     $count,
     $tag,

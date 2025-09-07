@@ -7,7 +7,7 @@ fn enresult<T>(t: T) -> Result<T, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {}, expr: {}", $tag, $expr);
+    println!("tag: {}, expr: {}", $tag, $expr_str);
 }))]
 #[hooq::tag = "(no tag)"]
 mod tmp {

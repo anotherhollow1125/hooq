@@ -21,7 +21,7 @@ fn option_fn_1(flag: bool, flagflag: bool) -> Option<()> {
                         "<hooq_root>/tests/special/inert_attr_setting/option.rs",
                         abs_path :
                         "<hooq_root>/tests/special/inert_attr_setting/option.rs",
-                        file : "option.rs", expr : "hoge().ok()", count : "1st ?",
+                        file : "option.rs", expr_str : "hoge().ok()", count : "1st ?",
                         bindings : ::std::collections::HashMap::from([]), }
                     ),
                 );
@@ -38,7 +38,7 @@ fn option_fn_1(flag: bool, flagflag: bool) -> Option<()> {
                             "<hooq_root>/tests/special/inert_attr_setting/option.rs",
                             abs_path :
                             "<hooq_root>/tests/special/inert_attr_setting/option.rs",
-                            file : "option.rs", expr : "None", count : "1st return",
+                            file : "option.rs", expr_str : "None", count : "1st return",
                             bindings : ::std::collections::HashMap::from([]), }
                         ),
                     );
@@ -57,8 +57,9 @@ fn option_fn_1(flag: bool, flagflag: bool) -> Option<()> {
                                 "<hooq_root>/tests/special/inert_attr_setting/option.rs",
                                 abs_path :
                                 "<hooq_root>/tests/special/inert_attr_setting/option.rs",
-                                file : "option.rs", expr : "Some(())", count : "2nd return",
-                                bindings : ::std::collections::HashMap::from([]), }
+                                file : "option.rs", expr_str : "Some(())", count :
+                                "2nd return", bindings :
+                                ::std::collections::HashMap::from([]), }
                             ),
                         );
                     };
@@ -79,8 +80,9 @@ fn option_fn_1(flag: bool, flagflag: bool) -> Option<()> {
                         "<hooq_root>/tests/special/inert_attr_setting/option.rs",
                         abs_path :
                         "<hooq_root>/tests/special/inert_attr_setting/option.rs",
-                        file : "option.rs", expr : "Some(())", count : "1st tail expr",
-                        bindings : ::std::collections::HashMap::from([]), }
+                        file : "option.rs", expr_str : "Some(())", count :
+                        "1st tail expr", bindings :
+                        ::std::collections::HashMap::from([]), }
                     ),
                 );
             };
@@ -98,7 +100,7 @@ fn option_fn_2(flag: bool, flagflag: bool) -> Option<()> {
                         "<hooq_root>/tests/special/inert_attr_setting/option.rs",
                         abs_path :
                         "<hooq_root>/tests/special/inert_attr_setting/option.rs",
-                        file : "option.rs", expr : "hoge().ok()", count : "1st ?",
+                        file : "option.rs", expr_str : "hoge().ok()", count : "1st ?",
                         bindings : ::std::collections::HashMap::from([]), }
                     ),
                 );
@@ -115,7 +117,7 @@ fn option_fn_2(flag: bool, flagflag: bool) -> Option<()> {
                             "<hooq_root>/tests/special/inert_attr_setting/option.rs",
                             abs_path :
                             "<hooq_root>/tests/special/inert_attr_setting/option.rs",
-                            file : "option.rs", expr : "None", count : "1st return",
+                            file : "option.rs", expr_str : "None", count : "1st return",
                             bindings : ::std::collections::HashMap::from([]), }
                         ),
                     );
@@ -134,8 +136,9 @@ fn option_fn_2(flag: bool, flagflag: bool) -> Option<()> {
                                 "<hooq_root>/tests/special/inert_attr_setting/option.rs",
                                 abs_path :
                                 "<hooq_root>/tests/special/inert_attr_setting/option.rs",
-                                file : "option.rs", expr : "Some(())", count : "2nd return",
-                                bindings : ::std::collections::HashMap::from([]), }
+                                file : "option.rs", expr_str : "Some(())", count :
+                                "2nd return", bindings :
+                                ::std::collections::HashMap::from([]), }
                             ),
                         );
                     };
@@ -154,8 +157,8 @@ fn option_fn_2(flag: bool, flagflag: bool) -> Option<()> {
                     "<hooq_root>/tests/special/inert_attr_setting/option.rs",
                     abs_path :
                     "<hooq_root>/tests/special/inert_attr_setting/option.rs",
-                    file : "option.rs", expr : "None", count : "1st tail expr", bindings
-                    : ::std::collections::HashMap::from([]), }
+                    file : "option.rs", expr_str : "None", count : "1st tail expr",
+                    bindings : ::std::collections::HashMap::from([]), }
                 ),
             );
         };

@@ -35,4 +35,5 @@ macrotest = "1.2.0"
 serde_json = "1.0.143"
 test-helpers = { path = "../test-helpers" }
 tokio = { version = "1.47.1", features = ["full"] }
+toml = "0.9.5"
 util_macros = { path = "tests/util_macros" }

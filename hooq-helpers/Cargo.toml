@@ -14,5 +14,5 @@ readme = "docs/README.md"
 [dependencies]
 
 [dev-dependencies]
-toml = "0.9.5"
 hooq = { path = "../hooq" }
+toml = "0.9.5"

@@ -9,10 +9,10 @@ use hooq::hooq;
 
 #[hooq]
 #[hooq::method(.ok_or_else(|| format!("{} (L{}, {})", $expr_str, $line, $nth)))]
-fn display_description(val: &toml::Value) -> Result<(), String> {
-    let desc = val.get("package")?.get("description")?.as_str()?;
+fn display_name(val: &toml::Value) -> Result<(), String> {
+    let name = val.get("package")?.get("name")?.as_str()?;
 
-    println!("Description: {desc}");
+    println!("name: {name}");
 
     #[hooq::skip]
     Ok(())
@@ -22,7 +22,7 @@ fn display_description(val: &toml::Value) -> Result<(), String> {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cargo_toml = toml::from_str(&std::fs::read_to_string("Cargo.toml")?)?;
 
-    display_description(&cargo_toml)?;
+    display_name(&cargo_toml)?;
 
     Ok(())
 }
@@ -30,22 +30,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 The above expands into the following.
 
-```
+```ignore
 use hooq::hooq;
-fn display_description(val: &toml::Value) -> Result<(), String> {
-    let desc = val
+fn display_name(val: &toml::Value) -> Result<(), String> {
+    let name = val
         .get("package")
         .ok_or_else(|| ::alloc::__export::must_use({
             ::alloc::fmt::format(
                 format_args!("{0} (L{1}, {2})", "val.get(\"package\")", 6usize, "1st ?"),
             )
         }))?
-        .get("description")
+        .get("name")
         .ok_or_else(|| ::alloc::__export::must_use({
             ::alloc::fmt::format(
                 format_args!(
-                    "{0} (L{1}, {2})", "val.get(\"package\") ? .get(\"description\")",
-                    6usize, "2nd ?",
+                    "{0} (L{1}, {2})", "val.get(\"package\") ? .get(\"name\")", 6usize,
+                    "2nd ?",
                 ),
             )
         }))?
@@ -54,13 +54,12 @@ fn display_description(val: &toml::Value) -> Result<(), String> {
             ::alloc::fmt::format(
                 format_args!(
                     "{0} (L{1}, {2})",
-                    "val.get(\"package\") ? .get(\"description\") ? .as_str()", 6usize,
-                    "3rd ?",
+                    "val.get(\"package\") ? .get(\"name\") ? .as_str()", 6usize, "3rd ?",
                 ),
             )
         }))?;
     {
-        ::std::io::_print(format_args!("Description: {0}\n", desc));
+        ::std::io::_print(format_args!("name: {0}\n", name));
     };
     Ok(())
 }
@@ -84,7 +83,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
         })?;
-    display_description(&cargo_toml)
+    display_name(&cargo_toml)
         .inspect_err(|e| {
             let path = "/path/to/your/project/src/main.rs";
             let line = 18usize;
@@ -122,7 +121,7 @@ hooq = "*"
 
 If nothing is specifically specified for `#[hooq]`, the following method is inserted:
 
-```
+```ignore
 .inspect_err(|e| {
     let path = $path;
     let line = $line;

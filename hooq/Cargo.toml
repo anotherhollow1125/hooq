@@ -43,3 +43,6 @@ version = "0.1.0"
 default-features = false
 path = "../hooq-macros"
 version = "0.1.0"
+
+[dev-dependencies]
+toml = "0.9.5"

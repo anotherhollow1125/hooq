@@ -11,4 +11,12 @@ members = [
 ]
 
 [workspace.package]
+version = "0.1.0"
+edition = "2024"
 rust-version = "1.88.0"
+authors = ["namnium <anotherhollow1125@gmail.com>"]
+description = "The simple macro that inserts a method before `?`. (`?` 前にメソッドを挿入するシンプルなマクロ)"
+repository = "https://github.com/anotherhollow1125/hooq"
+license = "MIT OR Apache-2.0"
+keywords = ["error", "proc-macro", "anyhow", "eyre", "log"]
+categories = ["development-tools", "development-tools::debugging", "rust-patterns"]

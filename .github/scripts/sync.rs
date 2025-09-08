@@ -32,6 +32,7 @@ fn main() -> anyhow::Result<()> {
     let Args { check } = Args::parse();
 
     sync_sub_crate_versions(check)?;
+    cargo_sort(check)?;
     sync_readme(check)?;
 
     Ok::<(), anyhow::Error>(())
@@ -100,6 +101,29 @@ fn sync_sub_crate_versions(check_only: bool) -> anyhow::Result<()> {
             "./hooq/Cargo.toml",
             toml::to_string_pretty(&hooq_crate_toml)?,
         )?;
+    }
+
+    Ok::<(), anyhow::Error>(())
+}
+
+// TOMLの上書きは順番がおかしくなるので、cargo-sortで整形
+#[hooq(anyhow)]
+fn cargo_sort(check_only: bool) -> anyhow::Result<()> {
+    use std::process::Command;
+
+    let mut command = Command::new("cargo");
+    let command = command.arg("sort").arg("--workspace");
+
+    let command = if check_only {
+        command.arg("--check")
+    } else {
+        command
+    };
+
+    let status = command.status()?;
+
+    if !status.success() {
+        return Err(anyhow::anyhow!("cargo sort failed"));
     }
 
     Ok::<(), anyhow::Error>(())

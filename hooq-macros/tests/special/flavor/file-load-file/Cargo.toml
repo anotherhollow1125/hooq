@@ -3,6 +3,7 @@ name = "file-load-file"
 version = { workspace = true }
 edition = { workspace = true }
 rust-version = { workspace = true }
+publish = false
 
 [dependencies]
 hooq = { path = "../../../../../hooq" }

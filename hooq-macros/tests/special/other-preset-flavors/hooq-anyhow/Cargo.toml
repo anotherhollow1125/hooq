@@ -3,6 +3,7 @@ name = "hooq-anyhow"
 version = { workspace = true }
 edition = { workspace = true }
 rust-version = { workspace = true }
+publish = false
 
 [dependencies]
 anyhow = "1.0.99"

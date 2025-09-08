@@ -3,6 +3,7 @@ name = "util_macros"
 version = { workspace = true }
 edition = { workspace = true }
 description = "マクロ構文要素の置換部分を検証するために使うマクロユーティリティクレート"
+publish = false
 
 [lib]
 proc-macro = true

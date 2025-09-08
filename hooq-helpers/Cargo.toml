@@ -3,5 +3,11 @@ name = "hooq-helpers"
 version = { workspace = true }
 edition = { workspace = true }
 rust-version = { workspace = true }
+authors = { workspace = true }
+description = "HooqMeta struct provider for hooq. (hooq 向けの HooqMeta 構造体を提供します)"
+repository = { workspace = true }
+license = { workspace = true }
+keywords = { workspace = true }
+categories = { workspace = true }
 
 [dependencies]

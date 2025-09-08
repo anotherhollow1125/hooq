@@ -1,21 +1,47 @@
-[package]
-name = "hooq"
-version = { workspace = true }
-edition = { workspace = true }
-rust-version = { workspace = true }
-authors = { workspace = true }
-description = { workspace = true }
-repository = { workspace = true }
-license = { workspace = true }
-keywords = { workspace = true }
-categories = { workspace = true }
+[dependencies.hooq-helpers]
+path = "../hooq-helpers"
+version = "0.1.0"
+
+[dependencies.hooq-macros]
+default-features = false
+path = "../hooq-macros"
+version = "0.1.0"
 
 [features]
-default = ["log"]
-full = ["anyhow", "log"]
-log = ["hooq-macros/log"]
 anyhow = ["hooq-macros/anyhow"]
+default = ["log"]
+full = [
+    "anyhow",
+    "log",
+]
+log = ["hooq-macros/log"]
 
-[dependencies]
-hooq-helpers = { path = "../hooq-helpers" }
-hooq-macros = { path = "../hooq-macros", default-features = false }
+[package]
+name = "hooq"
+
+[package.authors]
+workspace = true
+
+[package.categories]
+workspace = true
+
+[package.description]
+workspace = true
+
+[package.edition]
+workspace = true
+
+[package.keywords]
+workspace = true
+
+[package.license]
+workspace = true
+
+[package.repository]
+workspace = true
+
+[package.rust-version]
+workspace = true
+
+[package.version]
+workspace = true

@@ -9,5 +9,10 @@ repository = { workspace = true }
 license = { workspace = true }
 keywords = { workspace = true }
 categories = { workspace = true }
+readme = "docs/README.md"
 
 [dependencies]
+
+[dev-dependencies]
+hooq = { path = "../hooq" }
+toml = "0.9.5"

@@ -221,6 +221,8 @@
 - [ ] dependabot の挙動調査および必要なら修正
 - [ ] 軽量化のため、 syn の feature を見直す
 - [ ] cargo プロジェクトではないrustcでコンパイルする場合でも `toml_load!()` でカレントディレクトリの `hooq.toml` を読み込むことの確認
+- [ ] 「`Ok(...)` がtail exprに来る時はフックしない」などを表す `tail_expr_idents` のブラックリスト版を作る
+  - `not_tail_expr_idents` とかでいいか
 
 # 検討中
 

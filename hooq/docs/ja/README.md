@@ -1,8 +1,8 @@
 # hooq
 
-A simple macro that inserts a method before the `?` operator
+`?` 前にメソッドを挿入するシンプルなマクロ
 
-The crate name comes from the acronym "HOOk for Question mark operator".
+クレート名の由来は "HOOk for Question mark operator" のアクロニム
 
 ```rust
 use hooq::hooq;
@@ -28,7 +28,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-The above expands into the following.
+上記が以下のように展開されます。
 
 ```ignore
 use hooq::hooq;
@@ -104,22 +104,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Quick Start
 
-Add the crate with `cargo add` as shown below, or
+以下に示すように `cargo add` で加えるか、
 
 ```bash
 cargo add hooq
 ```
 
-add it to your `Cargo.toml`.
+`Cargo.toml` に加えてください。
 
 ```toml
 [dependencies]
 hooq = "*"
 ```
 
-## Methods Inserted by Default
+## デフォルトで挿入されるメソッド
 
-If nothing is specifically specified for `#[hooq]`, the following method is inserted:
+`#[hooq]` として特に指定しなければ次のメソッドが挿入されます。
 
 ```ignore
 .inspect_err(|e| {
@@ -130,20 +130,20 @@ If nothing is specifically specified for `#[hooq]`, the following method is inse
 })
 ```
 
-You can switch the hooked method with the inert attribute `#[hooq::method(...)]`. Also, if you specify a flavor like `#[hooq(log)]` or `#[hooq(anyhow)]` (requires the `anyhow` feature) at the macro call site, the inserted method will correspond to that flavor.
+`#[hooq::method(...)]` 不活性アトリビュートでフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` ( `anyhow` feature が必要 ) としてFlavorを指定した場合などは、そのFlavorにちなんだメソッドになります！
 
-Available flavors can be found here: [hooq-macros/src/impls/flavor/presets/](../../hooq-macros/src/impls/flavor/presets/)
+用意されている Flavor は次のディレクトリから見られます: [hooq-macros/src/impls/flavor/presets/](../../../hooq-macros/src/impls/flavor/presets/)
 
-(More to come!)
+(今後拡充予定です！)
 
-## Attributes
-
-(WIP)
-
-## Metavariables
+## アトリビュート
 
 (WIP)
 
-## Flavors
+## メタ変数
+
+(WIP)
+
+## Flavor
 
 (WIP)

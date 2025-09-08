@@ -408,6 +408,7 @@ version = "0.1.0"
 dependencies = [
  "hooq-helpers",
  "hooq-macros",
+ "toml",
 ]
 
 [[package]]
@@ -434,6 +435,10 @@ dependencies = [
 [[package]]
 name = "hooq-helpers"
 version = "0.1.0"
+dependencies = [
+ "hooq",
+ "toml",
+]
 
 [[package]]
 name = "hooq-log"

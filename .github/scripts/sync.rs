@@ -33,7 +33,9 @@ fn main() -> anyhow::Result<()> {
 
     sync_sub_crate_versions(check)?;
     cargo_sort(check)?;
-    sync_readme(check)?;
+    for lang in ["", "/ja"] {
+        sync_readme(lang, check)?;
+    }
 
     Ok::<(), anyhow::Error>(())
 }
@@ -130,8 +132,8 @@ fn cargo_sort(check_only: bool) -> anyhow::Result<()> {
 }
 
 #[hooq(anyhow)]
-fn sync_readme(check_only: bool) -> anyhow::Result<()> {
-    let common_md = std::fs::read_to_string("./hooq/README.md")?;
+fn sync_readme(lang: &str, check_only: bool) -> anyhow::Result<()> {
+    let common_md = std::fs::read_to_string(format!("./hooq/docs{lang}/README.md"))?;
 
     let readme = Readme { common: common_md };
 
@@ -143,15 +145,17 @@ fn sync_readme(check_only: bool) -> anyhow::Result<()> {
     let github_template_md = std::fs::read_to_string("./docs/_readme_github.md.template")?;
     let github_readme_md = handlebars.render_template(&github_template_md, &readme)?;
 
+    let path = format!("./docs{lang}/README.md");
+
     if check_only {
-        let existing_github_readme_md = std::fs::read_to_string("./docs/README.md")?;
+        let existing_github_readme_md = std::fs::read_to_string(&path)?;
         if existing_github_readme_md != github_readme_md {
             return Err(anyhow::anyhow!(
                 "README.md is out of date. Please run the sync script to update it."
             ));
         }
     } else {
-        std::fs::write("./docs/README.md", github_readme_md)?;
+        std::fs::write(&path, github_readme_md)?;
     }
 
     // hooq-macros and hooq-helpers README.md
@@ -159,7 +163,7 @@ fn sync_readme(check_only: bool) -> anyhow::Result<()> {
     let sub_crates_readme_md = handlebars.render_template(&sub_crates_template_md, &readme)?;
 
     for sub_crates in ["hooq-macros", "hooq-helpers"] {
-        let path = format!("./{}/README.md", sub_crates);
+        let path = format!("./{sub_crates}/docs{lang}/README.md");
 
         if check_only {
             let existing_sub_crate_readme_md = std::fs::read_to_string(&path)?;

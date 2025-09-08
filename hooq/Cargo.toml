@@ -1,6 +1,7 @@
 
 [package]
 name = "hooq"
+readme = "docs/README.md"
 
 [package.authors]
 workspace = true

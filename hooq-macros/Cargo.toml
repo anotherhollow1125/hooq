@@ -10,6 +10,7 @@ license = { workspace = true }
 keywords = { workspace = true }
 categories = { workspace = true }
 exclude = ["*.expanded.rs"]
+readme = "docs/README.md"
 
 [lib]
 proc-macro = true

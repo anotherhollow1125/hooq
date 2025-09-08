@@ -14,7 +14,9 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "cargo"
-    directory: "/"
+    directories:
+      - "*"
+      - "**/*"
     schedule:
       interval: "weekly"
     groups:

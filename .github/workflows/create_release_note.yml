@@ -23,20 +23,21 @@ jobs:
             echo
             echo '<details>'
             echo '<summary>Files included in hooq-helpers</summary>'
-
+            echo
             echo "$helpers" | sed -e 's/^/- /g'
-
+            echo
             echo '</details>'
             echo '<details>'
             echo '<summary>Files included in hooq-macros</summary>'
-
+            echo
             echo "$macros" | sed -e 's/^/- /g'
-
+            echo
             echo '</details>'
             echo '<details>'
             echo '<summary>Files included in hooq</summary>'
-
+            echo
             echo "$hooq" | sed -e 's/^/- /g'
+            echo
             echo '</details>'
           } > notes-extra.md
       - name: Create Release Note

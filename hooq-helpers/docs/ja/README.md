@@ -116,7 +116,7 @@ cargo add hooq
 
 ```toml
 [dependencies]
-hooq = "*"
+hooq = "0.1.0"
 ```
 
 ## デフォルトで挿入されるメソッド
@@ -134,7 +134,7 @@ hooq = "*"
 
 `#[hooq::method(...)]` 不活性アトリビュートでフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` ( `anyhow` feature が必要 ) としてFlavorを指定した場合などは、そのFlavorにちなんだメソッドになります！
 
-用意されている Flavor は次のディレクトリから見られます: [hooq-macros/src/impls/flavor/presets/](../../../hooq-macros/src/impls/flavor/presets/)
+用意されている Flavor は次のディレクトリから見られます: [hooq-macros/src/impls/flavor/presets/](https://github.com/anotherhollow1125/hooq/tree/main/hooq-macros/src/impls/flavor/presets)
 
 (今後拡充予定です！)
 

@@ -37,9 +37,11 @@ fn main() -> anyhow::Result<()> {
     let Args { check } = Args::parse();
 
     let version = sync_sub_crate_versions(check)?;
+    let version_info = VersionInfo { version };
+
     cargo_sort(check)?;
     for lang in ["", "/ja"] {
-        sync_readme(lang, check)?;
+        sync_readme(lang, check, &version_info)?;
     }
 
     Ok::<(), anyhow::Error>(())

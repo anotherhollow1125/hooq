@@ -2,9 +2,12 @@ This is sub-crate for [hooq](../hooq) crate. Please use [hooq](../hooq) crate in
 
 # hooq
 
-A simple macro that inserts a method before the `?` operator
+A simple macro that inserts a method before `?`.
 
 The crate name comes from the acronym "HOOk for Question mark operator".
+
+> [!NOTE]
+> 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
 
 ```rust
 use hooq::hooq;
@@ -30,7 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-The above expands into the following.
+The above expands to the following.
 
 ```ignore
 use hooq::hooq;
@@ -106,22 +109,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Quick Start
 
-Add the crate with `cargo add` as shown below, or
+Add it with `cargo add` as shown below, or add it to your `Cargo.toml`.
 
 ```bash
 cargo add hooq
 ```
 
-add it to your `Cargo.toml`.
-
 ```toml
 [dependencies]
-hooq = "*"
+hooq = "0.1.0"
 ```
 
-## Methods Inserted by Default
+## Method inserted by default
 
-If nothing is specifically specified for `#[hooq]`, the following method is inserted:
+If you don't specify anything for `#[hooq]`, the following method is inserted by default.
 
 ```ignore
 .inspect_err(|e| {
@@ -132,9 +133,9 @@ If nothing is specifically specified for `#[hooq]`, the following method is inse
 })
 ```
 
-You can switch the hooked method with the inert attribute `#[hooq::method(...)]`. Also, if you specify a flavor like `#[hooq(log)]` or `#[hooq(anyhow)]` (requires the `anyhow` feature) at the macro call site, the inserted method will correspond to that flavor.
+You can switch the method to hook with the inert attribute `#[hooq::method(...)]`. Also, when you specify a flavor at the call site such as `#[hooq(log)]` or `#[hooq(anyhow)]` (the `anyhow` feature is required), the inserted method will change according to that flavor!
 
-Available flavors can be found here: [hooq-macros/src/impls/flavor/presets/](../../hooq-macros/src/impls/flavor/presets/)
+You can find the available flavors here: [hooq-macros/src/impls/flavor/presets/](https://github.com/anotherhollow1125/hooq/tree/main/hooq-macros/src/impls/flavor/presets)
 
 (More to come!)
 
@@ -142,10 +143,10 @@ Available flavors can be found here: [hooq-macros/src/impls/flavor/presets/](../
 
 (WIP)
 
-## Metavariables
+## Meta variables
 
 (WIP)
 
-## Flavors
+## Flavor
 
 (WIP)

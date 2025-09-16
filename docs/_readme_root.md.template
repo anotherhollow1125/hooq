@@ -4,6 +4,9 @@ A simple macro that inserts a method before `?`.
 
 The crate name comes from the acronym "HOOk for Question mark operator".
 
+> [!NOTE]
+> 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
+
 ```rust
 use hooq::hooq;
 

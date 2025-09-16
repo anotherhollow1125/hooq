@@ -117,7 +117,7 @@ cargo add hooq
 
 ```toml
 [dependencies]
-hooq = "0.1.0"
+hooq = "0.1.1"
 ```
 
 ## Method inserted by default

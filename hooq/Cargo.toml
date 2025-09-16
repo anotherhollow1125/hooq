@@ -37,12 +37,12 @@ full = ["anyhow", "log"]
 log = ["hooq-macros/log"]
 [dependencies.hooq-helpers]
 path = "../hooq-helpers"
-version = "0.1.0"
+version = "0.1.1"
 
 [dependencies.hooq-macros]
 default-features = false
 path = "../hooq-macros"
-version = "0.1.0"
+version = "0.1.1"
 
 [dev-dependencies]
 toml = "0.9.6"

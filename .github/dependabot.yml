@@ -22,3 +22,12 @@ updates:
       cargo-dependencies:
         patterns:
           - "*"
+  - package-ecosystem: "cargo"
+    directories:
+      - "*"
+    schedule:
+      interval: "weekly"
+    groups:
+      cargo-dependencies:
+        patterns:
+          - "*"

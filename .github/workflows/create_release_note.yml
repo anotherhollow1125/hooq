@@ -1,0 +1,54 @@
+name: Create Release Note
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+jobs:
+  create_release_note:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - run: |
+          cargo publish -p hooq-helpers --dry-run
+          cargo publish -p hooq-macros --dry-run
+          cargo publish -p hooq --dry-run
+      - name: Obtain Included Files List
+        id: included-files-list
+        run: |
+          helpers="$(cargo package --list -p hooq-helpers)"
+          macros="$(cargo package --list -p hooq-macros)"
+          hooq="$(cargo package --list -p hooq)"
+
+          {
+            echo 'Included files in this release:'
+            echo
+            echo
+            echo '<details>'
+            echo '<summary>Files included in hooq-helpers</summary>'
+            echo
+            echo "$helpers" | sed -e 's/^/- /g'
+            echo
+            echo '</details>'
+            echo '<details>'
+            echo '<summary>Files included in hooq-macros</summary>'
+            echo
+            echo "$macros" | sed -e 's/^/- /g'
+            echo
+            echo '</details>'
+            echo '<details>'
+            echo '<summary>Files included in hooq</summary>'
+            echo
+            echo "$hooq" | sed -e 's/^/- /g'
+            echo
+            echo '</details>'
+          } > notes-extra.md
+      - name: Create Release Note
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" --draft \
+            --generate-notes \
+            --notes-file notes-extra.md

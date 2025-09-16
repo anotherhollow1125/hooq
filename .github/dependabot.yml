@@ -14,17 +14,7 @@ updates:
         patterns:
           - "*"
   - package-ecosystem: "cargo"
-    directories:
-      - "**/*"
-    schedule:
-      interval: "weekly"
-    groups:
-      cargo-dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "cargo"
-    directories:
-      - "*"
+    directory: "/"
     schedule:
       interval: "weekly"
     groups:

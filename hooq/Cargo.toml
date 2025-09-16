@@ -45,4 +45,4 @@ path = "../hooq-macros"
 version = "0.1.0"
 
 [dev-dependencies]
-toml = "0.9.5"
+toml = "0.9.6"

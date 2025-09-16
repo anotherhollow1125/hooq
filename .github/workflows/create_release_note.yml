@@ -10,6 +10,10 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
+      - run: |
+          cargo publish -p hooq-helpers --dry-run
+          cargo publish -p hooq-macros --dry-run
+          cargo publish -p hooq --dry-run
       - name: Obtain Included Files List
         id: included-files-list
         run: |

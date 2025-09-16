@@ -1,11 +1,8 @@
 # hooq
 
-A simple macro that inserts a method before `?`.
+`?` 前にメソッドを挿入するシンプルなマクロ
 
-The crate name comes from the acronym "HOOk for Question mark operator".
-
-> [!NOTE]
-> 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
+クレート名の由来は "HOOk for Question mark operator" のアクロニム
 
 ```rust
 use hooq::hooq;
@@ -31,7 +28,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-The above expands to the following.
+上記が以下のように展開されます。
 
 ```ignore
 use hooq::hooq;
@@ -107,20 +104,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Quick Start
 
-Add it with `cargo add` as shown below, or add it to your `Cargo.toml`.
+以下に示すように `cargo add` で加えるか、
 
 ```bash
 cargo add hooq
 ```
 
+`Cargo.toml` に加えてください。
+
 ```toml
 [dependencies]
-hooq = "0.1.1"
+hooq = "{{version}}"
 ```
 
-## Method inserted by default
+## デフォルトで挿入されるメソッド
 
-If you don't specify anything for `#[hooq]`, the following method is inserted by default.
+`#[hooq]` として特に指定しなければ次のメソッドが挿入されます。
 
 ```ignore
 .inspect_err(|e| {
@@ -131,17 +130,17 @@ If you don't specify anything for `#[hooq]`, the following method is inserted by
 })
 ```
 
-You can switch the method to hook with the inert attribute `#[hooq::method(...)]`. Also, when you specify a flavor at the call site such as `#[hooq(log)]` or `#[hooq(anyhow)]` (the `anyhow` feature is required), the inserted method will change according to that flavor!
+`#[hooq::method(...)]` 不活性アトリビュートでフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` ( `anyhow` feature が必要 ) としてFlavorを指定した場合などは、そのFlavorにちなんだメソッドになります！
 
-You can find the available flavors here: [hooq-macros/src/impls/flavor/presets/](https://github.com/anotherhollow1125/hooq/tree/main/hooq-macros/src/impls/flavor/presets)
+用意されている Flavor は次のディレクトリから見られます: [hooq-macros/src/impls/flavor/presets/](https://github.com/anotherhollow1125/hooq/tree/main/hooq-macros/src/impls/flavor/presets)
 
-(More to come!)
+(今後拡充予定です！)
 
-## Attributes
+## アトリビュート
 
 (WIP)
 
-## Meta variables
+## メタ変数
 
 (WIP)
 

@@ -27,21 +27,28 @@ struct Readme {
     common: String,
 }
 
+#[derive(serde::Serialize)]
+struct VersionInfo {
+    version: String,
+}
+
 #[hooq(anyhow)]
 fn main() -> anyhow::Result<()> {
     let Args { check } = Args::parse();
 
-    sync_sub_crate_versions(check)?;
+    let version = sync_sub_crate_versions(check)?;
+    let version_info = VersionInfo { version };
+
     cargo_sort(check)?;
     for lang in ["", "/ja"] {
-        sync_readme(lang, check)?;
+        sync_readme(lang, check, &version_info)?;
     }
 
     Ok::<(), anyhow::Error>(())
 }
 
 #[hooq(anyhow)]
-fn sync_sub_crate_versions(check_only: bool) -> anyhow::Result<()> {
+fn sync_sub_crate_versions(check_only: bool) -> anyhow::Result<String> {
     let workspace_toml = toml::from_str::<toml::Value>(&std::fs::read_to_string("./Cargo.toml")?)?;
 
     if workspace_toml.as_table()?.get("workspace").is_none() {
@@ -105,7 +112,7 @@ fn sync_sub_crate_versions(check_only: bool) -> anyhow::Result<()> {
         )?;
     }
 
-    Ok::<(), anyhow::Error>(())
+    Ok::<String, anyhow::Error>(version.to_string())
 }
 
 // TOMLの上書きは順番がおかしくなるので、cargo-sortで整形
@@ -132,14 +139,17 @@ fn cargo_sort(check_only: bool) -> anyhow::Result<()> {
 }
 
 #[hooq(anyhow)]
-fn sync_readme(lang: &str, check_only: bool) -> anyhow::Result<()> {
-    let common_md = std::fs::read_to_string(format!("./hooq/docs{lang}/README.md"))?;
-
-    let readme = Readme { common: common_md };
+fn sync_readme(lang: &str, check_only: bool, version_info: &VersionInfo) -> anyhow::Result<()> {
+    let common_template_md =
+        std::fs::read_to_string(format!("./docs{lang}/_readme_root.md.template"))?;
 
     let mut handlebars = handlebars::Handlebars::new();
     handlebars.set_strict_mode(true);
     handlebars.register_escape_fn(handlebars::no_escape);
+
+    let common_md = handlebars.render_template(&common_template_md, &version_info)?;
+
+    let readme = Readme { common: common_md };
 
     // GitHub README.md
     let github_template_md = std::fs::read_to_string("./docs/_readme_github.md.template")?;
@@ -156,6 +166,23 @@ fn sync_readme(lang: &str, check_only: bool) -> anyhow::Result<()> {
         }
     } else {
         std::fs::write(&path, github_readme_md)?;
+    }
+
+    // hooq README.md
+    // コピーするのみ
+    let hooq_readme_md = readme.common.clone();
+
+    let path = format!("./hooq/docs{lang}/README.md");
+
+    if check_only {
+        let existing_hooq_readme_md = std::fs::read_to_string(&path)?;
+        if existing_hooq_readme_md != hooq_readme_md {
+            return Err(anyhow::anyhow!(
+                "README.md is out of date. Please run the sync script to update it."
+            ));
+        }
+    } else {
+        std::fs::write(&path, hooq_readme_md)?;
     }
 
     // hooq-macros and hooq-helpers README.md

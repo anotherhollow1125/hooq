@@ -12,10 +12,6 @@ jobs:
       id-token: write
     steps:
     - uses: actions/checkout@v5
-    - run: |
-        cargo publish -p hooq-helpers --dry-run
-        cargo publish -p hooq-macros --dry-run
-        cargo publish -p hooq --dry-run
     - uses: rust-lang/crates-io-auth-action@v1
       id: auth
     - run: cargo publish -p hooq-helpers

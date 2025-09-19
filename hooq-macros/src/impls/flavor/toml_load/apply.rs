@@ -16,6 +16,21 @@ pub fn update_flavors(
     Ok(())
 }
 
+fn split_include_or_not_include(idents: Vec<String>) -> (Vec<String>, Vec<String>) {
+    let mut include_idents = Vec::new();
+    let mut not_include_idents = Vec::new();
+
+    for ident in idents {
+        if let Some(stripped) = ident.strip_prefix('!') {
+            not_include_idents.push(stripped.to_string());
+        } else {
+            include_idents.push(ident);
+        }
+    }
+
+    (include_idents, not_include_idents)
+}
+
 fn update_flavor_inner(
     flavors: &mut HashMap<String, Flavor>,
     flavor_tables: HashMap<String, FlavorTable>,
@@ -28,6 +43,7 @@ fn update_flavor_inner(
             method,
             hook_targets,
             tail_expr_idents,
+            not_tail_expr_idents,
             result_types,
             hook_in_macros,
             bindings,
@@ -60,6 +76,8 @@ fn update_flavor_inner(
             .entry(flavor_name)
             .or_insert_with(|| base_flavor.clone());
 
+        let mut not_tail_expr_idents_setting = None;
+
         let trait_uses = trait_uses
             .into_iter()
             .map(|path| syn::parse_str::<Path>(&path))
@@ -86,7 +104,26 @@ expected: "?", "return", "tail_expr""#,
         }
 
         if let Some(tail_expr_idents) = tail_expr_idents {
+            let (tail_expr_idents, not_tail_expr_idents) =
+                split_include_or_not_include(tail_expr_idents);
+
             flavor.tail_expr_idents = tail_expr_idents;
+            not_tail_expr_idents_setting = match not_tail_expr_idents_setting {
+                Some(v) => Some([v, not_tail_expr_idents].concat()),
+                None if !not_tail_expr_idents.is_empty() => Some(not_tail_expr_idents),
+                None => None,
+            };
+        }
+
+        if let Some(not_tail_expr_idents) = not_tail_expr_idents {
+            not_tail_expr_idents_setting = match not_tail_expr_idents_setting {
+                Some(v) => Some([v, not_tail_expr_idents].concat()),
+                None => Some(not_tail_expr_idents),
+            };
+        }
+
+        if let Some(not_tail_expr_idents) = not_tail_expr_idents_setting {
+            flavor.not_tail_expr_idents = not_tail_expr_idents;
         }
 
         if let Some(result_types) = result_types {

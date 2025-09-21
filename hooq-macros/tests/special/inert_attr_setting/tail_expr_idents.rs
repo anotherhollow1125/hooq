@@ -1,5 +1,7 @@
 use hooq_macros::hooq;
 
+// not_tail_expr_idents も参照されたし
+//
 // なんだかんだ result_types の方にも
 // tail_expr_idents が関わる
 // テストを書いたのでそちらも参照されたし

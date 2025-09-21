@@ -9,12 +9,12 @@ pub fn a() -> anyhow::Result<()> {
 pub fn b() -> anyhow::Result<()> {
     a()?;
 
-    Result::<(), anyhow::Error>::Ok(())
+    Err(anyhow::anyhow!("error!"))
 }
 
 #[hooq(anyhow)]
 pub fn c() -> anyhow::Result<()> {
     b()?;
 
-    Result::<(), anyhow::Error>::Ok(())
+    Err(anyhow::anyhow!("error!"))
 }

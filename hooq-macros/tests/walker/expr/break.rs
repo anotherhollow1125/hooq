@@ -2,7 +2,7 @@ use hooq_macros::hooq;
 
 #[hooq]
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -26,7 +26,7 @@ fn func(flag: bool) -> Result<(), ()> {
         counter += 1;
 
         if counter > 3 {
-            break Ok(());
+            break Err(());
         }
     }?;
 
@@ -60,7 +60,7 @@ fn func(flag: bool) -> Result<(), ()> {
                         return Err(());
                     }
 
-                    Ok(())
+                    Err(())
                 }
             };
         }
@@ -69,5 +69,5 @@ fn func(flag: bool) -> Result<(), ()> {
 
 #[test]
 fn test() {
-    func(true).unwrap();
+    func(true).unwrap_err();
 }

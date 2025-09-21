@@ -21,13 +21,13 @@ fn func(flag: bool) -> Result<(), ()> {
                 return hoge().map(|_| ());
             }
 
-            Ok(())
+            Err(())
         }
         _ => {
             println!("Matched other case");
 
             if !flag {
-                return Ok(());
+                return Err(());
             }
 
             Err(())
@@ -37,5 +37,5 @@ fn func(flag: bool) -> Result<(), ()> {
 
 #[test]
 fn test() {
-    func(true).unwrap();
+    func(true).unwrap_err();
 }

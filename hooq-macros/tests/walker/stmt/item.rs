@@ -8,15 +8,15 @@ use hooq_macros::hooq;
 fn func() -> Result<(), ()> {
     #[hooq::tag = "func"]
     fn f() -> Result<(), ()> {
-        Ok(())
+        Err(())
     }
 
     f()?;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

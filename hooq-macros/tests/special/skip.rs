@@ -15,7 +15,7 @@ fn skip_target() -> Result<(), ()> {
     #[hooq::tag = "this attribute must be removed"]
     if enresult(false)? {
         #[hooq::tag = "this attribute must be removed"]
-        return Ok(());
+        return Err(());
     }
 
     if enresult(false)? {
@@ -32,13 +32,13 @@ fn skip_target() -> Result<(), ()> {
             #[hooq::tag = "this attribute must be removed"]
             enresult(())?;
 
-            return Ok(());
+            return Err(());
         }
 
-        Ok(())
+        Err(())
     };
 
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -64,11 +64,11 @@ fn complex_skip() -> Result<(), ()> {
 
                     return {
                         #[hooq::skip]
-                        Ok(())
+                        Err(())
                     };
                 }
 
-                Ok(())
+                Err(())
             } else {
                 enresult(())?;
 
@@ -96,10 +96,10 @@ fn complex_skip() -> Result<(), ()> {
                 Err(())
             }
         } else {
-            Ok(())
+            Err(())
         }
     } else {
-        Ok(())
+        Err(())
     }
 }
 
@@ -113,10 +113,10 @@ fn func() -> Result<(), ()> {
 
     complex_skip()?;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

@@ -1,13 +1,6 @@
 use hooq_macros::hooq;
 fn enresult<T>(v: T) -> Result<T, ()> {
     Ok(v)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/unary.rs";
-            let line = 5usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn func() -> Result<(), ()> {
     let b = !enresult(true)
@@ -59,7 +52,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

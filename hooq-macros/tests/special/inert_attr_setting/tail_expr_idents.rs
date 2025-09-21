@@ -11,6 +11,7 @@ fn enresult<T>(val: T) -> Result<T, ()> {
 #[hooq]
 #[hooq::result_types()]
 #[hooq::tail_expr_idents("Right", "Left")]
+#[hooq::not_tail_expr_idents()]
 fn func() -> Result<(), ()> {
     #[allow(non_snake_case)]
     let Right = || Result::<(), ()>::Ok(());

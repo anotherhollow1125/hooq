@@ -13,23 +13,9 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
             });
     }
     Ok(x - y)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/closure.rs";
-            let line = 8usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn two() -> Result<u32, ()> {
     Ok(2)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/closure.rs";
-            let line = 13usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn func() -> Result<(), ()> {
     let _ = |v| {
@@ -202,7 +188,7 @@ fn func() -> Result<(), ()> {
                 };
             })
     };
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

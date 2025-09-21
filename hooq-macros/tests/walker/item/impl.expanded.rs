@@ -1,7 +1,7 @@
 use hooq_macros::hooq;
 #[allow(unused)]
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/walker/item/impl.rs";
             let line = 6usize;
@@ -41,7 +41,7 @@ mod tmp {
                         );
                     };
                 })?;
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -55,7 +55,7 @@ mod tmp {
         }
         #[allow(unused)]
         fn i(&self) -> Result<(), ()> {
-            let res = Ok(());
+            let res = Err(());
             hoge()
                 .inspect(|_| {
                     {
@@ -79,7 +79,7 @@ mod tmp {
                         ::std::io::_print(format_args!("tag: {0}\n", "outer"));
                     };
                 })?;
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "outer"));
@@ -93,7 +93,7 @@ mod tmp {
                         ::std::io::_print(format_args!("tag: {0}\n", "inner"));
                     };
                 })?;
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "impl"));

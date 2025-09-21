@@ -10,7 +10,7 @@ async fn func(n: usize) -> Result<(), ()> {
             tokio::spawn(async move {
                 let _n = hoge()
                     .await
-                    .inspect(|_| {
+                    .inspect_err(|_| {
                         {
                             ::std::io::_print(format_args!("tag: {0}\n", "async block"));
                         };
@@ -20,8 +20,8 @@ async fn func(n: usize) -> Result<(), ()> {
                     ::std::io::_print(format_args!("Task {0} completed\n", i));
                 };
                 if i % 2 == 0 {
-                    return Err(())
-                        .inspect(|_| {
+                    return Err::<(), ()>(())
+                        .inspect_err(|_| {
                             {
                                 ::std::io::_print(
                                     format_args!("tag: {0}\n", "async block"),
@@ -29,8 +29,8 @@ async fn func(n: usize) -> Result<(), ()> {
                             };
                         });
                 }
-                Ok(())
-                    .inspect(|_| {
+                Err(())
+                    .inspect_err(|_| {
                         {
                             ::std::io::_print(format_args!("tag: {0}\n", "async block"));
                         };
@@ -45,13 +45,13 @@ async fn func(n: usize) -> Result<(), ()> {
                 ::std::io::_eprint(format_args!("An error occurred: {0:?}\n", e));
             };
         })
-        .inspect(|_| {
+        .inspect_err(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "async function"));
             };
         })?;
-    Ok(())
-        .inspect(|_| {
+    Err(())
+        .inspect_err(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "async function"));
             };

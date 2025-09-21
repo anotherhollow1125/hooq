@@ -2,13 +2,6 @@ use hooq_macros::hooq;
 fn get_bool(i: &mut usize) -> Result<bool, ()> {
     *i += 1;
     Ok(*i < 5)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/while.rs";
-            let line = 7usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn func() -> Result<(), ()> {
     let mut i = 0;
@@ -39,7 +32,7 @@ fn func() -> Result<(), ()> {
                         ::std::io::_print(format_args!("tag: {0}\n", "1"));
                     };
                 })?;
-            return Ok(())
+            return Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "1"));
@@ -83,7 +76,7 @@ fn func() -> Result<(), ()> {
             break;
         }
     }
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

@@ -1,13 +1,6 @@
 use hooq_macros::hooq;
 fn hoge() -> Result<usize, ()> {
     Ok(10)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/match.rs";
-            let line = 5usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn func(flag: bool) -> Result<(), ()> {
     match hoge()
@@ -36,7 +29,7 @@ fn func(flag: bool) -> Result<(), ()> {
                         };
                     });
             }
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
@@ -48,7 +41,7 @@ fn func(flag: bool) -> Result<(), ()> {
                 ::std::io::_print(format_args!("Matched other case\n"));
             };
             if !flag {
-                return Ok(())
+                return Err(())
                     .inspect(|_| {
                         {
                             ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

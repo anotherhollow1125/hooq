@@ -1,4 +1,6 @@
 [my-flavor-toml]
+tail_expr_idents = ["Ok", "Err"]
+not_tail_expr_idents = []
 method = """
 .inspect(|_| $checker.call())
 """

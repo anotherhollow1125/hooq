@@ -11,7 +11,7 @@ use hooq_macros::hooq;
 mod tmp {
     #[allow(unused)]
     fn hoge() -> Result<(), ()> {
-        Ok(())
+        Err(())
     }
 
     pub const STATIC_VAR: u32 = {
@@ -29,7 +29,7 @@ mod tmp {
                     return hoge();
                 }
 
-                Ok(())
+                Err(())
             };
 
             res

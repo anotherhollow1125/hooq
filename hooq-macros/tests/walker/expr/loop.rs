@@ -2,7 +2,7 @@ use hooq_macros::hooq;
 
 #[hooq]
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -17,7 +17,7 @@ fn func(flags: Vec<bool>) -> Result<(), ()> {
         hoge()?;
 
         if flags.next().unwrap_or(false) {
-            return Ok(());
+            return Err(());
         }
 
         if flags.next().unwrap_or(false) {
@@ -38,10 +38,10 @@ fn func(flags: Vec<bool>) -> Result<(), ()> {
         }
     }?;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func(vec![false, false, false, false, false, true]).unwrap();
+    func(vec![false, false, false, false, false, true]).unwrap_err();
 }

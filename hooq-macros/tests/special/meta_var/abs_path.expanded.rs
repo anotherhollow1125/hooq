@@ -1,6 +1,6 @@
 use hooq_macros::hooq;
 fn func() -> Result<(), ()> {
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_eprint(

@@ -2,18 +2,11 @@
 use hooq_macros::hooq;
 fn enresult<T>(t: T) -> Result<T, ()> {
     Ok(t)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/special/skip.rs";
-            let line = 7usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn skip_target() -> Result<(), ()> {
     enresult(())?;
     if enresult(false)? {
-        return Ok(());
+        return Err(());
     }
     if enresult(false)? {
         return enresult(());
@@ -22,11 +15,11 @@ fn skip_target() -> Result<(), ()> {
         enresult(())?;
         if enresult(false)? {
             enresult(())?;
-            return Ok(());
+            return Err(());
         }
-        Ok(())
+        Err(())
     };
-    Ok(())
+    Err(())
 }
 fn complex_skip() -> Result<(), ()> {
     let gen_bools = || enresult(true);
@@ -58,14 +51,14 @@ fn complex_skip() -> Result<(), ()> {
                                 ::std::io::_print(format_args!("tag: {0}\n", "2"));
                             };
                         })?;
-                    return { Ok(()) }
+                    return { Err(()) }
                         .inspect(|_| {
                             {
                                 ::std::io::_print(format_args!("tag: {0}\n", "2"));
                             };
                         });
                 }
-                Ok(())
+                Err(())
                     .inspect(|_| {
                         {
                             ::std::io::_print(format_args!("tag: {0}\n", "2"));
@@ -129,7 +122,7 @@ fn complex_skip() -> Result<(), ()> {
                     })
             }
         } else {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "2"));
@@ -137,7 +130,7 @@ fn complex_skip() -> Result<(), ()> {
                 })
         }
     } else {
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "1"));
@@ -163,7 +156,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

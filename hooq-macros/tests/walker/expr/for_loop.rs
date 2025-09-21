@@ -9,7 +9,7 @@ fn range(end: usize) -> Result<RangeInclusive<usize>, ()> {
 
 #[hooq]
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -34,10 +34,10 @@ fn func() -> Result<(), ()> {
         println!("{i} end");
     }
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap()
+    func().unwrap_err()
 }

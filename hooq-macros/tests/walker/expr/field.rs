@@ -24,10 +24,10 @@ fn func() -> Result<(), ()> {
     }
     .field;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

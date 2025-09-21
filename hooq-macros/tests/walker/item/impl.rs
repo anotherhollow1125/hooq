@@ -3,7 +3,7 @@ use hooq_macros::hooq;
 #[hooq]
 #[allow(unused)]
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -36,7 +36,7 @@ mod tmp {
         pub fn g() -> Result<(), ()> {
             hoge()?;
 
-            Ok(())
+            Err(())
         }
 
         #[hooq::tag = "impl related function 2 (not Result)"]
@@ -47,7 +47,7 @@ mod tmp {
         #[allow(unused)]
         #[hooq::tag = "impl method"]
         fn i(&self) -> Result<(), ()> {
-            let res = Ok(());
+            let res = Err(());
 
             hoge()?;
 
@@ -65,7 +65,7 @@ mod tmp {
             pub fn outer() -> Result<(), ()> {
                 hoge()?;
 
-                Ok(())
+                Err(())
             }
         }
 
@@ -74,7 +74,7 @@ mod tmp {
                 #[hooq::tag = "inner"]
                 hoge()?;
 
-                Ok(())
+                Err(())
             }
         }
     }
@@ -82,8 +82,8 @@ mod tmp {
 
 #[test]
 fn test() {
-    tmp::S::g().unwrap();
+    tmp::S::g().unwrap_err();
     let _ = tmp::S::h();
-    tmp::S::outer().unwrap();
-    tmp::S::inner().unwrap();
+    tmp::S::outer().unwrap_err();
+    tmp::S::inner().unwrap_err();
 }

@@ -7,7 +7,7 @@ fn b() -> Result<bool, ()> {
 }
 fn func() -> Result<(), ()> {
     let f = || {
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "inner"));

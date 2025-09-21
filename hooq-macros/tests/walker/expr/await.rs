@@ -11,13 +11,13 @@ async fn func() -> Result<(), ()> {
     let res = tokio::spawn(async {
         sleep(Duration::from_millis(10)).await;
 
-        Result::<(), ()>::Ok(())
+        Result::<(), ()>::Err(())
     })
     .await;
 
     res.map_err(|_| ())??;
 
-    Ok(())
+    Err(())
 }
 
 #[tokio::test]

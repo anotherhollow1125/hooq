@@ -12,7 +12,7 @@ mod tmp {
 
     #[allow(unused)]
     fn hoge() -> Result<(), ()> {
-        Ok(())
+        Err(())
     }
 
     pub trait Trit {
@@ -32,7 +32,7 @@ mod tmp {
         fn g() -> Result<(), ()> {
             hoge()?;
 
-            Ok(())
+            Err(())
         }
 
         #[hooq::tag = "related function 2 (not Result)"]
@@ -43,7 +43,7 @@ mod tmp {
         #[allow(unused)]
         #[hooq::tag = "method"]
         fn i(&self) -> Result<(), ()> {
-            let res = Ok(());
+            let res = Err(());
 
             hoge()?;
 
@@ -62,7 +62,7 @@ mod tmp {
             fn outer() -> Result<(), ()> {
                 hoge()?;
 
-                Ok(())
+                Err(())
             }
         }
 
@@ -72,7 +72,7 @@ mod tmp {
                 #[hooq::tag = "inner"]
                 hoge()?;
 
-                Ok(())
+                Err(())
             }
         }
     }
@@ -84,6 +84,6 @@ fn test() {
 
     impl tmp::Trit for T {}
 
-    <T as tmp::Trit>::g().unwrap();
+    <T as tmp::Trit>::g().unwrap_err();
     let _ = <T as tmp::Trit>::h();
 }

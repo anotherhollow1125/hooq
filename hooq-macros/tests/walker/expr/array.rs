@@ -1,7 +1,7 @@
 use hooq_macros::hooq;
 
 #[hooq]
-fn hoge() -> Result<u32, ()> {
+fn hoge() -> Result<u32, [u32; 2]> {
     Ok(10)
 }
 
@@ -10,8 +10,8 @@ fn hoge() -> Result<u32, ()> {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tag = "(no tag)"]
-fn func() -> Result<[u32; 2], ()> {
-    Ok([
+fn func() -> Result<(), [u32; 2]> {
+    Err([
         #[hooq::tag = "first"]
         hoge()?,
         #[hooq::tag = "second"]
@@ -21,5 +21,5 @@ fn func() -> Result<[u32; 2], ()> {
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

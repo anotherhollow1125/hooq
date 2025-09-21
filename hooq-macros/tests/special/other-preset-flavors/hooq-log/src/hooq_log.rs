@@ -9,12 +9,12 @@ pub fn a() -> Result<(), &'static str> {
 pub fn b() -> Result<(), &'static str> {
     a()?;
 
-    Ok(())
+    Err("err")
 }
 
 #[hooq(log)]
 pub fn c() -> Result<(), &'static str> {
     b()?;
 
-    Ok(())
+    Err("err")
 }

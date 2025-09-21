@@ -3,7 +3,7 @@ fn func() -> Result<(), ()> {
     #[allow(clippy::redundant_closure_call)]
     (|| {
         (|| {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "inner inner"));
@@ -15,7 +15,7 @@ fn func() -> Result<(), ()> {
                     ::std::io::_print(format_args!("tag: {0}\n", "inner"));
                 };
             })?;
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "inner"));
@@ -27,7 +27,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_print(format_args!("tag: {0}\n", "try"));
             };
         })?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

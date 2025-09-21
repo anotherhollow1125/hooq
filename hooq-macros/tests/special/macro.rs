@@ -43,7 +43,7 @@ fn func() -> Result<(), ()> {
                         return Err(());
                     }
 
-                    Ok(())
+                    Err(())
                 }
             };
         }
@@ -54,7 +54,7 @@ fn func() -> Result<(), ()> {
             fn outer() -> Result<(), ()> {
                 enresult(())?;
 
-                Ok(())
+                Err(())
             }
         }
 
@@ -76,7 +76,7 @@ fn func() -> Result<(), ()> {
                 #[hooq::tag = "inner"]
                 enresult(())?;
 
-                Ok(())
+                Err(())
             }
         }
     }
@@ -161,7 +161,7 @@ fn func() -> Result<(), ()> {
         "array": enresult([1, 2, 3])?,
     });
 
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -173,11 +173,11 @@ fn no_hooks_to_macros() -> Result<(), ()> {
 
     println!("{}", enresult("beep")?);
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
-    no_hooks_to_macros().unwrap();
+    func().unwrap_err();
+    no_hooks_to_macros().unwrap_err();
 }

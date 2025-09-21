@@ -1,7 +1,7 @@
 use hooq_macros::hooq;
 #[allow(unused)]
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/walker/expr/const.rs";
             let line = 6usize;
@@ -19,7 +19,7 @@ fn func() -> Result<(), ()> {
                         ::std::io::_print(format_args!("tag: {0}\n", "in const block"));
                     };
                 })?;
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "in const block"));
@@ -28,7 +28,7 @@ fn func() -> Result<(), ()> {
         }
         10
     };
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

@@ -31,6 +31,8 @@ mod custom {
     use hooq_macros::hooq;
 
     #[hooq(hook, trait_use(super::trait_define::CustomHook))]
+    #[hooq::tail_expr_idents("Ok", "Err")]
+    #[hooq::not_tail_expr_idents()]
     #[hooq::hoge = "hogehoge"]
     #[hooq::inner_struct = InnerStruct]
     #[hooq::array = [1, 2, 3]]

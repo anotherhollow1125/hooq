@@ -6,13 +6,6 @@ use hooq_macros::hooq;
 use util_macros::id;
 fn enresult<T>(t: T) -> Result<T, ()> {
     Ok(t)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/special/skip_detail.rs";
-            let line = 12usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn skip_stmts() -> Result<(), ()> {
     let _ = enresult(true)?
@@ -34,14 +27,14 @@ fn skip_stmts() -> Result<(), ()> {
                 };
             })?;
         if true {
-            return Ok(())
+            return Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "item"));
                     };
                 });
         }
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "item"));
@@ -92,7 +85,7 @@ fn skip_stmts() -> Result<(), ()> {
             ),
         );
     };
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
@@ -103,7 +96,7 @@ fn skip_item() -> Result<(), ()> {
     struct _S;
     impl _S {
         fn _method() -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -113,7 +106,7 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
         fn _method2() -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -123,7 +116,7 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
         fn _method3(&self) -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -133,7 +126,7 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
         fn _method4(&self) -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -145,7 +138,7 @@ fn skip_item() -> Result<(), ()> {
     }
     mod m {
         fn _mod_fn() -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -155,7 +148,7 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
         fn _mod_fn2() -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -205,7 +198,7 @@ fn skip_item() -> Result<(), ()> {
     });
     trait _T {
         fn _trait_method() -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -215,7 +208,7 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
         fn _trait_method2() -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -225,7 +218,7 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
         fn _trait_method3(&self) -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -235,7 +228,7 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
         fn _trait_method4(&self) -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -248,7 +241,7 @@ fn skip_item() -> Result<(), ()> {
     mod tmp {
         use super::*;
         fn _macro_fn() -> Result<(), ()> {
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "macro"));
@@ -265,7 +258,7 @@ fn skip_item() -> Result<(), ()> {
                                 ::std::io::_print(format_args!("tag: {0}\n", "macro"));
                             };
                         })?;
-                    Result::<(), ()>::Ok(())
+                    Result::<(), ()>::Err(())
                         .inspect(|_| {
                             {
                                 ::std::io::_print(format_args!("tag: {0}\n", "macro"));
@@ -275,7 +268,7 @@ fn skip_item() -> Result<(), ()> {
             )
         }
     }
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
@@ -431,7 +424,7 @@ fn skip_expr() -> Result<(), ()> {
                 };
             })?;
         if f {
-            return Ok(())
+            return Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "closure"));
@@ -467,7 +460,7 @@ fn skip_expr() -> Result<(), ()> {
                         );
                     };
                 })?;
-            Result::<(), ()>::Ok(())
+            Result::<(), ()>::Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "const block"));
@@ -637,8 +630,8 @@ fn skip_expr() -> Result<(), ()> {
         },
     )
         .0];
-    if let Ok(()) = enresult(())
-        && let Ok(()) = enresult(
+    if let Err(()) = enresult(())
+        && let Err(()) = enresult(
             (
                 enresult(enresult(()))?,
                 {
@@ -881,7 +874,7 @@ fn skip_expr() -> Result<(), ()> {
                         ::std::io::_print(format_args!("tag: {0}\n", "repeat"));
                     };
                 })?;
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "repeat"));
@@ -954,7 +947,7 @@ fn skip_expr() -> Result<(), ()> {
                 };
             })?;
     }
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
@@ -998,7 +991,7 @@ async fn skip_expr_async_await() -> Result<(), ()> {
                 enresult(())
             })?
             .await?;
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "async & await"));
@@ -1006,7 +999,7 @@ async fn skip_expr_async_await() -> Result<(), ()> {
             })
     }
         .await?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
@@ -1015,13 +1008,13 @@ async fn skip_expr_async_await() -> Result<(), ()> {
 }
 fn skip_last_ok() -> Result<(), ()> {
     let _: Result<(), ()> = {
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "last ok 1"));
                 };
             })
     };
-    let _: Result<(), ()> = { Ok(()) };
-    Ok(())
+    let _: Result<(), ()> = { Err(()) };
+    Err(())
 }

@@ -1,7 +1,7 @@
 use hooq_macros::hooq;
 fn func(flag: bool, flog: bool) -> Result<(), ()> {
     if flag {
-        return Ok(())
+        return Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "return"));
@@ -144,7 +144,7 @@ fn func(flag: bool, flog: bool) -> Result<(), ()> {
         v + 10
     }
     let _ = fuga(flog);
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

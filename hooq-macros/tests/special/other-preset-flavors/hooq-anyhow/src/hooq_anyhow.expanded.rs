@@ -51,11 +51,16 @@ pub fn b() -> anyhow::Result<()> {
                 )
             })
         })?;
-    Result::<(), anyhow::Error>::Ok(())
+    Err(
+            ::anyhow::__private::must_use({
+                let error = ::anyhow::__private::format_err(format_args!("error!"));
+                error
+            }),
+        )
         .with_context(|| {
             let file = "hooq_anyhow.rs";
             let line = 12usize;
-            let expr_str = "Result :: < (), anyhow :: Error > :: Ok(())";
+            let expr_str = "Err(anyhow :: anyhow! (\"error!\"))";
             let expr_str = if expr_str.len() > 20 {
                 ::alloc::__export::must_use({
                     ::alloc::fmt::format(
@@ -95,11 +100,16 @@ pub fn c() -> anyhow::Result<()> {
                 )
             })
         })?;
-    Result::<(), anyhow::Error>::Ok(())
+    Err(
+            ::anyhow::__private::must_use({
+                let error = ::anyhow::__private::format_err(format_args!("error!"));
+                error
+            }),
+        )
         .with_context(|| {
             let file = "hooq_anyhow.rs";
             let line = 19usize;
-            let expr_str = "Result :: < (), anyhow :: Error > :: Ok(())";
+            let expr_str = "Err(anyhow :: anyhow! (\"error!\"))";
             let expr_str = if expr_str.len() > 20 {
                 ::alloc::__export::must_use({
                     ::alloc::fmt::format(

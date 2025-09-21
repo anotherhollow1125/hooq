@@ -15,16 +15,16 @@ fn func() -> Result<(), ()> {
         fn _f() -> Result<(), ()> {
             hoge()?;
 
-            Ok(())
+            Err(())
         }
 
         5
     }];
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

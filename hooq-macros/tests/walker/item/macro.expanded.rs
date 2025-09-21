@@ -1,13 +1,6 @@
 use hooq_macros::hooq;
 fn enresult<T>(t: T) -> Result<T, ()> {
     Ok(t)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/item/macro.rs";
-            let line = 5usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 mod tmp {
     use util_macros::id;
@@ -16,7 +9,7 @@ mod tmp {
     macro_rules! tmp {
         () => {
             fn tmp_fn(flag : bool) -> Result < (), () > { if flag { enresult(()) ?;
-            return Err(()); } Ok(()) }
+            return Err(()); } Err(()) }
         };
     }
     pub fn outer() -> Result<(), ()> {
@@ -28,11 +21,11 @@ mod tmp {
                     );
                 };
             })?;
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0}, expr: {1}\n", "outer", "Ok(())"),
+                        format_args!("tag: {0}, expr: {1}\n", "outer", "Err(())"),
                     );
                 };
             })
@@ -71,11 +64,11 @@ mod tmp {
                     );
                 };
             })?;
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0}, expr: {1}\n", "(no tag)", "Ok(())"),
+                        format_args!("tag: {0}, expr: {1}\n", "(no tag)", "Err(())"),
                     );
                 };
             })

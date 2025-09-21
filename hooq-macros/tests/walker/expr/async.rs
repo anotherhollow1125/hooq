@@ -9,7 +9,7 @@ async fn hoge() -> Result<usize, ()> {
 
 #[hooq]
 #[hooq::tag = "async function"]
-#[hooq::method(.inspect(|_| {
+#[hooq::method(.inspect_err(|_| {
     println!("tag: {}", $tag);
 }))]
 #[hooq::tail_expr_idents("Ok", "Err")]
@@ -24,10 +24,10 @@ async fn func(n: usize) -> Result<(), ()> {
                 println!("Task {i} completed");
 
                 if i % 2 == 0 {
-                    return Err(());
+                    return Err::<(), ()>(());
                 }
 
-                Ok(())
+                Err(())
             })
         })
         .collect::<Vec<_>>();
@@ -36,7 +36,7 @@ async fn func(n: usize) -> Result<(), ()> {
         eprintln!("An error occurred: {e:?}");
     })?;
 
-    Ok(())
+    Err(())
 }
 
 #[tokio::test]

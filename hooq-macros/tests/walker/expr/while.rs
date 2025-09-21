@@ -25,7 +25,7 @@ fn func() -> Result<(), ()> {
         if !get_bool(&mut j)? {
             get_bool(&mut j)?;
 
-            return Ok(());
+            return Err(());
         }
 
         #[hooq::tag = "2"]
@@ -43,10 +43,10 @@ fn func() -> Result<(), ()> {
         }
     }
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

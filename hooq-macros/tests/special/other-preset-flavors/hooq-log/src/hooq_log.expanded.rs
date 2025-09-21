@@ -58,10 +58,10 @@ pub fn b() -> Result<(), &'static str> {
                 }
             };
         })?;
-    Ok(())
+    Err("err")
         .inspect_err(|e| {
             let line = 12usize;
-            let expr_str = "Ok(())";
+            let expr_str = "Err(\"err\")";
             let expr_str = if expr_str.len() > 20 {
                 ::alloc::__export::must_use({
                     ::alloc::fmt::format(
@@ -116,10 +116,10 @@ pub fn c() -> Result<(), &'static str> {
                 }
             };
         })?;
-    Ok(())
+    Err("err")
         .inspect_err(|e| {
             let line = 19usize;
-            let expr_str = "Ok(())";
+            let expr_str = "Err(\"err\")";
             let expr_str = if expr_str.len() > 20 {
                 ::alloc::__export::must_use({
                     ::alloc::fmt::format(

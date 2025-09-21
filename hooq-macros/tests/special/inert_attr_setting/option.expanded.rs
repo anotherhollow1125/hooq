@@ -1,13 +1,6 @@
 use hooq_macros::hooq;
 fn hoge() -> Result<(), ()> {
     Ok(())
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/special/inert_attr_setting/option.rs";
-            let line = 13usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn option_fn_1(flag: bool, flagflag: bool) -> Option<()> {
     hoge()

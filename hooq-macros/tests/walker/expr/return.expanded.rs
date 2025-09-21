@@ -1,7 +1,7 @@
 use hooq_macros::hooq;
 fn func(flag: bool) -> Result<(), ()> {
     if flag {
-        return Ok(())
+        return Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "return"));
@@ -15,7 +15,7 @@ fn func(flag: bool) -> Result<(), ()> {
         0
     }
     let _ = hoge(flag);
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

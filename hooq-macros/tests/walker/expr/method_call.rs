@@ -5,7 +5,7 @@ struct Strct;
 impl Strct {
     #[hooq]
     fn method(&self, _val1: usize, _val2: usize) -> Result<(), ()> {
-        Ok(())
+        Err(())
     }
 }
 
@@ -27,10 +27,10 @@ fn get_val() -> Result<usize, ()> {
 fn func() -> Result<(), ()> {
     get_strct()?.method(get_val()?, get_val()?)?;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

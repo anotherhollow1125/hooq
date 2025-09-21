@@ -1,13 +1,6 @@
 use hooq_macros::hooq;
 fn enresult<T>(v: T) -> Result<T, ()> {
     Ok(v)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/macro.rs";
-            let line = 5usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn func() -> Result<(), ()> {
     let _ = ::alloc::vec::from_elem(
@@ -62,11 +55,11 @@ fn func() -> Result<(), ()> {
                 })?,
         ]),
     );
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(
-                    format_args!("tag: {0}, expr: {1}\n", "(no tag)", "Ok(())"),
+                    format_args!("tag: {0}, expr: {1}\n", "(no tag)", "Err(())"),
                 );
             };
         })

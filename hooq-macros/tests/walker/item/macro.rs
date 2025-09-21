@@ -26,7 +26,7 @@ mod tmp {
                     return Err(());
                 }
 
-                Ok(())
+                Err(())
             }
         };
     }
@@ -36,7 +36,7 @@ mod tmp {
         pub fn outer() -> Result<(), ()> {
             enresult(())?;
 
-            Ok(())
+            Err(())
         }
     }
 
@@ -57,13 +57,13 @@ mod tmp {
             #[hooq::tag = "inner"]
             enresult(())?;
 
-            Ok(())
+            Err(())
         }
     }
 }
 
 #[test]
 fn test() {
-    tmp::outer().unwrap();
-    tmp::inner().unwrap();
+    tmp::outer().unwrap_err();
+    tmp::inner().unwrap_err();
 }

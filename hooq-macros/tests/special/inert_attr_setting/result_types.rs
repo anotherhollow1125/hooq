@@ -32,7 +32,7 @@ mod funcs {
             return enresult(());
         }
 
-        Ok(())
+        Err(())
     }
 
     // result_types に含まれていなくても、
@@ -40,6 +40,7 @@ mod funcs {
     // tail_expr_idents の方にはフックする
 
     #[hooq::tail_expr_idents("Ok")]
+    #[hooq::not_tail_expr_idents()]
     pub fn other_fn_2() -> NotTarget {
         if enresult(false)? {
             return enresult(());
@@ -59,7 +60,7 @@ mod funcs {
 
         if enresult(false)? {
             // 今度はこちらにはフックせず
-            return Ok(());
+            return Err(());
         }
 
         #[hooq::tail_expr_idents("Ok")]
@@ -71,7 +72,7 @@ mod funcs {
 fn test() {
     funcs::result_fn().unwrap();
     funcs::either_fn().unwrap();
-    funcs::other_fn_1().unwrap();
+    funcs::other_fn_1().unwrap_err();
     funcs::other_fn_2().unwrap();
     funcs::other_fn_3().unwrap();
 }

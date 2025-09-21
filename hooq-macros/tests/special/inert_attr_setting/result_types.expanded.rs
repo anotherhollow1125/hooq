@@ -4,15 +4,6 @@ mod funcs {
     type NotTarget = Result<(), ()>;
     fn enresult<T>(val: T) -> Result<T, ()> {
         Ok(val)
-            .inspect_err(|e| {
-                let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
-                let line = 11usize;
-                {
-                    ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
-                    );
-                };
-            })
     }
     pub fn result_fn() -> Result<(), ()> {
         if enresult(false)
@@ -96,13 +87,13 @@ mod funcs {
         {
             return enresult(());
         }
-        Ok(())
+        Err(())
     }
     pub fn other_fn_2() -> NotTarget {
         if enresult(false)
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
-                let line = 44usize;
+                let line = 45usize;
                 {
                     ::std::io::_eprint(
                         format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
@@ -115,7 +106,7 @@ mod funcs {
         if enresult(false)
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
-                let line = 48usize;
+                let line = 49usize;
                 {
                     ::std::io::_eprint(
                         format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
@@ -126,7 +117,7 @@ mod funcs {
             return Ok(())
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
-                    let line = 49usize;
+                    let line = 50usize;
                     {
                         ::std::io::_eprint(
                             format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
@@ -137,7 +128,7 @@ mod funcs {
         Ok(())
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
-                let line = 52usize;
+                let line = 53usize;
                 {
                     ::std::io::_eprint(
                         format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
@@ -149,7 +140,7 @@ mod funcs {
         if enresult(false)
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
-                let line = 56usize;
+                let line = 57usize;
                 {
                     ::std::io::_eprint(
                         format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
@@ -162,7 +153,7 @@ mod funcs {
         if enresult(false)
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
-                let line = 60usize;
+                let line = 61usize;
                 {
                     ::std::io::_eprint(
                         format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
@@ -170,12 +161,12 @@ mod funcs {
                 };
             })?
         {
-            return Ok(());
+            return Err(());
         }
         Ok(())
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
-                let line = 66usize;
+                let line = 67usize;
                 {
                     ::std::io::_eprint(
                         format_args!("[{0}:L{1}] {2:?}\n", path, line, e),

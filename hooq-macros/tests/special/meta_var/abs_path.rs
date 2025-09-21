@@ -9,10 +9,10 @@ use hooq_macros::hooq;
     eprintln!("abs_path: {}\n(abspath: {})", $abs_path, $abspath);
 }))]
 fn func() -> Result<(), ()> {
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

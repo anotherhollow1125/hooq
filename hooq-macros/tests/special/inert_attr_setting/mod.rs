@@ -12,6 +12,10 @@ use test_helpers::mask_project_root;
 fn test_special_inert_attr_setting() {
     mask_project_root("tests/special/inert_attr_setting", UnMask);
 
+    // マスクを外すファイルの更新が完了する前にテストが走ってしまっているようなので、
+    // 少しだけスリープを入れた
+    std::thread::sleep(std::time::Duration::from_millis(100));
+
     macrotest::expand_args(
         "tests/special/inert_attr_setting/hook_targets.rs",
         &["--ugly"],

@@ -12,6 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+    - name: Set up cargo sort
+      run: cargo install cargo-sort
     - name: Check docs are updated properly
       run: |
         .github/scripts/sync.rs -- --check

@@ -58,11 +58,11 @@ fn handle_tail_expr(
     }
 
     let (is_target_call, is_not_target_call) = if let Expr::Call(ExprCall { func, .. }) = expr
-        && let Expr::Path(ExprPath { path, .. }) = *func.clone()
+        && let Expr::Path(ExprPath { path, .. }) = func.as_ref()
     {
         (
-            context.path_is_hook_call_like_err(&path),
-            context.path_is_not_hook_call_like_ok(&path),
+            context.path_is_hook_call_like_err(path),
+            context.path_is_not_hook_call_like_ok(path),
         )
     } else {
         (false, false)
@@ -416,11 +416,11 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
 
                 let (is_target_call, is_not_target_call) =
                     if let Expr::Call(ExprCall { func, .. }) = &**expr
-                        && let Expr::Path(ExprPath { path, .. }) = *func.clone()
+                        && let Expr::Path(ExprPath { path, .. }) = func.as_ref()
                     {
                         (
-                            context.path_is_hook_call_like_err(&path),
-                            context.path_is_not_hook_call_like_ok(&path),
+                            context.path_is_hook_call_like_err(path),
+                            context.path_is_not_hook_call_like_ok(path),
                         )
                     } else {
                         (false, false)

@@ -146,8 +146,11 @@ expected: "?", "return", "tail_expr""#,
 
                 tail_expr_idents = Some(includes);
                 ignore_tail_expr_idents = match ignore_tail_expr_idents {
+                    // すでに存在する場合は追加
                     Some(v) => Some([v, not_includes].concat()),
+                    // 空ではないとき、指定が行われているので上書き
                     None if !not_includes.is_empty() => Some(not_includes),
+                    // 空であるときは、ignoreに当たる指定が行われていないのでそのまま (※)
                     None => None,
                 };
                 keeps.push(false);
@@ -159,7 +162,9 @@ expected: "?", "return", "tail_expr""#,
                 let strings = syn::parse2::<Strings>(tokens.clone())?;
 
                 ignore_tail_expr_idents = match ignore_tail_expr_idents {
+                    // すでに存在する場合は追加
                     Some(v) => Some([v, strings.0].concat()),
+                    // (※) とは異なり、こちらは空配列であっても指定のため上書き
                     None => Some(strings.0),
                 };
                 keeps.push(false);

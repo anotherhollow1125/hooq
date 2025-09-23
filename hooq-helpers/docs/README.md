@@ -7,7 +7,7 @@ This is sub-crate for [hooq](../hooq) crate. Please use [hooq](../hooq) crate in
 <h3>A simple macro that inserts a method before `?`.</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
-[![docs](https://img.shields.io/docsrs/hooq/0.1.1)](https://docs.rs/hooq/0.1.1/hooq/)
+[![docs](https://img.shields.io/docsrs/hooq/0.1.2)](https://docs.rs/hooq/0.1.2/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
 The crate name comes from the acronym "HOOk for Question mark operator".
@@ -16,7 +16,7 @@ The crate name comes from the acronym "HOOk for Question mark operator".
 
 Documentations:
 - tutorial: (mdBook coming soon.)
-- docs.rs: https://docs.rs/hooq/0.1.1/hooq/
+- docs.rs: https://docs.rs/hooq/0.1.2/hooq/
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
@@ -133,7 +133,7 @@ or add it to your `Cargo.toml`.
 
 ```toml
 [dependencies]
-hooq = "0.1.1"
+hooq = "0.1.2"
 ```
 
 ## Method inserted by default

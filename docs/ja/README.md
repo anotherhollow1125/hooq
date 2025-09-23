@@ -5,7 +5,7 @@
 <h3>`?` 前にメソッドを挿入するシンプルなマクロ</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
-[![docs](https://img.shields.io/docsrs/hooq/0.1.1)](https://docs.rs/hooq/0.1.1/hooq/)
+[![docs](https://img.shields.io/docsrs/hooq/0.1.2)](https://docs.rs/hooq/0.1.2/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
 クレート名の由来は "HOOk for Question mark operator" のアクロニム
@@ -14,7 +14,7 @@
 
 ドキュメント:
 - チュートリアル: (mdBook を準備中です)
-- docs.rs: https://docs.rs/hooq/0.1.1/hooq/
+- docs.rs: https://docs.rs/hooq/0.1.2/hooq/
 
 <hr />
 
@@ -128,7 +128,7 @@ cargo add hooq
 
 ```toml
 [dependencies]
-hooq = "0.1.1"
+hooq = "0.1.2"
 ```
 
 ## デフォルトで挿入されるメソッド

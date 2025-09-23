@@ -1,4 +1,4 @@
-name: Docs Check CI
+name: Docs and Cargo.toml sync check CI.
 
 on:
   push:

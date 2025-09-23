@@ -35,6 +35,27 @@ impl TailExprTargetKind {
     }
 }
 
+struct TargetCallCheckBools {
+    is_target_call: bool,
+    is_not_target_call: bool,
+}
+
+fn target_call_check_bools(context: &HookContext, expr: &Expr) -> TargetCallCheckBools {
+    if let Expr::Call(ExprCall { func, .. }) = expr
+        && let Expr::Path(ExprPath { path, .. }) = func.as_ref()
+    {
+        TargetCallCheckBools {
+            is_target_call: context.path_is_hook_call_like_err(path),
+            is_not_target_call: context.path_is_not_hook_call_like_ok(path),
+        }
+    } else {
+        TargetCallCheckBools {
+            is_target_call: false,
+            is_not_target_call: false,
+        }
+    }
+}
+
 fn handle_tail_expr(
     expr: &mut Expr,
     context: &HookContext,
@@ -57,16 +78,10 @@ fn handle_tail_expr(
         return Ok(());
     }
 
-    let (is_target_call, is_not_target_call) = if let Expr::Call(ExprCall { func, .. }) = expr
-        && let Expr::Path(ExprPath { path, .. }) = func.as_ref()
-    {
-        (
-            context.path_is_hook_call_like_err(path),
-            context.path_is_not_hook_call_like_ok(path),
-        )
-    } else {
-        (false, false)
-    };
+    let TargetCallCheckBools {
+        is_target_call,
+        is_not_target_call,
+    } = target_call_check_bools(&context, expr);
 
     // 以下のような場合にフック
     // - Err の時
@@ -414,17 +429,10 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
 
                 let q_span = expr_return.return_token.span();
 
-                let (is_target_call, is_not_target_call) =
-                    if let Expr::Call(ExprCall { func, .. }) = &**expr
-                        && let Expr::Path(ExprPath { path, .. }) = func.as_ref()
-                    {
-                        (
-                            context.path_is_hook_call_like_err(path),
-                            context.path_is_not_hook_call_like_ok(path),
-                        )
-                    } else {
-                        (false, false)
-                    };
+                let TargetCallCheckBools {
+                    is_target_call,
+                    is_not_target_call,
+                } = target_call_check_bools(&context, expr);
 
                 // Errの時 or 返り値型がResultでOkでない時フック
                 if is_target_call || context.return_type_is_result() && !is_not_target_call {

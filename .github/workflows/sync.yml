@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  docs-test:
+  sync-check:
     runs-on: ubuntu-latest
 
     steps:

@@ -1,0 +1,17 @@
+name: Docs Check CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  docs-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+    - name: Check docs are updated properly
+      run: |
+        .github/scripts/sync.rs -- --check

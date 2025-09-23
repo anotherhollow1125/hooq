@@ -43,7 +43,7 @@ fn update_flavor_inner(
             method,
             hook_targets,
             tail_expr_idents,
-            not_tail_expr_idents,
+            ignore_tail_expr_idents,
             result_types,
             hook_in_macros,
             bindings,
@@ -76,7 +76,7 @@ fn update_flavor_inner(
             .entry(flavor_name)
             .or_insert_with(|| base_flavor.clone());
 
-        let mut not_tail_expr_idents_setting = None;
+        let mut ignore_tail_expr_idents_setting = None;
 
         let trait_uses = trait_uses
             .into_iter()
@@ -104,26 +104,26 @@ expected: "?", "return", "tail_expr""#,
         }
 
         if let Some(tail_expr_idents) = tail_expr_idents {
-            let (tail_expr_idents, not_tail_expr_idents) =
+            let (tail_expr_idents, ignore_tail_expr_idents) =
                 split_include_or_not_include(tail_expr_idents);
 
             flavor.tail_expr_idents = tail_expr_idents;
-            not_tail_expr_idents_setting = match not_tail_expr_idents_setting {
-                Some(v) => Some([v, not_tail_expr_idents].concat()),
-                None if !not_tail_expr_idents.is_empty() => Some(not_tail_expr_idents),
+            ignore_tail_expr_idents_setting = match ignore_tail_expr_idents_setting {
+                Some(v) => Some([v, ignore_tail_expr_idents].concat()),
+                None if !ignore_tail_expr_idents.is_empty() => Some(ignore_tail_expr_idents),
                 None => None,
             };
         }
 
-        if let Some(not_tail_expr_idents) = not_tail_expr_idents {
-            not_tail_expr_idents_setting = match not_tail_expr_idents_setting {
-                Some(v) => Some([v, not_tail_expr_idents].concat()),
-                None => Some(not_tail_expr_idents),
+        if let Some(ignore_tail_expr_idents) = ignore_tail_expr_idents {
+            ignore_tail_expr_idents_setting = match ignore_tail_expr_idents_setting {
+                Some(v) => Some([v, ignore_tail_expr_idents].concat()),
+                None => Some(ignore_tail_expr_idents),
             };
         }
 
-        if let Some(not_tail_expr_idents) = not_tail_expr_idents_setting {
-            flavor.not_tail_expr_idents = not_tail_expr_idents;
+        if let Some(ignore_tail_expr_idents) = ignore_tail_expr_idents_setting {
+            flavor.ignore_tail_expr_idents = ignore_tail_expr_idents;
         }
 
         if let Some(result_types) = result_types {

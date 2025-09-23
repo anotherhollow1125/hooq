@@ -1,5 +1,5 @@
 mod hook_targets;
-mod not_tail_expr_idents;
+mod ignore_tail_expr_idents;
 mod option;
 mod result_types;
 mod tail_expr_idents;
@@ -17,7 +17,7 @@ fn test_special_inert_attr_setting() {
         &["--ugly"],
     );
     macrotest::expand_args(
-        "tests/special/inert_attr_setting/not_tail_expr_idents.rs",
+        "tests/special/inert_attr_setting/ignore_tail_expr_idents.rs",
         &["--ugly"],
     );
     macrotest::expand_args("tests/special/inert_attr_setting/option.rs", &["--ugly"]);

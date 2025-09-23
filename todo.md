@@ -193,7 +193,7 @@
 - [x] ドキュメント内の相対パスが軒並みバグっているのでURLに変更する
   - URL差し込み機能をスクリプトに設ける感じで
 - [ ] 「`Ok(...)` がtail exprに来る時はフックしない」などを表す `tail_expr_idents` のブラックリスト版を作る
-  - `not_tail_expr_idents` とかでいいか
+  - `ignore_tail_expr_idents` とかでいいか
 - [ ] `toml_load!()` マクロを廃止し、ファイルパスは各マクロ呼び出しで指定するようにする。キャッシュ機構のみ設ける
 - [ ] `#[hooq::method = flavor_name]` での上書きにする
 - [ ] README 整形

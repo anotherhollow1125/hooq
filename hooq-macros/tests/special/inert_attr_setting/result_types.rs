@@ -40,7 +40,7 @@ mod funcs {
     // tail_expr_idents の方にはフックする
 
     #[hooq::tail_expr_idents("Ok")]
-    #[hooq::not_tail_expr_idents()]
+    #[hooq::ignore_tail_expr_idents()]
     pub fn other_fn_2() -> NotTarget {
         if enresult(false)? {
             return enresult(());

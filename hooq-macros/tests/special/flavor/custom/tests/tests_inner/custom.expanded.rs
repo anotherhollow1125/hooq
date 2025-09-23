@@ -121,7 +121,7 @@ fn func3(flag: bool) -> Result<(), ()> {
             ::std::io::_print(
                 format_args!(
                     "Ok Value with: {1:?} & with tag: {0}\n",
-                    "[not_tail_expr_idents_test_1]", v
+                    "[ignore_tail_expr_idents_test_1]", v
                 ),
             );
         })
@@ -129,7 +129,7 @@ fn func3(flag: bool) -> Result<(), ()> {
             ::std::io::_eprint(
                 format_args!(
                     "Err Value with: {1:?} & with tag: {0}\n",
-                    "[not_tail_expr_idents_test_1]", e
+                    "[ignore_tail_expr_idents_test_1]", e
                 ),
             );
         })?;
@@ -144,7 +144,7 @@ fn func3(flag: bool) -> Result<(), ()> {
             ::std::io::_print(
                 format_args!(
                     "Ok Value with: {1:?} & with tag: {0}\n",
-                    "[not_tail_expr_idents_test_1]", v
+                    "[ignore_tail_expr_idents_test_1]", v
                 ),
             );
         })
@@ -152,7 +152,7 @@ fn func3(flag: bool) -> Result<(), ()> {
             ::std::io::_eprint(
                 format_args!(
                     "Err Value with: {1:?} & with tag: {0}\n",
-                    "[not_tail_expr_idents_test_1]", e
+                    "[ignore_tail_expr_idents_test_1]", e
                 ),
             );
         })
@@ -164,7 +164,7 @@ fn func4(flag: bool) -> Result<(), ()> {
             ::std::io::_print(
                 format_args!(
                     "Ok Value with: {1:?} & with tag: {0}\n",
-                    "[not_tail_expr_idents_test_2]", v
+                    "[ignore_tail_expr_idents_test_2]", v
                 ),
             );
         })
@@ -172,7 +172,7 @@ fn func4(flag: bool) -> Result<(), ()> {
             ::std::io::_eprint(
                 format_args!(
                     "Err Value with: {1:?} & with tag: {0}\n",
-                    "[not_tail_expr_idents_test_2]", e
+                    "[ignore_tail_expr_idents_test_2]", e
                 ),
             );
         })?;
@@ -187,7 +187,7 @@ fn func4(flag: bool) -> Result<(), ()> {
             ::std::io::_print(
                 format_args!(
                     "Ok Value with: {1:?} & with tag: {0}\n",
-                    "[not_tail_expr_idents_test_2]", v
+                    "[ignore_tail_expr_idents_test_2]", v
                 ),
             );
         })
@@ -195,7 +195,7 @@ fn func4(flag: bool) -> Result<(), ()> {
             ::std::io::_eprint(
                 format_args!(
                     "Err Value with: {1:?} & with tag: {0}\n",
-                    "[not_tail_expr_idents_test_2]", e
+                    "[ignore_tail_expr_idents_test_2]", e
                 ),
             );
         })

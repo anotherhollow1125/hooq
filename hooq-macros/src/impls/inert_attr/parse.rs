@@ -68,7 +68,7 @@ const INERT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are be
 - #[hooq::method(...)]
 - #[hooq::hook_targets(...)]
 - #[hooq::tail_expr_idents(...)]
-- #[hooq::not_tail_expr_idents(...)]
+- #[hooq::ignore_tail_expr_idents(...)]
 - #[hooq::result_types(...)]
 - #[hooq::hook_in_macros(...)]
 - #[hooq::binding(xxx = ...)]
@@ -84,8 +84,8 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     let hooq_hook_targets = parse_quote!(hooq::hook_targets);
     // #[hooq::tail_expr_idents("Err", ...)]
     let hooq_tail_expr_idents = parse_quote!(hooq::tail_expr_idents);
-    // #[hooq::not_tail_expr_idents("Ok", ...)]
-    let hooq_not_tail_expr_idents = parse_quote!(hooq::not_tail_expr_idents);
+    // #[hooq::ignore_tail_expr_idents("Ok", ...)]
+    let hooq_ignore_tail_expr_idents = parse_quote!(hooq::ignore_tail_expr_idents);
     // #[hooq::result_types("XxxResult", ...)]
     let hooq_result_types = parse_quote!(hooq::result_types);
     // #[hooq::hook_in_macros(true | false)]
@@ -102,7 +102,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     let mut method: Option<TokenStream> = None;
     let mut hook_targets: Option<HookTargetSwitch> = None;
     let mut tail_expr_idents: Option<Vec<String>> = None;
-    let mut not_tail_expr_idents: Option<Vec<String>> = None;
+    let mut ignore_tail_expr_idents: Option<Vec<String>> = None;
     let mut result_types: Option<Vec<String>> = None;
     let mut hook_in_macros: Option<bool> = None;
     let mut bindings: HashMap<String, Expr> = HashMap::new();
@@ -138,14 +138,14 @@ expected: "?", "return", "tail_expr""#,
                 }
             }
 
-            // tail_expr_idents or not_tail_expr_idents
+            // tail_expr_idents or ignore_tail_expr_idents
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_tail_expr_idents => {
                 let strings = syn::parse2::<Strings>(tokens.clone())?;
 
                 let (includes, not_includes) = strings.split_include_or_not_include();
 
                 tail_expr_idents = Some(includes);
-                not_tail_expr_idents = match not_tail_expr_idents {
+                ignore_tail_expr_idents = match ignore_tail_expr_idents {
                     Some(v) => Some([v, not_includes].concat()),
                     None if !not_includes.is_empty() => Some(not_includes),
                     None => None,
@@ -153,12 +153,12 @@ expected: "?", "return", "tail_expr""#,
                 keeps.push(false);
             }
 
-            // not_tail_expr_idents
-            // このフィールドのみ、tail_expr_idents と not_tail_expr_idents の両方から設定可能
-            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_not_tail_expr_idents => {
+            // ignore_tail_expr_idents
+            // このフィールドのみ、tail_expr_idents と ignore_tail_expr_idents の両方から設定可能
+            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_ignore_tail_expr_idents => {
                 let strings = syn::parse2::<Strings>(tokens.clone())?;
 
-                not_tail_expr_idents = match not_tail_expr_idents {
+                ignore_tail_expr_idents = match ignore_tail_expr_idents {
                     Some(v) => Some([v, strings.0].concat()),
                     None => Some(strings.0),
                 };
@@ -242,7 +242,7 @@ expected: "?", "return", "tail_expr""#,
         method,
         hook_targets,
         tail_expr_idents,
-        not_tail_expr_idents,
+        ignore_tail_expr_idents,
         result_types,
         hook_in_macros,
         bindings,

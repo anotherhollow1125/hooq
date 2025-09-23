@@ -5,10 +5,10 @@ fn enresult<T>(val: T) -> Result<T, ()> {
 }
 
 #[hooq]
-// Result 型を対象にしていても、not_tail_expr_idents に含まれる場合はフックされないことを確認する
+// Result 型を対象にしていても、ignore_tail_expr_idents に含まれる場合はフックされないことを確認する
 #[hooq::result_types("Result")]
 #[hooq::tail_expr_idents("Right")] // 両方含めるものは tail_expr_idents のテストで検証済み
-#[hooq::not_tail_expr_idents("Left")]
+#[hooq::ignore_tail_expr_idents("Left")]
 fn func() -> Result<(), ()> {
     #[allow(non_snake_case)]
     let Right = || Result::<(), ()>::Ok(());

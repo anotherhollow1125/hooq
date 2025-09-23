@@ -1,6 +1,6 @@
 [my-flavor-file]
 tail_expr_idents = ["Ok", "Err"]
-not_tail_expr_idents = []
+ignore_tail_expr_idents = []
 method = """
 .inspect(|_| $checker.call())
 """

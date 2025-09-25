@@ -1,13 +1,12 @@
 <div align="center">
+<a href="https://docs.rs/hooq/0.1.2/hooq/" target="_blank">
 <img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_eye_catch3.png" />
-
-<div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1rem;">
-<img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_logo.svg" width=50 />
+</a>
 <h1>hooq</h1>
-</div>
 
 <h3>`?` 前にメソッドを挿入するシンプルなマクロ</h3>
 
+<img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_logo.svg" width=30 />
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
 [![docs](https://img.shields.io/docsrs/hooq/0.1.2)](https://docs.rs/hooq/0.1.2/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)

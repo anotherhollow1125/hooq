@@ -10,7 +10,7 @@ fn func(flag: bool) -> Result<(), ()> {
     enresult(())?;
 
     if flag {
-        return Ok(());
+        return Err(());
     }
 
     Err(())

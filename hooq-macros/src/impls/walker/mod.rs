@@ -1,18 +1,19 @@
-use proc_macro2::Span;
 use quote::ToTokens;
 use syn::spanned::Spanned;
 use syn::{
     Expr, ExprCall, ExprMacro, ExprPath, ImplItem, ImplItemConst, ImplItemMacro, Item, ItemConst,
     ItemMacro, ItemMod, ItemStatic, Local, LocalInit, Stmt, StmtMacro, TraitItem, TraitItemConst,
-    TraitItemFn, TraitItemMacro, parse_quote,
+    TraitItemFn, TraitItemMacro,
 };
 
 use crate::impls::inert_attr::context::{HookContext, HookTargetKind};
 use crate::impls::inert_attr::{HandleInertAttrsResult, handle_inert_attrs};
 use crate::impls::utils::{closure_signature, get_attrs_from_expr};
 
+mod hook_expr;
 mod walk_macro;
 
+use hook_expr::hook_expr;
 use walk_macro::walk_macro;
 
 #[cfg(test)]
@@ -31,6 +32,27 @@ impl TailExprTargetKind {
             self,
             TailExprTargetKind::FnBlockTailExpr | TailExprTargetKind::BlockTailExpr
         )
+    }
+}
+
+struct TargetCallCheckBools {
+    is_target_call: bool,
+    is_not_target_call: bool,
+}
+
+fn target_call_check_bools(context: &HookContext, expr: &Expr) -> TargetCallCheckBools {
+    if let Expr::Call(ExprCall { func, .. }) = expr
+        && let Expr::Path(ExprPath { path, .. }) = func.as_ref()
+    {
+        TargetCallCheckBools {
+            is_target_call: context.path_is_hook_call_like_err(path),
+            is_not_target_call: context.path_is_not_hook_call_like_ok(path),
+        }
+    } else {
+        TargetCallCheckBools {
+            is_target_call: false,
+            is_not_target_call: false,
+        }
     }
 }
 
@@ -56,30 +78,20 @@ fn handle_tail_expr(
         return Ok(());
     }
 
-    // 関数orクロージャで返り値型がResultの時は常にフック
-    if context.return_type_is_result()
-        && tail_expr_target_kind == TailExprTargetKind::FnBlockTailExpr
+    let TargetCallCheckBools {
+        is_target_call,
+        is_not_target_call,
+    } = target_call_check_bools(&context, expr);
+
+    // 以下のような場合にフック
+    // - Err の時
+    // - 関数orクロージャで返り値型がResultでOkではない時
+    if is_target_call
+        || context.return_type_is_result()
+            && tail_expr_target_kind == TailExprTargetKind::FnBlockTailExpr
+            && !is_not_target_call
     {
         let q_span = expr.span();
-
-        hook_expr(
-            !is_skipped,
-            expr,
-            &expr_for_display,
-            HookTargetKind::TailExpr,
-            q_span,
-            &context,
-        )?;
-
-        return Ok(());
-    }
-
-    // Ok or Err の時にフック
-    if let Expr::Call(ExprCall { func, .. }) = expr
-        && let Expr::Path(ExprPath { path, .. }) = *func.clone()
-        && context.path_is_special_call_like_err(&path)
-    {
-        let q_span = path.span();
 
         hook_expr(
             !is_skipped,
@@ -378,35 +390,6 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
     }
 }
 
-fn hook_expr(
-    apply: bool,
-    expr_field: &mut Expr,
-    expr_field_for_display: &str,
-    kind: HookTargetKind,
-    q_span: Span,
-    context: &HookContext,
-) -> syn::Result<()> {
-    if !apply {
-        return Ok(());
-    }
-
-    context.counter.borrow_mut().count_up(kind);
-    let context = context.as_hook_info(expr_field_for_display, kind);
-
-    if !context.is_hook_target() {
-        return Ok(());
-    }
-
-    let method = context.generate_method(q_span)?;
-    let original_expr = expr_field.clone();
-
-    *expr_field = parse_quote! {
-        #original_expr #method
-    };
-
-    Ok(())
-}
-
 fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
     match expr {
         // 置換対象となるバリアント
@@ -446,17 +429,13 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
 
                 let q_span = expr_return.return_token.span();
 
-                let is_like_ok_or_err = if let Expr::Call(ExprCall { func, .. }) = &**expr
-                    && let Expr::Path(ExprPath { path, .. }) = *func.clone()
-                    && context.path_is_special_call_like_err(&path)
-                {
-                    true
-                } else {
-                    false
-                };
+                let TargetCallCheckBools {
+                    is_target_call,
+                    is_not_target_call,
+                } = target_call_check_bools(&context, expr);
 
-                // 返り値型がResultの時 or OkやErrの時フック
-                if is_like_ok_or_err || context.return_type_is_result() {
+                // Errの時 or 返り値型がResultでOkでない時フック
+                if is_target_call || context.return_type_is_result() && !is_not_target_call {
                     hook_expr(
                         !is_skipped,
                         expr,

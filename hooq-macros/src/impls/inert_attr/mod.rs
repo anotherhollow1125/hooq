@@ -14,6 +14,7 @@ pub struct InertAttribute {
     pub method: Option<TokenStream>,
     pub hook_targets: Option<HookTargetSwitch>,
     pub tail_expr_idents: Option<Vec<String>>,
+    pub ignore_tail_expr_idents: Option<Vec<String>>,
     pub result_types: Option<Vec<String>>,
     pub hook_in_macros: Option<bool>,
     pub bindings: HashMap<String, Expr>,

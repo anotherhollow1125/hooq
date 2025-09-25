@@ -17,7 +17,7 @@ fn func() -> Result<(), ()> {
         }
         let _ = g();
         let _ = h();
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "func"));
@@ -30,7 +30,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

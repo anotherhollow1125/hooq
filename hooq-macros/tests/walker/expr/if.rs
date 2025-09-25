@@ -16,18 +16,18 @@ fn func(flag: bool) -> Result<(), ()> {
         let _ = hoge()?;
 
         if flag {
-            return Ok(());
+            return Err(());
         }
 
         if false {
             return hoge().map(|_| ());
         }
 
-        Ok(())
+        Err(())
     } else if hoge()? {
         let _ = hoge()?;
 
-        Ok(())
+        Err(())
     } else {
         let _ = hoge()?;
 
@@ -37,5 +37,5 @@ fn func(flag: bool) -> Result<(), ()> {
 
 #[test]
 fn test() {
-    func(true).unwrap();
+    func(true).unwrap_err();
 }

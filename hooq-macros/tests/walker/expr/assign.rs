@@ -26,10 +26,10 @@ fn func() -> Result<(), ()> {
 
     let _ = x;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

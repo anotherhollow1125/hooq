@@ -33,10 +33,10 @@ fn skip_stmts() -> Result<(), ()> {
         enresult(())?;
 
         if true {
-            return Ok(());
+            return Err(());
         }
 
-        Ok(())
+        Err(())
     }
 
     #[hooq::tag = "expr"]
@@ -72,7 +72,7 @@ fn skip_stmts() -> Result<(), ()> {
         }?
     );
 
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -91,20 +91,20 @@ fn skip_item() -> Result<(), ()> {
     impl _S {
         #[hooq::tag = "sub scope in impl"]
         fn _method() -> Result<(), ()> {
-            Ok(())
+            Err(())
         }
 
         #[hooq::tag = "sub scope in impl"]
         #[hooq::skip] // nop
         fn _method2() -> Result<(), ()> {
-            Ok(())
+            Err(())
         }
 
         #[hooq::tag = "sub scope in impl"]
         #[hooq::skip] // nop
         id! {
             fn _method3(&self) -> Result<(), ()> {
-                Ok(())
+                Err(())
             }
         }
 
@@ -112,7 +112,7 @@ fn skip_item() -> Result<(), ()> {
         id! {
             #[hooq::skip] // nop
             fn _method4(&self) -> Result<(), ()> {
-                Ok(())
+                Err(())
             }
         }
     }
@@ -122,13 +122,13 @@ fn skip_item() -> Result<(), ()> {
     mod m {
         #[hooq::tag = "sub scope in mod"]
         fn _mod_fn() -> Result<(), ()> {
-            Ok(())
+            Err(())
         }
 
         #[hooq::tag = "sub scope in mod"]
         #[hooq::skip] // nop
         fn _mod_fn2() -> Result<(), ()> {
-            Ok(())
+            Err(())
         }
     }
 
@@ -161,20 +161,20 @@ fn skip_item() -> Result<(), ()> {
     trait _T {
         #[hooq::tag = "sub scope in trait"]
         fn _trait_method() -> Result<(), ()> {
-            Ok(())
+            Err(())
         }
 
         #[hooq::tag = "sub scope in trait"]
         #[hooq::skip] // nop
         fn _trait_method2() -> Result<(), ()> {
-            Ok(())
+            Err(())
         }
 
         #[hooq::tag = "sub scope in impl"]
         #[hooq::skip] // nop
         id! {
             fn _trait_method3(&self) -> Result<(), ()> {
-                Ok(())
+                Err(())
             }
         }
 
@@ -182,7 +182,7 @@ fn skip_item() -> Result<(), ()> {
         id! {
             #[hooq::skip] // nop
             fn _trait_method4(&self) -> Result<(), ()> {
-                Ok(())
+                Err(())
             }
         }
     }
@@ -194,7 +194,7 @@ fn skip_item() -> Result<(), ()> {
         #[hooq::skip] // nop
         id! {
             fn _macro_fn() -> Result<(), ()> {
-                Ok(())
+                Err(())
             }
         }
 
@@ -206,13 +206,13 @@ fn skip_item() -> Result<(), ()> {
                 Ok({
                     enresult(())?;
 
-                    Result::<(), ()>::Ok(())
+                    Result::<(), ()>::Err(())
                 }?)
             }
         }
     }
 
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -301,7 +301,7 @@ fn skip_expr() -> Result<(), ()> {
         let _ = enresult(enresult(())?)?;
 
         if f {
-            return Ok(());
+            return Err(());
         }
 
         enresult(enresult(enresult(()))?)?
@@ -314,7 +314,7 @@ fn skip_expr() -> Result<(), ()> {
             #[hooq::tag = "sub scope in const block"]
             enresult(())?;
 
-            Result::<(), ()>::Ok(())
+            Result::<(), ()>::Err(())
         };
     };
 
@@ -395,9 +395,9 @@ fn skip_expr() -> Result<(), ()> {
     enresult([enresult(())?, { enresult(())? }])?[(enresult(0)?, { enresult(())? }).0];
 
     #[hooq::tag = "let"]
-    if let Ok(()) = enresult(())
+    if let Err(()) = enresult(())
         && #[hooq::skip]
-        let Ok(()) = enresult((enresult(enresult(()))?, { enresult(())? }).0)?
+        let Err(()) = enresult((enresult(enresult(()))?, { enresult(())? }).0)?
     {
         enresult(())?;
     }
@@ -518,7 +518,7 @@ fn skip_expr() -> Result<(), ()> {
         fn _f() -> Result<(), ()> {
             enresult(())?;
 
-            Ok(())
+            Err(())
         }
 
         5
@@ -565,7 +565,7 @@ fn skip_expr() -> Result<(), ()> {
 
     // yield は検証方法が思いつかなかったためパス
 
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -592,11 +592,11 @@ async fn skip_expr_async_await() -> Result<(), ()> {
         })?
         .await?;
 
-        Ok(())
+        Err(())
     }
     .await?;
 
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -608,25 +608,25 @@ fn skip_last_ok() -> Result<(), ()> {
     let _: Result<(), ()> = #[hooq::tag = "last ok 1"]
     #[hooq::skip]
     {
-        Ok(())
+        Err(())
     };
 
     let _: Result<(), ()> = #[hooq::tag = "last ok 2"]
     {
         #[hooq::skip]
-        Ok(())
+        Err(())
     };
 
     #[hooq::tag = "last ok 3"]
     #[hooq::skip]
-    Ok(())
+    Err(())
 }
 
 #[tokio::test]
 async fn test() {
-    skip_stmts().unwrap();
-    skip_item().unwrap();
-    skip_expr().unwrap();
-    skip_expr_async_await().await.unwrap();
-    skip_last_ok().unwrap();
+    skip_stmts().unwrap_err();
+    skip_item().unwrap_err();
+    skip_expr().unwrap_err();
+    skip_expr_async_await().await.unwrap_err();
+    skip_last_ok().unwrap_err();
 }

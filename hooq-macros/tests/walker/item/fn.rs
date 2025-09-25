@@ -22,15 +22,15 @@ fn func() -> Result<(), ()> {
         let _ = g();
         let _ = h();
 
-        Ok(())
+        Err(())
     }
 
     f()?;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

@@ -1,8 +1,26 @@
-# hooq
+<div align="center">
+<img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_eye_catch3.png" />
 
-`?` 前にメソッドを挿入するシンプルなマクロ
+<div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1rem;">
+<img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_logo.svg" width=50 />
+<h1>hooq</h1>
+</div>
+
+<h3>`?` 前にメソッドを挿入するシンプルなマクロ</h3>
+
+[![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
+[![docs](https://img.shields.io/docsrs/hooq/0.1.2)](https://docs.rs/hooq/0.1.2/hooq/)
+[![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
 クレート名の由来は "HOOk for Question mark operator" のアクロニム
+
+</div>
+
+ドキュメント:
+- チュートリアル: (mdBook を準備中です)
+- docs.rs: https://docs.rs/hooq/0.1.2/hooq/
+
+<hr />
 
 ```rust
 use hooq::hooq;
@@ -12,9 +30,13 @@ use hooq::hooq;
 fn display_name(val: &toml::Value) -> Result<(), String> {
     let name = val.get("package")?.get("name")?.as_str()?;
 
+    #[hooq::skip_all]
+    if name.contains("4") {
+        return Err("name contains '4'. Guido Mista disallow this.".to_string());
+    }
+
     println!("name: {name}");
 
-    #[hooq::skip]
     Ok(())
 }
 
@@ -58,6 +80,9 @@ fn display_name(val: &toml::Value) -> Result<(), String> {
                 ),
             )
         }))?;
+    if name.contains("4") {
+        return Err("name contains '4'. Guido Mista disallow this.".to_string());
+    }
     {
         ::std::io::_print(format_args!("name: {0}\n", name));
     };
@@ -68,7 +93,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &std::fs::read_to_string("Cargo.toml")
                 .inspect_err(|e| {
                     let path = "/path/to/your/project/src/main.rs";
-                    let line = 16usize;
+                    let line = 20usize;
                     {
                         ::std::io::_eprint(
                             format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
@@ -78,7 +103,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .inspect_err(|e| {
             let path = "/path/to/your/project/src/main.rs";
-            let line = 16usize;
+            let line = 20usize;
             {
                 ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
@@ -86,19 +111,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     display_name(&cargo_toml)
         .inspect_err(|e| {
             let path = "/path/to/your/project/src/main.rs";
-            let line = 18usize;
+            let line = 22usize;
             {
                 ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
             };
         })?;
     Ok(())
-        .inspect_err(|e| {
-            let path = "/path/to/your/project/src/main.rs";
-            let line = 20usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 ```
 
@@ -114,7 +132,7 @@ cargo add hooq
 
 ```toml
 [dependencies]
-hooq = "0.1.1"
+hooq = "0.1.2"
 ```
 
 ## デフォルトで挿入されるメソッド

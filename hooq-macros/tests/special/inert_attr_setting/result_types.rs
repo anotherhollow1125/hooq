@@ -2,6 +2,7 @@ use hooq_macros::hooq;
 
 #[hooq]
 #[hooq::tail_expr_idents()]
+#[hooq::ignore_tail_expr_idents()]
 #[hooq::result_types("Result", "Either")]
 mod funcs {
     type Either = Result<(), ()>;
@@ -32,7 +33,7 @@ mod funcs {
             return enresult(());
         }
 
-        Ok(())
+        Err(())
     }
 
     // result_types に含まれていなくても、
@@ -59,10 +60,47 @@ mod funcs {
 
         if enresult(false)? {
             // 今度はこちらにはフックせず
-            return Ok(());
+            return Err(());
         }
 
         #[hooq::tail_expr_idents("Ok")]
+        Ok(())
+    }
+
+    // result_types に含まれていても、
+    // ignore_tail_expr_idents に含まれていれば
+    // フックしない
+
+    pub fn other_fn_4_1() -> Either {
+        if enresult(false)? {
+            return enresult(());
+        }
+
+        if enresult(false)? {
+            return Err(());
+        }
+
+        if enresult(false)? {
+            return Ok(());
+        }
+
+        Ok(())
+    }
+
+    #[hooq::ignore_tail_expr_idents("Ok")]
+    pub fn other_fn_4_2() -> Either {
+        if enresult(false)? {
+            return enresult(());
+        }
+
+        if enresult(false)? {
+            return Err(());
+        }
+
+        if enresult(false)? {
+            return Ok(());
+        }
+
         Ok(())
     }
 }
@@ -71,7 +109,9 @@ mod funcs {
 fn test() {
     funcs::result_fn().unwrap();
     funcs::either_fn().unwrap();
-    funcs::other_fn_1().unwrap();
+    funcs::other_fn_1().unwrap_err();
     funcs::other_fn_2().unwrap();
     funcs::other_fn_3().unwrap();
+    funcs::other_fn_4_1().unwrap();
+    funcs::other_fn_4_2().unwrap();
 }

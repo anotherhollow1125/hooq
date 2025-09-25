@@ -3,7 +3,7 @@ use tokio::time::{Duration, sleep};
 async fn func() -> Result<(), ()> {
     let res = tokio::spawn(async {
             sleep(Duration::from_millis(10)).await;
-            Result::<(), ()>::Ok(())
+            Result::<(), ()>::Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "async function"));
@@ -22,7 +22,7 @@ async fn func() -> Result<(), ()> {
                 ::std::io::_print(format_args!("tag: {0}\n", "async function"));
             };
         })?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "async function"));

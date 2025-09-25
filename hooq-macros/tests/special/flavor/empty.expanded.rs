@@ -5,7 +5,7 @@ fn enresult<T>(val: T) -> Result<T, ()> {
 fn func(flag: bool) -> Result<(), ()> {
     enresult(())?;
     if flag {
-        return Ok(());
+        return Err(());
     }
     Err(())
 }

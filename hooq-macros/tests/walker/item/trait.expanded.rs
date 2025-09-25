@@ -3,7 +3,7 @@ mod tmp {
     use util_macros::id;
     #[allow(unused)]
     fn hoge() -> Result<(), ()> {
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
@@ -37,7 +37,7 @@ mod tmp {
                         );
                     };
                 })?;
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(
@@ -51,7 +51,7 @@ mod tmp {
         }
         #[allow(unused)]
         fn i(&self) -> Result<(), ()> {
-            let res = Ok(());
+            let res = Err(());
             hoge()
                 .inspect(|_| {
                     {
@@ -76,7 +76,7 @@ mod tmp {
                         ::std::io::_print(format_args!("tag: {0}\n", "outer"));
                     };
                 })?;
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "outer"));
@@ -91,7 +91,7 @@ mod tmp {
                         ::std::io::_print(format_args!("tag: {0}\n", "inner"));
                     };
                 })?;
-            Ok(())
+            Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

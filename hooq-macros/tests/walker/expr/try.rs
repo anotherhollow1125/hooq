@@ -12,14 +12,14 @@ fn func() -> Result<(), ()> {
     (#[hooq::tag = "inner"]
     || {
         (#[hooq::tag = "inner inner"]
-        || Ok(()))()?;
-        Ok(())
+        || Err(()))()?;
+        Err(())
     })()?;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

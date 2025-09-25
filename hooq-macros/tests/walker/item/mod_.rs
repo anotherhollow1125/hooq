@@ -7,11 +7,11 @@ use hooq_macros::hooq;
 #[hooq::tag = "mod"]
 mod tmp {
     pub fn func() -> Result<(), ()> {
-        Ok(())
+        Err(())
     }
 }
 
 #[test]
 fn test() {
-    tmp::func().unwrap();
+    tmp::func().unwrap_err();
 }

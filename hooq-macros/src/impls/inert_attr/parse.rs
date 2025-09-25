@@ -46,11 +46,29 @@ impl Parse for Strings {
     }
 }
 
+impl Strings {
+    fn split_include_or_not_include(self) -> (Vec<String>, Vec<String>) {
+        let mut includes = Vec::new();
+        let mut not_includes = Vec::new();
+
+        for s in self.0 {
+            if let Some(stripped) = s.strip_prefix('!') {
+                not_includes.push(stripped.to_string());
+            } else {
+                includes.push(s);
+            }
+        }
+
+        (includes, not_includes)
+    }
+}
+
 const INERT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
 
 - #[hooq::method(...)]
 - #[hooq::hook_targets(...)]
 - #[hooq::tail_expr_idents(...)]
+- #[hooq::ignore_tail_expr_idents(...)]
 - #[hooq::result_types(...)]
 - #[hooq::hook_in_macros(...)]
 - #[hooq::binding(xxx = ...)]
@@ -64,8 +82,10 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     let hooq_method = parse_quote!(hooq::method);
     // #[hooq::hook_targets("return", "?", ...)]
     let hooq_hook_targets = parse_quote!(hooq::hook_targets);
-    // #[hooq::tail_expr_idents("Ok", ...)]
+    // #[hooq::tail_expr_idents("Err", ...)]
     let hooq_tail_expr_idents = parse_quote!(hooq::tail_expr_idents);
+    // #[hooq::ignore_tail_expr_idents("Ok", ...)]
+    let hooq_ignore_tail_expr_idents = parse_quote!(hooq::ignore_tail_expr_idents);
     // #[hooq::result_types("XxxResult", ...)]
     let hooq_result_types = parse_quote!(hooq::result_types);
     // #[hooq::hook_in_macros(true | false)]
@@ -82,6 +102,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     let mut method: Option<TokenStream> = None;
     let mut hook_targets: Option<HookTargetSwitch> = None;
     let mut tail_expr_idents: Option<Vec<String>> = None;
+    let mut ignore_tail_expr_idents: Option<Vec<String>> = None;
     let mut result_types: Option<Vec<String>> = None;
     let mut hook_in_macros: Option<bool> = None;
     let mut bindings: HashMap<String, Expr> = HashMap::new();
@@ -117,10 +138,35 @@ expected: "?", "return", "tail_expr""#,
                 }
             }
 
-            // tail_expr_idents
+            // tail_expr_idents or ignore_tail_expr_idents
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_tail_expr_idents => {
                 let strings = syn::parse2::<Strings>(tokens.clone())?;
-                tail_expr_idents = Some(strings.0);
+
+                let (includes, not_includes) = strings.split_include_or_not_include();
+
+                tail_expr_idents = Some(includes);
+                ignore_tail_expr_idents = match ignore_tail_expr_idents {
+                    // すでに存在する場合は追加
+                    Some(v) => Some([v, not_includes].concat()),
+                    // 空ではないとき、指定が行われているので上書き
+                    None if !not_includes.is_empty() => Some(not_includes),
+                    // 空であるときは、ignoreに当たる指定が行われていないのでそのまま (※)
+                    None => None,
+                };
+                keeps.push(false);
+            }
+
+            // ignore_tail_expr_idents
+            // このフィールドのみ、tail_expr_idents と ignore_tail_expr_idents の両方から設定可能
+            Meta::List(MetaList { path, tokens, .. }) if path == &hooq_ignore_tail_expr_idents => {
+                let strings = syn::parse2::<Strings>(tokens.clone())?;
+
+                ignore_tail_expr_idents = match ignore_tail_expr_idents {
+                    // すでに存在する場合は追加
+                    Some(v) => Some([v, strings.0].concat()),
+                    // (※) とは異なり、こちらは空配列であっても指定のため上書き
+                    None => Some(strings.0),
+                };
                 keeps.push(false);
             }
 
@@ -201,6 +247,7 @@ expected: "?", "return", "tail_expr""#,
         method,
         hook_targets,
         tail_expr_idents,
+        ignore_tail_expr_idents,
         result_types,
         hook_in_macros,
         bindings,

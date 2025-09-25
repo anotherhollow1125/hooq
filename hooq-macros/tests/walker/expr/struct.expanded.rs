@@ -15,13 +15,6 @@ union Unon {
 }
 fn hoge() -> Result<u32, ()> {
     Ok(10)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/struct.rs";
-            let line = 22usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn func() -> Result<(), ()> {
     let _ = Strct {
@@ -74,7 +67,7 @@ fn func() -> Result<(), ()> {
                 };
             })?,
     };
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

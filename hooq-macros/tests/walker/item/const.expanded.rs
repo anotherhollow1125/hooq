@@ -2,7 +2,7 @@ use hooq_macros::hooq;
 mod tmp {
     #[allow(unused)]
     fn hoge() -> Result<(), ()> {
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
@@ -34,7 +34,7 @@ mod tmp {
                             };
                         });
                 }
-                Ok(())
+                Err(())
                     .inspect(|_| {
                         {
                             ::std::io::_print(format_args!("tag: {0}\n", "deep"));

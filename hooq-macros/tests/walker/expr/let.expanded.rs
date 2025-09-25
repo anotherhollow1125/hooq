@@ -1,13 +1,6 @@
 use hooq_macros::hooq;
 fn hoge(v: usize) -> Result<usize, ()> {
     Ok(v + 1)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/let.rs";
-            let line = 5usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn func() -> Result<(), ()> {
     if let 11 = hoge(10)

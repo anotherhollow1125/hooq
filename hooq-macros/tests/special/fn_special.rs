@@ -12,7 +12,7 @@ use hooq_macros::hooq;
 fn func(flag: bool, flog: bool) -> Result<(), ()> {
     #[hooq::tag = "return"]
     if flag {
-        return Ok(());
+        return Err(());
     }
 
     #[hooq::tag = "not result"]
@@ -78,10 +78,10 @@ fn func(flag: bool, flog: bool) -> Result<(), ()> {
 
     let _ = fuga(flog);
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func(true, true).unwrap();
+    func(true, true).unwrap_err();
 }

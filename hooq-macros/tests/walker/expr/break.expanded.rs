@@ -1,6 +1,6 @@
 use hooq_macros::hooq;
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/walker/expr/break.rs";
             let line = 5usize;
@@ -20,7 +20,7 @@ fn func(flag: bool) -> Result<(), ()> {
     loop {
         counter += 1;
         if counter > 3 {
-            break Ok(());
+            break Err(());
         }
     }
         .inspect(|_| {
@@ -58,7 +58,7 @@ fn func(flag: bool) -> Result<(), ()> {
                                 };
                             });
                     }
-                    Ok(())
+                    Err(())
                         .inspect(|_| {
                             {
                                 ::std::io::_print(format_args!("tag: {0}\n", "nest"));

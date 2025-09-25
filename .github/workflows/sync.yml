@@ -1,0 +1,19 @@
+name: Docs and Cargo.toml sync check CI.
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  sync-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+    - name: Set up cargo sort
+      run: cargo install cargo-sort
+    - name: Check docs are updated properly
+      run: |
+        .github/scripts/sync.rs -- --check

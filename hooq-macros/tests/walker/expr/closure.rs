@@ -58,10 +58,10 @@ fn func() -> Result<(), ()> {
         })
     };
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

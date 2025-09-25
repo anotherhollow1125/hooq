@@ -1,13 +1,6 @@
 use hooq_macros::hooq;
 fn hoge() -> Result<(), ()> {
     Ok(())
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
-            let line = 5usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn default(flag: bool) -> Result<(), ()> {
     hoge()
@@ -19,7 +12,7 @@ fn default(flag: bool) -> Result<(), ()> {
             };
         })?;
     if !flag {
-        return Ok(())
+        return Err(())
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
                 let line = 13usize;
@@ -30,7 +23,7 @@ fn default(flag: bool) -> Result<(), ()> {
                 };
             });
     }
-    Ok(())
+    Err(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
             let line = 16usize;
@@ -49,14 +42,14 @@ fn q_only(flag: bool) -> Result<(), ()> {
             };
         })?;
     if !flag {
-        return Ok(());
+        return Err(());
     }
-    Ok(())
+    Err(())
 }
 fn return_only(flag: bool) -> Result<(), ()> {
     hoge()?;
     if !flag {
-        return Ok(())
+        return Err(())
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
                 let line = 37usize;
@@ -67,14 +60,14 @@ fn return_only(flag: bool) -> Result<(), ()> {
                 };
             });
     }
-    Ok(())
+    Err(())
 }
 fn tailexpr_only(flag: bool) -> Result<(), ()> {
     hoge()?;
     if !flag {
-        return Ok(());
+        return Err(());
     }
-    Ok(())
+    Err(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
             let line = 52usize;
@@ -93,7 +86,7 @@ fn return_and_question(flag: bool) -> Result<(), ()> {
             };
         })?;
     if !flag {
-        return Ok(())
+        return Err(())
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
                 let line = 61usize;
@@ -104,5 +97,5 @@ fn return_and_question(flag: bool) -> Result<(), ()> {
                 };
             });
     }
-    Ok(())
+    Err(())
 }

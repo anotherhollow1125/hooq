@@ -1,7 +1,7 @@
 use hooq_macros::hooq;
 fn func() -> Result<(), ()> {
     fn f() -> Result<(), ()> {
-        Ok(())
+        Err(())
             .inspect(|_| {
                 {
                     ::std::io::_print(format_args!("tag: {0}\n", "func"));
@@ -14,7 +14,7 @@ fn func() -> Result<(), ()> {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

@@ -14,8 +14,8 @@ use MaskMode::*;
 // /home/user_name/../hooq <-> <hooq_root>
 pub fn mask_project_root(target_path: &str, mode: MaskMode) {
     // *.expanded.rs ファイルのリストを取得
-    let files = glob(format!("{target_path}/**/*.expanded.rs").as_str())
-        .expect("Failed to read glob pattern");
+    let files =
+        glob(format!("{target_path}/*.expanded.rs").as_str()).expect("Failed to read glob pattern");
 
     // プロジェクトルートを取得
     let project_root = std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR is not set");

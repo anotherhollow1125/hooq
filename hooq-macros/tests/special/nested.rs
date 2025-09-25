@@ -2,7 +2,7 @@ use hooq_macros::hooq;
 
 #[hooq]
 fn func(_: ()) -> Result<(), ()> {
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -18,10 +18,10 @@ expr: {expr}");
 }))]
 fn nested() -> Result<(), ()> {
     func(func(func(func(())?)?)?)?;
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    nested().unwrap();
+    nested().unwrap_err();
 }

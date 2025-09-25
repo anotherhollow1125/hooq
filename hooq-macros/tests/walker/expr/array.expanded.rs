@@ -1,16 +1,9 @@
 use hooq_macros::hooq;
-fn hoge() -> Result<u32, ()> {
+fn hoge() -> Result<u32, [u32; 2]> {
     Ok(10)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/array.rs";
-            let line = 5usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
-fn func() -> Result<[u32; 2], ()> {
-    Ok([
+fn func() -> Result<(), [u32; 2]> {
+    Err([
             hoge()
                 .inspect(|_| {
                     {

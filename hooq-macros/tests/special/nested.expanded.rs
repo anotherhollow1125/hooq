@@ -1,6 +1,6 @@
 use hooq_macros::hooq;
 fn func(_: ()) -> Result<(), ()> {
-    Ok(())
+    Err(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/nested.rs";
             let line = 5usize;
@@ -68,11 +68,11 @@ fn nested() -> Result<(), ()> {
                 );
             };
         })?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             let path = "<hooq_root>/tests/special/nested.rs";
             let line = 21usize;
-            let expr = "Ok(())";
+            let expr = "Err(())";
             {
                 ::std::io::_eprint(
                     format_args!(

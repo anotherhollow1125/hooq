@@ -17,7 +17,7 @@ fn func() -> Result<(), ()> {
     #[hooq::tag = "closure"]
     let f = || {
         #[hooq::tag = "inner"]
-        Ok(())
+        Err(())
     };
 
     #[hooq::tag = "closure 2"]
@@ -40,5 +40,5 @@ fn func() -> Result<(), ()> {
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

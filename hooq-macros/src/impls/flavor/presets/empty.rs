@@ -15,6 +15,7 @@ pub fn empty_flavor() -> Flavor {
             tail_expr: false,
         },
         tail_expr_idents: Vec::new(),
+        ignore_tail_expr_idents: Vec::new(),
         result_types: Vec::new(),
         hook_in_macros: false,
         bindings: HashMap::new(),

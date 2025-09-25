@@ -17,6 +17,7 @@ pub struct FlavorTable {
     pub method: Option<String>,
     pub hook_targets: Option<Vec<String>>,
     pub tail_expr_idents: Option<Vec<String>>,
+    pub ignore_tail_expr_idents: Option<Vec<String>>,
     pub result_types: Option<Vec<String>>,
     pub hook_in_macros: Option<bool>,
     #[serde(default)]
@@ -39,6 +40,7 @@ method = """.inspect_err(|_| {
 })"""
 hook_targets = ["?"]
 tail_expr_idents = ["Err"]
+ignore_tail_expr_idents = ["Ok"]
 hook_in_macros = true
 bindings = { flag = "false" }
 

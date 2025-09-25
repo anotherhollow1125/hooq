@@ -2,7 +2,7 @@ use hooq_macros::hooq;
 
 #[hooq]
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -26,14 +26,14 @@ fn func(flag: bool) -> Result<(), ()> {
                 return hoge();
             }
 
-            Ok(())
+            Err(())
         },
     );
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func(true).unwrap();
+    func(true).unwrap_err();
 }

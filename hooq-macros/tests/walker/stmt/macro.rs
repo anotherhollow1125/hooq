@@ -20,10 +20,10 @@ fn func() -> Result<(), ()> {
         enresult(20)?
     );
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

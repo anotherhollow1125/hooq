@@ -5,6 +5,7 @@ use hooq::{hooq, toml_load};
 toml_load!(
     r#"
 [my_flavor]
+ignore_tail_expr_idents = []
 method = """.inspect(|v| println!("Ok Value with: {v:?} & with tag: {}", $tag))
 .inspect_err(|e| eprintln!("Err Value with: {e:?} & with tag: {}", $tag))"""
 bindings = { tag = "\"[default]\"" }
@@ -15,6 +16,15 @@ bindings = { tag = "\"[sub]\"" }
 [my_flavor.sub.sub]
 bindings = { tag = "\"[sub.sub]\"" }
 tail_expr_idents = ["Ok", "Err"]
+
+[my_flavor.ignore_tail_expr_idents_test_1]
+bindings = { tag = "\"[ignore_tail_expr_idents_test_1]\"" }
+tail_expr_idents = ["Err"]
+ignore_tail_expr_idents = ["Ok"]
+
+[my_flavor.sub.sub.ignore_tail_expr_idents_test_2]
+bindings = { tag = "\"[ignore_tail_expr_idents_test_2]\"" }
+tail_expr_idents = ["Err", "!Ok"]
 "#
 );
 
@@ -41,6 +51,38 @@ fn func(flag: bool) -> Result<(), ()> {
 #[hooq(my_flavor::sub::sub)]
 #[allow(unused)]
 fn func2(flag: bool) -> Result<(), ()> {
+    enresult(())?;
+
+    if flag {
+        return Ok(());
+    }
+
+    let res = { Ok(()) };
+
+    println!("res: {res:?}");
+
+    res
+}
+
+#[hooq(my_flavor::ignore_tail_expr_idents_test_1)]
+#[allow(unused)]
+fn func3(flag: bool) -> Result<(), ()> {
+    enresult(())?;
+
+    if flag {
+        return Ok(());
+    }
+
+    let res = { Ok(()) };
+
+    println!("res: {res:?}");
+
+    res
+}
+
+#[hooq(my_flavor::sub::sub::ignore_tail_expr_idents_test_2)]
+#[allow(unused)]
+fn func4(flag: bool) -> Result<(), ()> {
     enresult(())?;
 
     if flag {

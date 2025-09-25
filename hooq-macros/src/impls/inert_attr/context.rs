@@ -174,6 +174,7 @@ pub struct LocalContext<'a> {
     pub method: LocalContextField<'a, TokenStream>,
     pub hook_targets: LocalContextField<'a, HookTargetSwitch>,
     pub tail_expr_idents: LocalContextField<'a, Vec<String>>,
+    pub ignore_tail_expr_idents: LocalContextField<'a, Vec<String>>,
     pub result_types: LocalContextField<'a, Vec<String>>,
     pub hook_in_macros: LocalContextField<'a, bool>,
     pub bindings: LocalContextField<'a, HashMap<String, Rc<Expr>>>,
@@ -196,6 +197,7 @@ impl<'a> HookContext<'a> {
             method,
             hook_targets,
             tail_expr_idents,
+            ignore_tail_expr_idents,
             result_types,
             hook_in_macros,
             bindings,
@@ -209,6 +211,7 @@ impl<'a> HookContext<'a> {
                 method,
                 hook_targets: LocalContextField::Override(hook_targets),
                 tail_expr_idents: LocalContextField::Override(tail_expr_idents),
+                ignore_tail_expr_idents: LocalContextField::Override(ignore_tail_expr_idents),
                 result_types: LocalContextField::Override(result_types),
                 hook_in_macros: LocalContextField::Override(hook_in_macros),
                 bindings: LocalContextField::Override(bindings),
@@ -231,6 +234,7 @@ impl<'a> HookContext<'a> {
             method,
             hook_targets,
             tail_expr_idents,
+            ignore_tail_expr_idents,
             result_types,
             hook_in_macros,
             bindings,
@@ -245,6 +249,10 @@ impl<'a> HookContext<'a> {
         let tail_expr_idents = LocalContextField::from_parent(
             tail_expr_idents,
             &parent_context.local_context.tail_expr_idents,
+        );
+        let ignore_tail_expr_idents = LocalContextField::from_parent(
+            ignore_tail_expr_idents,
+            &parent_context.local_context.ignore_tail_expr_idents,
         );
         let result_types = LocalContextField::from_parent(
             result_types,
@@ -268,6 +276,7 @@ impl<'a> HookContext<'a> {
                 method,
                 hook_targets,
                 tail_expr_idents,
+                ignore_tail_expr_idents,
                 result_types,
                 bindings,
                 skip_status,
@@ -315,9 +324,16 @@ impl<'a> HookContext<'a> {
         *self.local_context.hook_in_macros
     }
 
-    pub fn path_is_special_call_like_err(&self, path: &Path) -> bool {
+    pub fn path_is_hook_call_like_err(&self, path: &Path) -> bool {
         self.local_context
             .tail_expr_idents
+            .iter()
+            .any(|s| path_is_end_of(path, s))
+    }
+
+    pub fn path_is_not_hook_call_like_ok(&self, path: &Path) -> bool {
+        self.local_context
+            .ignore_tail_expr_idents
             .iter()
             .any(|s| path_is_end_of(path, s))
     }

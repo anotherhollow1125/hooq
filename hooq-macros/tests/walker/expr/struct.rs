@@ -46,10 +46,10 @@ fn func() -> Result<(), ()> {
 
     let _ = Unon { uint32: hoge()? };
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

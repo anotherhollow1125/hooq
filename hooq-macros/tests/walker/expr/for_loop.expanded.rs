@@ -2,16 +2,9 @@ use std::ops::RangeInclusive;
 use hooq_macros::hooq;
 fn range(end: usize) -> Result<RangeInclusive<usize>, ()> {
     Ok(0..=end)
-        .inspect_err(|e| {
-            let path = "<hooq_root>/tests/walker/expr/for_loop.rs";
-            let line = 7usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })
 }
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/walker/expr/for_loop.rs";
             let line = 12usize;
@@ -57,7 +50,7 @@ fn func() -> Result<(), ()> {
             ::std::io::_print(format_args!("{0} end\n", i));
         };
     }
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

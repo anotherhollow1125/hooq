@@ -32,7 +32,7 @@ mod custom {
             return Ok(100)
                 .hook(|| {
                     ::hooq::HooqMeta {
-                        line: 42usize,
+                        line: 44usize,
                         column: 13usize,
                         path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                         abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -111,7 +111,7 @@ mod custom {
         result
             .hook(|| {
                 ::hooq::HooqMeta {
-                    line: 51usize,
+                    line: 53usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -214,7 +214,7 @@ mod custom {
         Ok(42)
             .hook(|| {
                 ::hooq::HooqMeta {
-                    line: 57usize,
+                    line: 59usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -231,7 +231,7 @@ mod custom {
         Ok(42)
             .hook(|| {
                 ::hooq::HooqMeta {
-                    line: 63usize,
+                    line: 65usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -248,7 +248,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
         Ok(())
             .inspect(|_| {
                 let meta = ::hooq::HooqMeta {
-                    line: 80usize,
+                    line: 82usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -284,7 +284,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
         Ok(())
             .inspect(|_| {
                 let meta = ::hooq::HooqMeta {
-                    line: 83usize,
+                    line: 85usize,
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
@@ -334,7 +334,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
     }
         .inspect(|_| {
             let meta = ::hooq::HooqMeta {
-                line: 79usize,
+                line: 81usize,
                 column: 5usize,
                 path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                 abs_path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",

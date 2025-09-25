@@ -1,4 +1,5 @@
 [my-flavor-sub-mod]
+tail_expr_idents = ["Ok", "Err"]
 method = """
 .inspect(|_| $checker.call())
 """

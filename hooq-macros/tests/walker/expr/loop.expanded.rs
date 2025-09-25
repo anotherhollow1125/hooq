@@ -1,6 +1,6 @@
 use hooq_macros::hooq;
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/walker/expr/loop.rs";
             let line = 5usize;
@@ -19,7 +19,7 @@ fn func(flags: Vec<bool>) -> Result<(), ()> {
                 };
             })?;
         if flags.next().unwrap_or(false) {
-            return Ok(())
+            return Err(())
                 .inspect(|_| {
                     {
                         ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
@@ -56,7 +56,7 @@ fn func(flags: Vec<bool>) -> Result<(), ()> {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));
             };
         })?;
-    Ok(())
+    Err(())
         .inspect(|_| {
             {
                 ::std::io::_print(format_args!("tag: {0}\n", "(no tag)"));

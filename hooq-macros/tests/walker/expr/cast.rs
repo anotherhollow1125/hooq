@@ -13,10 +13,10 @@ fn hoge() -> Result<u32, ()> {
 fn func() -> Result<(), ()> {
     let _ = hoge()? as i64;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

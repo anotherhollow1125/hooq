@@ -1,5 +1,7 @@
 use hooq_macros::hooq;
 
+// ignore_tail_expr_idents も参照されたし
+//
 // なんだかんだ result_types の方にも
 // tail_expr_idents が関わる
 // テストを書いたのでそちらも参照されたし
@@ -11,6 +13,7 @@ fn enresult<T>(val: T) -> Result<T, ()> {
 #[hooq]
 #[hooq::result_types()]
 #[hooq::tail_expr_idents("Right", "Left")]
+#[hooq::ignore_tail_expr_idents()]
 fn func() -> Result<(), ()> {
     #[allow(non_snake_case)]
     let Right = || Result::<(), ()>::Ok(());

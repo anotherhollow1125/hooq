@@ -3,7 +3,7 @@ use hooq_macros::hooq;
 #[hooq]
 #[allow(unused)]
 fn hoge() -> Result<(), ()> {
-    Ok(())
+    Err(())
 }
 
 #[hooq]
@@ -16,15 +16,15 @@ fn func() -> Result<(), ()> {
         #[hooq::tag = "in const block"]
         fn _f() -> Result<(), ()> {
             hoge()?;
-            Ok(())
+            Err(())
         }
         10
     };
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

@@ -33,10 +33,10 @@ fn func(flag: bool) -> Result<(), ()> {
         .unwrap()))
         * 6;
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func(true).unwrap();
+    func(true).unwrap_err();
 }

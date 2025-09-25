@@ -21,10 +21,10 @@ fn func() -> Result<(), ()> {
         return Err(());
     };
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

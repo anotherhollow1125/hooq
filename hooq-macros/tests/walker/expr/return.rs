@@ -8,7 +8,7 @@ use hooq_macros::hooq;
 fn func(flag: bool) -> Result<(), ()> {
     #[hooq::tag = "return"]
     if flag {
-        return Ok(());
+        return Err(());
     }
 
     #[hooq::tag = "not result"]
@@ -21,10 +21,10 @@ fn func(flag: bool) -> Result<(), ()> {
 
     let _ = hoge(flag);
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func(true).unwrap();
+    func(true).unwrap_err();
 }

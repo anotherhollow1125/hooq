@@ -14,10 +14,10 @@ fn hoge() -> Result<usize, ()> {
 fn func() -> Result<(), ()> {
     let _ = v()?[hoge()?];
 
-    Ok(())
+    Err(())
 }
 
 #[test]
 fn test() {
-    func().unwrap();
+    func().unwrap_err();
 }

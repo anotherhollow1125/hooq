@@ -5,6 +5,7 @@ use hooq::{hooq, toml_load};
 toml_load!(
     content = r#"
 [content]
+ignore_tail_expr_idents = []
 method = """.inspect(|v| println!("Ok Value with: {v:?} & with tag: {}", $tag))
 .inspect_err(|e| eprintln!("Err Value with: {e:?} & with tag: {}", $tag))"""
 bindings = { tag = "\"[default]\"" }

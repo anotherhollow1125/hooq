@@ -2,7 +2,11 @@ This is sub-crate for [hooq](../hooq) crate. Please use [hooq](../hooq) crate in
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_eye_catch3.png" />
+
+<div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 1rem;">
+<img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_logo.svg" width=50 />
 <h1>hooq</h1>
+</div>
 
 <h3>`?` 前にメソッドを挿入するシンプルなマクロ</h3>
 

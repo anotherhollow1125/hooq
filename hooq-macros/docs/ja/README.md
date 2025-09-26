@@ -18,7 +18,7 @@ This is sub-crate for [hooq](../hooq) crate. Please use [hooq](../hooq) crate in
 
 ドキュメント:
 - チュートリアル: (mdBook を準備中です)
-- docs.rs: https://docs.rs/hooq/0.1.2/hooq/
+- docs.rs: <https://docs.rs/hooq/0.1.2/hooq/>
 
 <hr />
 
@@ -120,7 +120,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-## Quick Start
+## インストール
 
 以下に示すように `cargo add` で加えるか、
 

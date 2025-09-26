@@ -16,7 +16,7 @@
 
 Documentations:
 - tutorial: (mdBook coming soon.)
-- docs.rs: https://docs.rs/hooq/0.1.2/hooq/
+- docs.rs: <https://docs.rs/hooq/0.1.2/hooq/>
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
@@ -121,7 +121,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-## Quick Start
+## Install
 
 Add it with `cargo add` as shown below,
 

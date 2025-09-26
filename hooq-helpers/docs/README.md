@@ -12,7 +12,7 @@ This is sub-crate for [hooq](../hooq) crate. Please use [hooq](../hooq) crate in
 [![docs](https://img.shields.io/docsrs/hooq/0.1.2)](https://docs.rs/hooq/0.1.2/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
-🪝 The crate name comes from the acronym "HOOk for Question mark operator". 🪝
+🪝 The name hooq comes from combining 'HOOk' and the 'Question mark operator ( ? )'. 🪝
 
 </div>
 

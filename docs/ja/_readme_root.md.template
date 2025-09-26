@@ -16,7 +16,7 @@
 
 ドキュメント:
 - チュートリアル: (mdBook を準備中です)
-- docs.rs: https://docs.rs/hooq/{{version}}/hooq/
+- docs.rs: <https://docs.rs/hooq/{{version}}/hooq/>
 
 <hr />
 
@@ -118,7 +118,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-## Quick Start
+## インストール
 
 以下に示すように `cargo add` で加えるか、
 

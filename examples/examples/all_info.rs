@@ -64,7 +64,7 @@ fn func(n: usize) -> Result<&'static str, &'static str> {
 
     check_four(n)?;
 
-    if n % 2 == 0 {
+    if n.is_multiple_of(2) {
         return Ok("even");
     }
 

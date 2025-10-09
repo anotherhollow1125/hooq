@@ -1,6 +1,7 @@
 mod abs_path;
 mod bindings;
 mod hooq_meta;
+mod line;
 
 use test_helpers::MaskMode::*;
 use test_helpers::mask_project_root;
@@ -12,6 +13,7 @@ fn test_special_meta_var() {
     macrotest::expand_args("tests/special/meta_var/abs_path.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/meta_var/bindings.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/meta_var/hooq_meta.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/meta_var/line.rs", &["--ugly"]);
 
     mask_project_root("tests/special/meta_var", Mask);
 }

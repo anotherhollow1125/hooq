@@ -7,5 +7,4 @@ publish = false
 
 [dev-dependencies]
 hooq = { path = "../../../../../hooq" }
-macrotest = "1.2.0"
 test-helpers = { path = "../../../../../test-helpers" }

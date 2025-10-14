@@ -172,7 +172,6 @@ name = "custom"
 version = "0.1.2"
 dependencies = [
  "hooq",
- "macrotest",
  "test-helpers",
 ]
 
@@ -181,7 +180,6 @@ name = "default"
 version = "0.1.2"
 dependencies = [
  "hooq",
- "macrotest",
  "test-helpers",
 ]
 

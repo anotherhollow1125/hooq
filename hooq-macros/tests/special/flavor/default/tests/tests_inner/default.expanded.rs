@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use hooq::{hooq, toml_load};
+use hooq::hooq;
 #[allow(unused)]
 fn enresult<T: Debug>(val: T) -> Result<T, ()> {
     Ok(val)
@@ -7,42 +7,31 @@ fn enresult<T: Debug>(val: T) -> Result<T, ()> {
 #[allow(unused)]
 fn func(flag: bool) -> Result<(), ()> {
     enresult(())
-        .inspect(|v| {
-            ::std::io::_print(
-                format_args!("Ok Value with: {1:?} & with tag: {0}\n", "[default]", v),
-            );
-        })
         .inspect_err(|e| {
-            ::std::io::_eprint(
-                format_args!("Err Value with: {1:?} & with tag: {0}\n", "[default]", e),
-            );
+            let path = "<hooq_root>/tests/tests_inner/default.rs";
+            let line = 14usize;
+            {
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+            };
         })?;
     if flag {
         return Err(())
-            .inspect(|v| {
-                ::std::io::_print(
-                    format_args!(
-                        "Ok Value with: {1:?} & with tag: {0}\n", "[default]", v
-                    ),
-                );
-            })
             .inspect_err(|e| {
-                ::std::io::_eprint(
-                    format_args!(
-                        "Err Value with: {1:?} & with tag: {0}\n", "[default]", e
-                    ),
-                );
+                let path = "<hooq_root>/tests/tests_inner/default.rs";
+                let line = 17usize;
+                {
+                    ::std::io::_eprint(
+                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                    );
+                };
             });
     }
     Err(())
-        .inspect(|v| {
-            ::std::io::_print(
-                format_args!("Ok Value with: {1:?} & with tag: {0}\n", "[default]", v),
-            );
-        })
         .inspect_err(|e| {
-            ::std::io::_eprint(
-                format_args!("Err Value with: {1:?} & with tag: {0}\n", "[default]", e),
-            );
+            let path = "<hooq_root>/tests/tests_inner/default.rs";
+            let line = 20usize;
+            {
+                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+            };
         })
 }

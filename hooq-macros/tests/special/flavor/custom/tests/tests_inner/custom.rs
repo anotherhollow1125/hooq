@@ -1,32 +1,6 @@
 use std::fmt::Debug;
 
-use hooq::{hooq, toml_load};
-
-toml_load!(
-    r#"
-[my_flavor]
-ignore_tail_expr_idents = []
-method = """.inspect(|v| println!("Ok Value with: {v:?} & with tag: {}", $tag))
-.inspect_err(|e| eprintln!("Err Value with: {e:?} & with tag: {}", $tag))"""
-bindings = { tag = "\"[default]\"" }
-
-[my_flavor.sub]
-bindings = { tag = "\"[sub]\"" }
-
-[my_flavor.sub.sub]
-bindings = { tag = "\"[sub.sub]\"" }
-tail_expr_idents = ["Ok", "Err"]
-
-[my_flavor.ignore_tail_expr_idents_test_1]
-bindings = { tag = "\"[ignore_tail_expr_idents_test_1]\"" }
-tail_expr_idents = ["Err"]
-ignore_tail_expr_idents = ["Ok"]
-
-[my_flavor.sub.sub.ignore_tail_expr_idents_test_2]
-bindings = { tag = "\"[ignore_tail_expr_idents_test_2]\"" }
-tail_expr_idents = ["Err", "!Ok"]
-"#
-);
+use hooq::hooq;
 
 #[hooq(my_flavor)]
 #[allow(unused)]
@@ -100,4 +74,10 @@ fn func4(flag: bool) -> Result<(), ()> {
 fn test() {
     func(false).unwrap_err();
     func(true).unwrap();
+    func2(true).unwrap();
+    func2(false).unwrap();
+    func3(true).unwrap();
+    func3(false).unwrap();
+    func4(true).unwrap();
+    func4(false).unwrap();
 }

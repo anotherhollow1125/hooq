@@ -1,15 +1,6 @@
 use std::fmt::Debug;
 
-use hooq::{hooq, toml_load};
-
-toml_load!(
-    r#"
-[default]
-method = """.inspect(|v| println!("Ok Value with: {v:?} & with tag: {}", $tag))
-.inspect_err(|e| eprintln!("Err Value with: {e:?} & with tag: {}", $tag))"""
-bindings = { tag = "\"[default]\"" }
-"#
-);
+use hooq::hooq;
 
 #[hooq]
 #[allow(unused)]

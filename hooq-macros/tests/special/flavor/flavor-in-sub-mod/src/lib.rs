@@ -1,7 +1,3 @@
-use hooq::toml_load;
-
-toml_load!();
-
 pub mod sub;
 
 #[test]

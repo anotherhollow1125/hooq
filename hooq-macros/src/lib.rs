@@ -20,18 +20,3 @@ pub fn hooq(attr: TokenStream, item: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
-
-/// Prepare flavors by toml file loading.
-///
-/// - toml_load!(): Load `hooq.toml` in the crate root.
-/// - toml_load!("path/to/file.toml"): Load specified toml file.
-/// - toml_load!(r#"(toml content)"#): Load toml from string literal.
-/// - toml_load!(toml = "path/to/file.toml" or r#"(toml content)"#): Load specified toml file or toml from string literal.
-/// - toml_load!(file = "path/to/file.toml") or toml_load!(path = "path/to/file.toml"): Load specified toml file.
-/// - toml_load!(content = r#"(toml content)"#): Load toml from string literal.
-#[proc_macro]
-pub fn toml_load(input: TokenStream) -> TokenStream {
-    impls::flavor::r#macro::toml_load(input.into())
-        .unwrap_or_else(syn::Error::into_compile_error)
-        .into()
-}

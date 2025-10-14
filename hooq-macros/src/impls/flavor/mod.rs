@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::{LazyLock, Mutex};
 
@@ -8,7 +9,6 @@ use syn::{Expr, Path, parse_quote};
 use crate::impls::flavor::toml_load::HooqToml;
 use crate::impls::inert_attr::context::HookTargetSwitch;
 
-pub mod r#macro;
 mod presets;
 mod toml_load;
 
@@ -80,14 +80,43 @@ pub struct TomlStore {
     inner: Mutex<HashMap<String, CheckedHooqToml>>,
 }
 
+pub static LOADED_HOOQ_TOML: LazyLock<TomlStore> = LazyLock::new(|| TomlStore {
+    inner: Mutex::new(HashMap::new()),
+});
+
 impl TomlStore {
+    fn load() -> Result<Option<CheckedHooqToml>, String> {
+        if let Some(checked_hooq_toml) = LOADED_HOOQ_TOML.get() {
+            return Ok(Some(checked_hooq_toml));
+        }
+
+        let dir_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string());
+        let path = PathBuf::from(dir_path).join("hooq.toml");
+
+        if let Ok(false) | Err(_) = path.try_exists() {
+            return Ok(None);
+        }
+
+        let content = std::fs::read_to_string(&path)
+            .map_err(|e| format!("failed to read file `{}`: {}", path.display(), e))?;
+
+        let hooq_toml: HooqToml = toml::from_str(&content)
+            .map_err(|e| format!("failed to parse toml from file `{}`: {}", path.display(), e))?;
+
+        let checked_hooq_toml = CheckedHooqToml::try_from(hooq_toml)?;
+
+        LOADED_HOOQ_TOML.set(checked_hooq_toml.clone());
+
+        Ok(Some(checked_hooq_toml))
+    }
+
     // NOTE:
     // 異なるCargoプロジェクトを同じタイミングでVSCodeで開いていた時に
     // 違うTomlStoreの内容が違うプロジェクトに供給されている事象が見られた
     //
     // 効果がどれぐらいあるかは懐疑的であるが、少しでも軽減すべく
     // プロジェクトごとに保存領域を分けるようにした
-    pub fn set(&self, checked_hooq_toml: CheckedHooqToml) {
+    fn set(&self, checked_hooq_toml: CheckedHooqToml) {
         let key = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string());
 
         self.inner.lock().unwrap().insert(key, checked_hooq_toml);
@@ -100,10 +129,6 @@ impl TomlStore {
     }
 }
 
-pub static LOADED_HOOQ_TOML: LazyLock<TomlStore> = LazyLock::new(|| TomlStore {
-    inner: Mutex::new(HashMap::new()),
-});
-
 impl FlavorStore {
     fn new() -> Self {
         let flavors = presets::preset_flavors();
@@ -111,16 +136,15 @@ impl FlavorStore {
         Self { flavors }
     }
 
-    pub fn with_hooq_toml() -> Self {
+    pub fn with_hooq_toml() -> Result<Self, String> {
         let mut flavors = Self::new();
 
-        // toml_load()! 経由でHooqTomlがロードされていれば読み込む
-        if let Some(hooq_toml) = LOADED_HOOQ_TOML.get() {
+        if let Some(hooq_toml) = TomlStore::load()? {
             // 変換が成功することはCheckedHooqTomlの生成時に確認済み
             toml_load::apply::update_flavors(&mut flavors.flavors, hooq_toml.inner).unwrap();
         }
 
-        flavors
+        Ok(flavors)
     }
 
     pub fn get_flavor(&self, path: &[String]) -> Option<Flavor> {

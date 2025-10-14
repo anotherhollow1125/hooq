@@ -54,7 +54,8 @@ impl RootContext {
         // 未指定時でもあくまでも FlavorStore から取得する必要あり
         let flavor = flavor.unwrap_or(vec!["default".to_string()]);
 
-        let flavor_store = FlavorStore::with_hooq_toml();
+        let flavor_store = FlavorStore::with_hooq_toml()
+            .map_err(|e| syn::Error::new(span, format!("failed to load hooq.toml: {e}")))?;
 
         let Flavor {
             trait_uses: trait_uses_of_flavor,

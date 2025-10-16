@@ -1,0 +1,11 @@
+[default]
+method = """.inspect_err(|v| {
+   eprintln!("Default Error Handler: {}", v);
+})
+.inspect(|_| println!("Default Success Handler"))"""
+
+[custom]
+method = """.inspect_err(|v| {
+   eprintln!("Custom Error Handler: {}", v);
+})
+.inspect(|_| println!("Custom Success Handler"))"""

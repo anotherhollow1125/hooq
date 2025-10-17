@@ -225,7 +225,16 @@ fn main() -> Result<()> {
 
                     if expected != actual {
                         return Err(anyhow::anyhow!(
-                            "{dest} is out of date. Please run the build script to update it."
+                            "{dest} is out of date. Please run the build script to update it.
+expected:
+```rust
+{expected}
+```
+
+actual:
+```rust
+{actual}
+```"
                         ));
                     } else {
                         std::fs::remove_file(&tmp)?;

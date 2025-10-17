@@ -8,18 +8,39 @@ description = "README.md の生成およびhooqクレートのCargo.tomlにあ�
 anyhow = "1.0.99"
 toml = "0.9.5"
 serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.145"
 handlebars = "6.3.2"
 clap = { version = "4.5.47", features = ["derive"] }
 hooq = { path = "../../hooq", features = ["anyhow"] }
+reqwest = { version = "0.12.24", features = ["blocking", "json"] }
+chrono = "0.4.42"
 ---
 
-use clap::Parser;
+use chrono::DateTime;
+use clap::{Parser, ValueEnum};
 use hooq::hooq;
+
+#[derive(ValueEnum, Clone, Copy, Debug)]
+enum Mode {
+    Wip,
+    Publish,
+}
+
+impl std::fmt::Display for Mode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Mode::Wip => write!(f, "wip"),
+            Mode::Publish => write!(f, "publish"),
+        }
+    }
+}
 
 #[derive(Parser, Debug)]
 struct Args {
     #[arg(short, long, default_value_t = false)]
     check: bool,
+    #[arg(short, long, default_value_t = Mode::Wip)]
+    mode: Mode,
 }
 
 #[derive(serde::Serialize)]
@@ -33,10 +54,57 @@ struct VersionInfo {
 }
 
 #[hooq(anyhow)]
-fn main() -> anyhow::Result<()> {
-    let Args { check } = Args::parse();
+fn get_published_version() -> anyhow::Result<String> {
+    #[derive(serde::Deserialize, Debug)]
+    struct CrateVersion {
+        num: String,
+        yanked: bool,
+        created_at: String,
+    }
 
-    let version = sync_sub_crate_versions(check)?;
+    #[derive(serde::Deserialize, Debug)]
+    struct CrateResponse {
+        versions: Vec<CrateVersion>,
+    }
+
+    let resp: serde_json::Value = reqwest::blocking::Client::builder()
+        .user_agent("hooq-sync-script/0.1.0")
+        .build()?
+        .get("https://crates.io/api/v1/crates/hooq/versions")
+        .send()?
+        .json()?;
+
+    let resp: CrateResponse = serde_json::from_value(resp.clone())
+        .map_err(|e| anyhow::anyhow!("Failed to parse response: {} from {}", e, resp))?;
+
+    let latest_version = resp
+        .versions
+        .iter()
+        .filter_map(|v| #[hooq::skip_all]
+        {
+            if v.yanked {
+                return None;
+            }
+
+            let datetime = DateTime::parse_from_rfc3339(&v.created_at).ok()?;
+
+            Some((v.num.clone(), datetime))
+        })
+        .max_by_key(|v| v.1)
+        .ok_or_else(|| anyhow::anyhow!("No available versions found"))?;
+
+    Ok(latest_version.0)
+}
+
+#[hooq(anyhow)]
+fn main() -> anyhow::Result<()> {
+    let Args { check, mode } = Args::parse();
+
+    let current_version = sync_sub_crate_versions(check)?;
+    let version = match mode {
+        Mode::Wip => get_published_version()?,
+        Mode::Publish => current_version.clone(),
+    };
     let version_info = VersionInfo { version };
 
     cargo_sort(check)?;

@@ -116,7 +116,7 @@ fn gen_pathes(build_profile: BuildProfile) -> Result<Pathes> {
         Ok(res)
     };
 
-    let libhooq_path = path_generator("libhooq", ".rlib")?;
+    let libhooq_path = path_generator("libhooq-", ".rlib")?;
 
     Ok(Pathes {
         deps_path,
@@ -204,7 +204,14 @@ fn main() -> Result<()> {
 
     match mode {
         Mode::Build => {
-            main_build(profile)?;
+            let res = main_build(profile);
+
+            if res.is_err() {
+                // retry once after cleaning
+                std::fs::remove_dir_all("./target")?;
+                hooq_build(profile)?;
+                main_build(profile)?;
+            }
         }
         Mode::Expand | Mode::ExpandCheck => {
             let tmp = main_expand(profile)?;

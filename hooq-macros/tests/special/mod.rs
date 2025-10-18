@@ -1,4 +1,5 @@
 mod flavor;
+mod flavor_not_cargo_project;
 mod fn_special;
 mod inert_attr_setting;
 mod r#macro;

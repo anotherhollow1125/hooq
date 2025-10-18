@@ -31,11 +31,15 @@ impl Parse for RootAttribute {
 
 fn root_attribute_error_message() -> String {
     let flavor_names = FlavorStore::with_hooq_toml()
-        .all_flavor_names()
-        .into_iter()
-        .map(|name| format!("  - {name}"))
-        .collect::<Vec<_>>()
-        .join("\n");
+        .map(|store| {
+            store
+                .all_flavor_names()
+                .into_iter()
+                .map(|name| format!("  - {name}"))
+                .collect::<Vec<_>>()
+                .join("\n")
+        })
+        .unwrap_or_default();
 
     format!(
         r#"expected attribute formats are below:

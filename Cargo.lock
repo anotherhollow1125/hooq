@@ -168,29 +168,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
 
 [[package]]
-name = "content-content"
-version = "0.1.2"
-dependencies = [
- "hooq",
- "macrotest",
- "test-helpers",
-]
-
-[[package]]
 name = "custom"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "hooq",
- "macrotest",
  "test-helpers",
 ]
 
 [[package]]
 name = "default"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "hooq",
- "macrotest",
  "test-helpers",
 ]
 
@@ -237,43 +226,7 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
 name = "file-load"
-version = "0.1.2"
-dependencies = [
- "hooq",
- "macrotest",
- "test-helpers",
-]
-
-[[package]]
-name = "file-load-file"
-version = "0.1.2"
-dependencies = [
- "hooq",
- "macrotest",
- "test-helpers",
-]
-
-[[package]]
-name = "file-load-litstr-path"
-version = "0.1.2"
-dependencies = [
- "hooq",
- "macrotest",
- "test-helpers",
-]
-
-[[package]]
-name = "file-load-path"
-version = "0.1.2"
-dependencies = [
- "hooq",
- "macrotest",
- "test-helpers",
-]
-
-[[package]]
-name = "file-load-toml-path"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "hooq",
  "macrotest",
@@ -282,7 +235,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-in-sub-mod"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "hooq",
  "macrotest",
@@ -404,7 +357,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
 name = "hooq"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "hooq-helpers",
  "hooq-macros",
@@ -413,7 +366,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-anyhow"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "hooq",
@@ -423,7 +376,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-examples"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -434,7 +387,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-helpers"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "hooq",
  "toml",
@@ -442,7 +395,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-log"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "env_logger",
  "hooq",
@@ -453,7 +406,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-macros"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "futures",
  "hooq",
@@ -842,7 +795,7 @@ dependencies = [
 
 [[package]]
 name = "test-helpers"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "glob",
 ]
@@ -894,15 +847,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "toml-content"
-version = "0.1.2"
-dependencies = [
- "hooq",
- "macrotest",
- "test-helpers",
-]
-
-[[package]]
 name = "toml_datetime"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -940,7 +884,7 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 
 [[package]]
 name = "util_macros"
-version = "0.1.2"
+version = "0.2.0"
 
 [[package]]
 name = "wasi"

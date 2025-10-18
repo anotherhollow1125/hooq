@@ -1,6 +1,4 @@
-use hooq::{hooq, toml_load};
-
-toml_load!();
+use hooq::hooq;
 
 struct Checker(bool);
 

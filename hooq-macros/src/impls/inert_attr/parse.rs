@@ -3,9 +3,11 @@ use std::collections::HashMap;
 use proc_macro2::TokenStream;
 use syn::parse::Parse;
 use syn::{
-    Attribute, Expr, LitBool, LitStr, Meta, MetaList, MetaNameValue, Path, Token, parse_quote,
+    Attribute, Expr, ExprLit, ExprPath, Lit, LitBool, LitStr, Meta, MetaList, MetaNameValue, Path,
+    Token, parse_quote,
 };
 
+use crate::impls::flavor::{FlavorPath, FlavorStore};
 use crate::impls::inert_attr::InertAttribute;
 use crate::impls::inert_attr::context::HookTargetSwitch;
 
@@ -66,6 +68,7 @@ impl Strings {
 const INERT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
 
 - #[hooq::method(...)]
+- #[hooq::method = FLAVOR_NAME]
 - #[hooq::hook_targets(...)]
 - #[hooq::tail_expr_idents(...)]
 - #[hooq::ignore_tail_expr_idents(...)]
@@ -78,7 +81,7 @@ const INERT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are be
 "#;
 
 pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttribute> {
-    // #[hooq::method(...)]
+    // #[hooq::method(...)] or #[hooq::method = ...]
     let hooq_method = parse_quote!(hooq::method);
     // #[hooq::hook_targets("return", "?", ...)]
     let hooq_hook_targets = parse_quote!(hooq::hook_targets);
@@ -115,6 +118,37 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
             // method
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_method => {
                 method = Some(tokens.clone());
+                keeps.push(false);
+            }
+            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_method => {
+                let flavor_path: FlavorPath = match value {
+                    Expr::Path(ExprPath { path, .. }) => path
+                        .try_into()
+                        .map_err(|e| syn::Error::new_spanned(path, e))?,
+                    Expr::Lit(ExprLit {
+                        lit: Lit::Str(lit), ..
+                    }) => lit
+                        .value()
+                        .try_into()
+                        .map_err(|e| syn::Error::new_spanned(lit, e))?,
+                    _ => {
+                        return Err(syn::Error::new_spanned(
+                            value,
+                            "invalid hooq::method attribute value. expected: FLAVOR_NAME as path or string",
+                        ));
+                    }
+                };
+
+                method = Some(
+                    FlavorStore::with_hooq_toml()
+                        .map_err(|e| {
+                            syn::Error::new_spanned(value, format!("failed to load hooq.toml: {e}"))
+                        })?
+                        .get_flavor(&flavor_path)
+                        .map_err(|e| syn::Error::new_spanned(value, e))?
+                        .method,
+                );
+
                 keeps.push(false);
             }
 

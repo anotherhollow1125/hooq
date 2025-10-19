@@ -4,7 +4,7 @@ use std::rc::Rc;
 use proc_macro2::{Span, TokenStream};
 use syn::{Expr, Path};
 
-use crate::impls::flavor::{Flavor, FlavorStore};
+use crate::impls::flavor::{Flavor, FlavorPath, FlavorStore};
 use crate::impls::inert_attr::context::HookTargetSwitch;
 
 mod parse;
@@ -37,7 +37,7 @@ impl RootContext {
 #[derive(Debug)]
 pub struct RootAttribute {
     pub trait_uses: Vec<Path>,
-    pub flavor: Option<Vec<String>>,
+    pub flavor: Option<FlavorPath>,
     pub span: Span,
 }
 
@@ -52,7 +52,12 @@ impl RootContext {
         // NOTE:
         // default への上書きが存在する可能性があるので
         // 未指定時でもあくまでも FlavorStore から取得する必要あり
-        let flavor = flavor.unwrap_or(vec!["default".to_string()]);
+        let flavor = flavor.unwrap_or(
+            "default"
+                .to_string()
+                .try_into()
+                .map_err(|e| syn::Error::new(span, e))?,
+        );
 
         let flavor_store = FlavorStore::with_hooq_toml()
             .map_err(|e| syn::Error::new(span, format!("failed to load hooq.toml: {e}")))?;
@@ -67,22 +72,9 @@ impl RootContext {
             hook_in_macros,
             bindings,
             sub_flavors: _,
-        } = flavor_store.get_flavor(&flavor).ok_or_else(|| {
-            syn::Error::new(
-                span,
-                format!(
-                    "flavor `{}` is not found. available flavors:
-{}",
-                    flavor.join("::"),
-                    flavor_store
-                        .all_flavor_names()
-                        .into_iter()
-                        .map(|name| format!("  - {name}"))
-                        .collect::<Vec<_>>()
-                        .join("\n")
-                ),
-            )
-        })?;
+        } = flavor_store
+            .get_flavor(&flavor)
+            .map_err(|e| syn::Error::new(span, e))?;
 
         trait_uses.extend(trait_uses_of_flavor);
 

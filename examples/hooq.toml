@@ -1,0 +1,5 @@
+[custom]
+method = """.inspect_err(|_| println!("custom error handler"))"""
+
+[custom2]
+method = """.inspect_err(|e| println!("custom error handler 2: {}", e))"""

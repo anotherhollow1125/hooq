@@ -6,9 +6,11 @@ use std::sync::{LazyLock, Mutex};
 use proc_macro2::TokenStream;
 use syn::{Expr, Path, parse_quote};
 
+pub use crate::impls::flavor::flavor_path::FlavorPath;
 use crate::impls::flavor::toml_load::HooqToml;
 use crate::impls::inert_attr::context::HookTargetSwitch;
 
+mod flavor_path;
 mod presets;
 mod toml_load;
 
@@ -147,7 +149,7 @@ impl FlavorStore {
         Ok(flavors)
     }
 
-    pub fn get_flavor(&self, path: &[String]) -> Option<Flavor> {
+    fn get_flavor_inner(&self, path: &FlavorPath) -> Option<Flavor> {
         let mut path = path.iter();
         let mut current: &Flavor = self.flavors.get(path.next()?)?;
 
@@ -156,6 +158,21 @@ impl FlavorStore {
         }
 
         Some(current.clone())
+    }
+
+    pub fn get_flavor(&self, path: &FlavorPath) -> Result<Flavor, String> {
+        self.get_flavor_inner(path).ok_or_else(|| {
+            format!(
+                "flavor `{}` is not found. available flavors:
+{}",
+                path.join("::"),
+                self.all_flavor_names()
+                    .into_iter()
+                    .map(|name| format!("  - {name}"))
+                    .collect::<Vec<_>>()
+                    .join("\n")
+            )
+        })
     }
 
     pub fn all_flavor_names(&self) -> Vec<String> {

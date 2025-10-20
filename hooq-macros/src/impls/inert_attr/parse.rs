@@ -1,13 +1,14 @@
 use std::collections::HashMap;
 
-use proc_macro2::TokenStream;
+use proc_macro2::{Span, TokenStream};
 use syn::parse::Parse;
+use syn::spanned::Spanned;
 use syn::{
     Attribute, Expr, ExprLit, ExprPath, Lit, LitBool, LitStr, Meta, MetaList, MetaNameValue, Path,
     Token, parse_quote,
 };
 
-use crate::impls::flavor::{FlavorPath, FlavorStore};
+use crate::impls::flavor::{Flavor, FlavorPath, FlavorStore};
 use crate::impls::inert_attr::InertAttribute;
 use crate::impls::inert_attr::context::HookTargetSwitch;
 
@@ -67,32 +68,72 @@ impl Strings {
 
 const INERT_ATTRIBUTE_ERROR_MESSAGE: &str = r#"expected attribute formats are below:
 
-- #[hooq::method(...)]
-- #[hooq::method = FLAVOR_NAME]
-- #[hooq::hook_targets(...)]
-- #[hooq::tail_expr_idents(...)]
-- #[hooq::ignore_tail_expr_idents(...)]
-- #[hooq::result_types(...)]
-- #[hooq::hook_in_macros(...)]
-- #[hooq::binding(xxx = ...)]
-- #[hooq::xxx = ...] // alternative syntax for binding
+- #[hooq::method(/* e.g. `.method(...)` */)]
+- #[hooq::hook_targets(/* e.g. `"return", "?"` */)]
+- #[hooq::tail_expr_idents(/* e.g. `Err` */)]
+- #[hooq::ignore_tail_expr_idents(/* e.g. `Ok` */)]
+- #[hooq::result_types(/* e.g. `XxxResult` */)]
+- #[hooq::hook_in_macros(/* `true` or `false` */)]
+- #[hooq::binding(xxx = /* e.g. `42` */)] // xxx is param name
+- #[hooq::xxx = /* e.g. `42` */] // alternative syntax for binding
 - #[hooq::skip]
 - #[hooq::skip_all]
+
+or like #[hooq::SETTING = FLAVOR_NAME] format where
+- SETTING is one of:
+  - flavor
+  - method
+  - hook_targets
+  - tail_expr_idents // ignore_tail_expr_idents is included here
+  - result_types
+  - hook_in_macros
+  - bindings
+- FLAVOR_NAME is a flavor name as path or string
+This format overrides the corresponding setting with the one defined in the specified flavor."
 "#;
 
+fn get_flavor_path(value: &Expr) -> syn::Result<FlavorPath> {
+    match value {
+        Expr::Path(ExprPath { path, .. }) => Ok(path
+            .try_into()
+            .map_err(|e| syn::Error::new_spanned(path, e))?),
+        Expr::Lit(ExprLit {
+            lit: Lit::Str(lit), ..
+        }) => Ok(lit
+            .value()
+            .try_into()
+            .map_err(|e| syn::Error::new_spanned(lit, e))?),
+        _ => Err(syn::Error::new_spanned(
+            value,
+            "invalid hooq::method attribute value. expected: FLAVOR_NAME as path or string",
+        )),
+    }
+}
+
+fn get_flavor(span: Span, flavor_path: &FlavorPath) -> syn::Result<Flavor> {
+    FlavorStore::with_hooq_toml()
+        .map_err(|e| syn::Error::new(span, format!("failed to load hooq.toml: {e}")))?
+        .get_flavor(flavor_path)
+        .map_err(|e| syn::Error::new(span, e))
+}
+
 pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<InertAttribute> {
+    // #[hooq::flavor = FLAVOR_NAME]
+    let hooq_flavor = parse_quote!(hooq::flavor);
     // #[hooq::method(...)] or #[hooq::method = ...]
     let hooq_method = parse_quote!(hooq::method);
-    // #[hooq::hook_targets("return", "?", ...)]
+    // #[hooq::hook_targets("return", "?", ...)] or #[hooq::hook_targets = ...]
     let hooq_hook_targets = parse_quote!(hooq::hook_targets);
-    // #[hooq::tail_expr_idents("Err", ...)]
+    // #[hooq::tail_expr_idents("Err", ...)] or #[hooq::tail_expr_idents = ...]
     let hooq_tail_expr_idents = parse_quote!(hooq::tail_expr_idents);
     // #[hooq::ignore_tail_expr_idents("Ok", ...)]
     let hooq_ignore_tail_expr_idents = parse_quote!(hooq::ignore_tail_expr_idents);
-    // #[hooq::result_types("XxxResult", ...)]
+    // #[hooq::result_types("XxxResult", ...)] or #[hooq::result_types = ...]
     let hooq_result_types = parse_quote!(hooq::result_types);
-    // #[hooq::hook_in_macros(true | false)]
+    // #[hooq::hook_in_macros(true | false)] or #[hooq::hook_in_macros = ...]
     let hooq_hook_in_macros = parse_quote!(hooq::hook_in_macros);
+    // #[hooq::bindings = FLAVOR_NAME]
+    let hooq_bindings = parse_quote!(hooq::bindings);
     // #[hooq::binding(xxx = ...)]
     let hooq_binding = parse_quote!(hooq::binding);
     // #[hooq::var(xxx = ...)]
@@ -115,39 +156,43 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     let mut keeps = Vec::with_capacity(attrs.len());
     for attr in attrs.iter_mut() {
         match &attr.meta {
+            // flavor
+            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_flavor => {
+                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let Flavor {
+                    trait_uses: _,
+                    method: flavor_method,
+                    hook_targets: flavor_hook_targets,
+                    tail_expr_idents: flavor_tail_expr_idents,
+                    ignore_tail_expr_idents: flavor_ignore_tail_expr_idents,
+                    result_types: flavor_result_types,
+                    hook_in_macros: flavor_hook_in_macros,
+                    bindings: flavor_bindings,
+                    sub_flavors: _,
+                } = get_flavor(path.span(), &flavor_path)?;
+
+                // override settings by the flavor settings
+                method = Some(flavor_method);
+                hook_targets = Some(flavor_hook_targets);
+                tail_expr_idents = Some(flavor_tail_expr_idents);
+                ignore_tail_expr_idents = Some(flavor_ignore_tail_expr_idents);
+                result_types = Some(flavor_result_types);
+                hook_in_macros = Some(flavor_hook_in_macros);
+                for (k, v) in flavor_bindings.iter() {
+                    bindings.insert(k.clone(), v.as_ref().clone());
+                }
+
+                keeps.push(false);
+            }
+
             // method
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_method => {
                 method = Some(tokens.clone());
                 keeps.push(false);
             }
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_method => {
-                let flavor_path: FlavorPath = match value {
-                    Expr::Path(ExprPath { path, .. }) => path
-                        .try_into()
-                        .map_err(|e| syn::Error::new_spanned(path, e))?,
-                    Expr::Lit(ExprLit {
-                        lit: Lit::Str(lit), ..
-                    }) => lit
-                        .value()
-                        .try_into()
-                        .map_err(|e| syn::Error::new_spanned(lit, e))?,
-                    _ => {
-                        return Err(syn::Error::new_spanned(
-                            value,
-                            "invalid hooq::method attribute value. expected: FLAVOR_NAME as path or string",
-                        ));
-                    }
-                };
-
-                method = Some(
-                    FlavorStore::with_hooq_toml()
-                        .map_err(|e| {
-                            syn::Error::new_spanned(value, format!("failed to load hooq.toml: {e}"))
-                        })?
-                        .get_flavor(&flavor_path)
-                        .map_err(|e| syn::Error::new_spanned(value, e))?
-                        .method,
-                );
+                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                method = Some(get_flavor(path.span(), &flavor_path)?.method);
 
                 keeps.push(false);
             }
@@ -171,6 +216,12 @@ expected: "?", "return", "tail_expr""#,
                     }
                 }
             }
+            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_hook_targets => {
+                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                hook_targets = Some(get_flavor(path.span(), &flavor_path)?.hook_targets);
+
+                keeps.push(false);
+            }
 
             // tail_expr_idents or ignore_tail_expr_idents
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_tail_expr_idents => {
@@ -189,6 +240,19 @@ expected: "?", "return", "tail_expr""#,
                 };
                 keeps.push(false);
             }
+            Meta::NameValue(MetaNameValue { path, value, .. })
+                if path == &hooq_tail_expr_idents =>
+            {
+                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor = get_flavor(path.span(), &flavor_path)?;
+
+                // flavor指定では ["Err", "!Ok"] のようなパターンに対応できない("Err" のみ適用されるみたいになりかねない)ので、
+                // tail_expr_idents による指定で両方を兼ねることにする
+                tail_expr_idents = Some(flavor.tail_expr_idents.clone());
+                ignore_tail_expr_idents = Some(flavor.ignore_tail_expr_idents.clone());
+
+                keeps.push(false);
+            }
 
             // ignore_tail_expr_idents
             // このフィールドのみ、tail_expr_idents と ignore_tail_expr_idents の両方から設定可能
@@ -203,6 +267,15 @@ expected: "?", "return", "tail_expr""#,
                 };
                 keeps.push(false);
             }
+            // ignore_tail_expr_idents については `#[hooq::ignore_tail_expr_idents = ...]` 形式は非対応とする
+            Meta::List(MetaList { path, .. }) if path == &hooq_ignore_tail_expr_idents => {
+                return Err(syn::Error::new_spanned(
+                    path,
+                    "you can't use #[hooq::ignore_tail_expr_idents = FLAVOR_NAME] format.
+please use #[hooq::tail_expr_idents = FLAVOR_NAME] format instead.
+this format can set both tail_expr_idents and ignore_tail_expr_idents fields by the flavor settings.",
+                ));
+            }
 
             // result_types
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_result_types => {
@@ -210,11 +283,35 @@ expected: "?", "return", "tail_expr""#,
                 result_types = Some(strings.0);
                 keeps.push(false);
             }
+            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_result_types => {
+                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                result_types = Some(get_flavor(path.span(), &flavor_path)?.result_types);
+
+                keeps.push(false);
+            }
 
             // hook_in_macros
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_hook_in_macros => {
                 let hook = syn::parse2::<LitBool>(tokens.clone())?;
                 hook_in_macros = Some(hook.value());
+                keeps.push(false);
+            }
+            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_hook_in_macros => {
+                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                hook_in_macros = Some(get_flavor(path.span(), &flavor_path)?.hook_in_macros);
+
+                keeps.push(false);
+            }
+
+            // set bindings by the flavor setting
+            Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_bindings => {
+                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor = get_flavor(path.span(), &flavor_path)?;
+
+                for (k, v) in flavor.bindings.iter() {
+                    bindings.insert(k.clone(), v.as_ref().clone());
+                }
+
                 keeps.push(false);
             }
 

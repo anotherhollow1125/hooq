@@ -268,7 +268,9 @@ expected: "?", "return", "tail_expr""#,
                 keeps.push(false);
             }
             // ignore_tail_expr_idents については `#[hooq::ignore_tail_expr_idents = ...]` 形式は非対応とする
-            Meta::List(MetaList { path, .. }) if path == &hooq_ignore_tail_expr_idents => {
+            Meta::NameValue(MetaNameValue { path, .. })
+                if path == &hooq_ignore_tail_expr_idents =>
+            {
                 return Err(syn::Error::new_spanned(
                     path,
                     "you can't use #[hooq::ignore_tail_expr_idents = FLAVOR_NAME] format.

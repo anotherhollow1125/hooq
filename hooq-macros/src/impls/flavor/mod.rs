@@ -55,7 +55,7 @@ fn default_method() -> TokenStream {
 
     parse_quote! {
         .inspect_err(|e| {
-            let path = $path;
+            let path = $abs_path;
             let line = $line;
 
             ::std::eprintln!("[{path}:L{line}] {e:?}");

@@ -225,6 +225,18 @@ fn hook_in_macros_override() -> Result<(), ()> {
     Ok(())
 }
 
+#[hooq]
+#[hooq::hello = "(not specified)"]
+#[hooq::method(.inspect_err(|_| println!("{}", $hello)))]
+fn bindings_override() -> Result<(), ()> {
+    enresult(())?;
+
+    #[hooq::bindings = custom::full]
+    enresult(())?;
+
+    Ok(())
+}
+
 #[test]
 fn test() {
     flavor_override().unwrap();
@@ -233,4 +245,5 @@ fn test() {
     tail_expr_idents_override().unwrap();
     result_types_override().unwrap();
     hook_in_macros_override().unwrap();
+    bindings_override().unwrap();
 }

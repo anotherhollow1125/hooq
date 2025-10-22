@@ -380,6 +380,17 @@ mod inert_flavor {
         };
         Ok(())
     }
+    fn bindings_override() -> Result<(), ()> {
+        enresult(())
+            .inspect_err(|_| {
+                ::std::io::_print(format_args!("{0}\n", "(not specified)"));
+            })?;
+        enresult(())
+            .inspect_err(|_| {
+                ::std::io::_print(format_args!("{0}\n", "Hello"));
+            })?;
+        Ok(())
+    }
     extern crate test;
     #[rustc_test_marker = "tests_inner::inert_flavor::test"]
     #[doc(hidden)]
@@ -389,9 +400,9 @@ mod inert_flavor {
             ignore: false,
             ignore_message: ::core::option::Option::None,
             source_file: "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs",
-            start_line: 229usize,
+            start_line: 241usize,
             start_col: 4usize,
-            end_line: 229usize,
+            end_line: 241usize,
             end_col: 8usize,
             compile_fail: false,
             no_run: false,
@@ -407,5 +418,6 @@ mod inert_flavor {
         tail_expr_idents_override().unwrap();
         result_types_override().unwrap();
         hook_in_macros_override().unwrap();
+        bindings_override().unwrap();
     }
 }

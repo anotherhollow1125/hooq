@@ -1,0 +1,15 @@
+[custom]
+method = """.inspect_err(|_| println!("custom error handler called"))"""
+
+[custom.ok]
+method = """.inspect(|_| println!("ok handler called"))"""
+tail_expr_idents = ["Ok"]
+ignore_tail_expr_idents = ["Err"]
+
+[custom.full]
+method = """.inspect(|_| eprintln!("full custom handler called: {}", $hello))"""
+hook_targets = ["?", "tail_expr"]
+tail_expr_idents = ["MyErr", "!MyOk"]
+result_types = ["MyResult"]
+hook_in_macros = false
+bindings = { hello = "\"Hello\"" }

@@ -1,7 +1,0 @@
-[custom]
-method = """.inspect_err(|_| println!("custom error handler called"))"""
-
-[custom.ok]
-method = """.inspect(|_| println!("ok handler called"))"""
-tail_expr_idents = ["Ok"]
-ignore_tail_expr_idents = ["Err"]

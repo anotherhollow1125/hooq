@@ -22,7 +22,7 @@ fn func(flag: bool) -> Result<(), ()> {
     Err(())
 }
 
-#[hooq(my_flavor::sub::sub)]
+#[hooq(flavor = "my_flavor::sub::sub")]
 #[allow(unused)]
 fn func2(flag: bool) -> Result<(), ()> {
     enresult(())?;

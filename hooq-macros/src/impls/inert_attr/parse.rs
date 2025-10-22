@@ -92,7 +92,7 @@ or like #[hooq::SETTING = FLAVOR_NAME] format where
 This format overrides the corresponding setting with the one defined in the specified flavor."
 "#;
 
-fn get_flavor_path(value: &Expr) -> syn::Result<FlavorPath> {
+fn get_flavor_path(value: &Expr, setting_name: &str) -> syn::Result<FlavorPath> {
     match value {
         Expr::Path(ExprPath { path, .. }) => Ok(path
             .try_into()
@@ -105,7 +105,9 @@ fn get_flavor_path(value: &Expr) -> syn::Result<FlavorPath> {
             .map_err(|e| syn::Error::new_spanned(lit, e))?),
         _ => Err(syn::Error::new_spanned(
             value,
-            "invalid hooq::method attribute value. expected: FLAVOR_NAME as path or string",
+            format!(
+                "invalid hooq::{setting_name} attribute value. expected: FLAVOR_NAME as path or string"
+            ),
         )),
     }
 }
@@ -158,7 +160,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
         match &attr.meta {
             // flavor
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_flavor => {
-                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor_path: FlavorPath = get_flavor_path(value, "flavor")?;
                 let Flavor {
                     trait_uses: _,
                     method: flavor_method,
@@ -191,7 +193,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
                 keeps.push(false);
             }
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_method => {
-                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor_path: FlavorPath = get_flavor_path(value, "method")?;
                 method = Some(get_flavor(path.span(), &flavor_path)?.method);
 
                 keeps.push(false);
@@ -217,7 +219,7 @@ expected: "?", "return", "tail_expr""#,
                 }
             }
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_hook_targets => {
-                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor_path: FlavorPath = get_flavor_path(value, "hook_targets")?;
                 hook_targets = Some(get_flavor(path.span(), &flavor_path)?.hook_targets);
 
                 keeps.push(false);
@@ -243,7 +245,7 @@ expected: "?", "return", "tail_expr""#,
             Meta::NameValue(MetaNameValue { path, value, .. })
                 if path == &hooq_tail_expr_idents =>
             {
-                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor_path: FlavorPath = get_flavor_path(value, "tail_expr_idents")?;
                 let flavor = get_flavor(path.span(), &flavor_path)?;
 
                 // flavor指定では ["Err", "!Ok"] のようなパターンに対応できない("Err" のみ適用されるみたいになりかねない)ので、
@@ -286,7 +288,7 @@ this format can set both tail_expr_idents and ignore_tail_expr_idents fields by 
                 keeps.push(false);
             }
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_result_types => {
-                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor_path: FlavorPath = get_flavor_path(value, "result_types")?;
                 result_types = Some(get_flavor(path.span(), &flavor_path)?.result_types);
 
                 keeps.push(false);
@@ -299,7 +301,7 @@ this format can set both tail_expr_idents and ignore_tail_expr_idents fields by 
                 keeps.push(false);
             }
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_hook_in_macros => {
-                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor_path: FlavorPath = get_flavor_path(value, "hook_in_macros")?;
                 hook_in_macros = Some(get_flavor(path.span(), &flavor_path)?.hook_in_macros);
 
                 keeps.push(false);
@@ -307,7 +309,7 @@ this format can set both tail_expr_idents and ignore_tail_expr_idents fields by 
 
             // set bindings by the flavor setting
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_bindings => {
-                let flavor_path: FlavorPath = get_flavor_path(value)?;
+                let flavor_path: FlavorPath = get_flavor_path(value, "bindings")?;
                 let flavor = get_flavor(path.span(), &flavor_path)?;
 
                 for (k, v) in flavor.bindings.iter() {

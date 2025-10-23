@@ -6,7 +6,6 @@ use syn::{Attribute, Expr};
 use crate::impls::inert_attr::context::{HookContext, HookTargetSwitch, SkipStatus};
 
 pub mod context;
-pub mod method;
 mod parse;
 
 #[derive(Debug)]

@@ -7,6 +7,7 @@ use crate::impls::root_attr::{RootAttribute, RootContext};
 
 pub mod flavor;
 pub mod inert_attr;
+pub mod method;
 pub mod root_attr;
 pub mod utils;
 mod walker;

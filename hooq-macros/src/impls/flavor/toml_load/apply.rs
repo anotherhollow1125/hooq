@@ -89,7 +89,7 @@ fn update_flavor_inner(
             let method_stream = syn::parse_str::<TokenStream>(&method)
                 .map_err(|e| format!("failed to parse method: {e}"))?;
 
-            flavor.method = method_stream;
+            flavor.method = method_stream.into();
         }
 
         if let Some(hook_targets) = hook_targets {

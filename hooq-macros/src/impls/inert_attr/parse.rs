@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use proc_macro2::{Span, TokenStream};
+use proc_macro2::Span;
 use syn::parse::Parse;
 use syn::spanned::Spanned;
 use syn::{
@@ -11,6 +11,7 @@ use syn::{
 use crate::impls::flavor::{Flavor, FlavorPath, FlavorStore};
 use crate::impls::inert_attr::InertAttribute;
 use crate::impls::inert_attr::context::HookTargetSwitch;
+use crate::impls::method::Method;
 
 fn get_binding_name(path: &Path) -> syn::Result<Option<String>> {
     let mut segs = path.segments.iter();
@@ -145,7 +146,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     // #[hooq::skip_all]
     let hooq_skip_all = parse_quote!(hooq::skip_all);
 
-    let mut method: Option<TokenStream> = None;
+    let mut method: Option<Method> = None;
     let mut hook_targets: Option<HookTargetSwitch> = None;
     let mut tail_expr_idents: Option<Vec<String>> = None;
     let mut ignore_tail_expr_idents: Option<Vec<String>> = None;
@@ -189,7 +190,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
 
             // method
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_method => {
-                method = Some(tokens.clone());
+                method = Some(tokens.clone().into());
                 keeps.push(false);
             }
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_method => {

@@ -3,10 +3,10 @@ use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::Rc;
 
-use proc_macro2::TokenStream;
 use syn::{Expr, Path, Signature};
 
 use crate::impls::inert_attr::InertAttribute;
+use crate::impls::method::Method;
 use crate::impls::root_attr::RootContext;
 use crate::impls::utils::function_info::FunctionInfo;
 use crate::impls::utils::path_is_end_of;
@@ -171,7 +171,7 @@ impl TryFrom<Vec<String>> for HookTargetSwitch {
 #[derive(Debug, Clone)]
 pub struct LocalContext<'a> {
     // ユーザー設定値
-    pub method: LocalContextField<'a, TokenStream>,
+    pub method: LocalContextField<'a, Method>,
     pub hook_targets: LocalContextField<'a, HookTargetSwitch>,
     pub tail_expr_idents: LocalContextField<'a, Vec<String>>,
     pub ignore_tail_expr_idents: LocalContextField<'a, Vec<String>>,
@@ -366,7 +366,7 @@ impl HookInfo<'_> {
         self.hook_context.local_context.fn_info.as_ref()
     }
 
-    pub fn method(&self) -> &TokenStream {
+    pub fn method(&self) -> &Method {
         &self.hook_context.local_context.method
     }
 

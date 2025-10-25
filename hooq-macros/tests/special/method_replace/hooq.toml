@@ -1,0 +1,6 @@
+[custom]
+method = """{
+    println!("checkpoint: {}", $expr_str);
+
+    $expr
+}"""

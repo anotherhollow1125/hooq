@@ -4,9 +4,10 @@ use std::str::FromStr;
 use meta_vars::{META_VARS_LIST, MetaVars};
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
 use quote::ToTokens;
-use syn::parse_quote;
+use syn::{Expr, parse_quote};
 
 use crate::impls::inert_attr::context::HookInfo;
+use crate::impls::method::Method;
 
 mod meta_vars;
 
@@ -35,26 +36,70 @@ fn get_file_name(q_span: Span) -> String {
 }
 
 impl HookInfo<'_> {
-    pub fn generate_method(&self, q_span: Span) -> syn::Result<TokenStream> {
-        let mut res = TokenStream::new();
+    pub fn render_expr_with_method(&self, expr: &mut Expr, q_span: Span) -> syn::Result<()> {
+        fn spanned(method: TokenStream, q_span: Span) -> TokenStream {
+            // NOTE:
+            // parse_quote_spanned! ではなぜか Span が正しく設定されない
+            // そのため、イテレータを活用して設定している
+            // TODO: もっと良い方法があればそちらに変更する
+            let method: TokenStream = method
+                .into_iter()
+                .map(|mut tt| {
+                    tt.set_span(q_span);
+                    tt
+                })
+                .collect();
 
-        let method = self.method().clone();
-        self.expand_meta_vars(method, &mut res, q_span)?;
+            method
+        }
 
-        let res = res
-            .into_iter()
-            .map(|mut tt| {
-                tt.set_span(q_span);
-                tt
-            })
-            .collect();
+        let new_expr: Expr = match self.method().clone() {
+            Method::Insert(dot, method_template) => {
+                let mut method = TokenStream::new();
 
-        Ok(res)
+                self.expand_meta_vars(expr, method_template, &mut method, q_span)?;
+                let method = spanned(method, q_span);
+
+                parse_quote! {
+                    #expr #dot #method
+                }
+            }
+            Method::Replace(method_template) => {
+                /*
+                // NOTE: Span を適切に設定するため、$expr の置換を後に行う
+                // 以下のようなコードの構想があったが、
+                // q_span で一気に書き換えても特に問題なく $expr に赤線が引かれたので、
+                // 2回展開を行うのはやめることとした
+                // 普段このようなコードは残さないがこちらはメモと共に残すべきと考えた
+
+                let mut pre_method = TokenStream::new();
+
+                self.expand_meta_vars(None, method_template, &mut pre_method, q_span)?;
+                let pre_method = spanned(pre_method, q_span);
+
+                let mut method = TokenStream::new();
+                self.expand_meta_vars(Some(expr), pre_method, &mut method, q_span)?;
+                */
+
+                let mut method = TokenStream::new();
+                self.expand_meta_vars(expr, method_template, &mut method, q_span)?;
+                let method = spanned(method, q_span);
+
+                parse_quote! {
+                    #method
+                }
+            }
+        };
+
+        *expr = new_expr;
+
+        Ok(())
     }
 
     // 再帰的に適用するために ts, res を引数としている
     fn expand_meta_vars(
         &self,
+        expr: &Expr,
         ts: TokenStream,
         res: &mut TokenStream,
         q_span: Span,
@@ -81,7 +126,7 @@ impl HookInfo<'_> {
 
                     next_is_replace_target = false;
 
-                    res.extend([self.meta_vars2token_stream(&ident, q_span)?]);
+                    res.extend([self.meta_vars2token_stream(expr, &ident, q_span)?]);
                 }
                 TokenTree::Group(group) => {
                     if next_is_replace_target {
@@ -89,7 +134,7 @@ impl HookInfo<'_> {
                     }
 
                     let mut res_for_group = TokenStream::new();
-                    self.expand_meta_vars(group.stream(), &mut res_for_group, q_span)?;
+                    self.expand_meta_vars(expr, group.stream(), &mut res_for_group, q_span)?;
 
                     let new_group = Group::new(group.delimiter(), res_for_group);
 
@@ -168,6 +213,7 @@ impl HookInfo<'_> {
 
     fn meta_vars2token_stream(
         &self,
+        expr: &Expr,
         var_ident: &Ident,
         #[allow(unused)] q_span: Span,
     ) -> syn::Result<TokenStream> {
@@ -207,6 +253,7 @@ impl HookInfo<'_> {
                     #file
                 })
             }
+            Ok(MetaVars::Expr) => Ok(expr.to_token_stream()),
             Ok(MetaVars::ExprStr) => {
                 let expr_str = self.expr_str;
 

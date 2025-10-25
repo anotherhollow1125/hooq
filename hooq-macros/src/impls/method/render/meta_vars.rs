@@ -7,6 +7,7 @@ pub enum MetaVars {
     Path,
     AbsPath,
     File,
+    Expr,
     ExprStr,
     Count,
     FnName,
@@ -15,12 +16,13 @@ pub enum MetaVars {
     HooqMeta,
 }
 
-pub const META_VARS_LIST: [MetaVars; 11] = [
+pub const META_VARS_LIST: [MetaVars; 12] = [
     MetaVars::Line,
     MetaVars::Column,
     MetaVars::Path,
     MetaVars::AbsPath,
     MetaVars::File,
+    MetaVars::Expr,
     MetaVars::ExprStr,
     MetaVars::Count,
     MetaVars::FnName,
@@ -39,6 +41,7 @@ impl FromStr for MetaVars {
             "path" => Ok(MetaVars::Path),
             "abspath" | "abs_path" => Ok(MetaVars::AbsPath),
             "file" => Ok(MetaVars::File),
+            "expr" => Ok(MetaVars::Expr),
             "expr_str" => Ok(MetaVars::ExprStr),
             "nth" | "count" => Ok(MetaVars::Count),
             "fnname" | "fn_name" => Ok(MetaVars::FnName),
@@ -61,6 +64,7 @@ impl Display for MetaVars {
                 MetaVars::Path => "path",
                 MetaVars::AbsPath => "abs_path",
                 MetaVars::File => "file",
+                MetaVars::Expr => "expr",
                 MetaVars::ExprStr => "expr_str",
                 MetaVars::Count => "count",
                 MetaVars::FnName => "fn_name",

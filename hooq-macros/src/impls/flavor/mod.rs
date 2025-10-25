@@ -9,6 +9,7 @@ use syn::{Expr, Path, parse_quote};
 pub use crate::impls::flavor::flavor_path::FlavorPath;
 use crate::impls::flavor::toml_load::HooqToml;
 use crate::impls::inert_attr::context::HookTargetSwitch;
+use crate::impls::method::Method;
 
 mod flavor_path;
 mod presets;
@@ -17,7 +18,7 @@ mod toml_load;
 #[derive(Debug, Clone)]
 pub struct Flavor {
     pub trait_uses: Vec<Path>,
-    pub method: TokenStream,
+    pub method: Method,
     pub hook_targets: HookTargetSwitch,
     pub tail_expr_idents: Vec<String>,
     pub ignore_tail_expr_idents: Vec<String>,
@@ -31,7 +32,7 @@ impl Default for Flavor {
     fn default() -> Self {
         Self {
             trait_uses: Vec::new(),
-            method: default_method(),
+            method: default_method().into(),
             hook_targets: HookTargetSwitch {
                 question: true,
                 return_: true,

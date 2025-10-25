@@ -5,7 +5,7 @@ use crate::impls::flavor::Flavor;
 
 pub fn log_flavor() -> Flavor {
     Flavor {
-        method: log_method(),
+        method: log_method().into(),
         ..Default::default()
     }
 }

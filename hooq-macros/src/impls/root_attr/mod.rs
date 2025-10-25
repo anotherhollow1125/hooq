@@ -6,6 +6,7 @@ use syn::{Expr, Path};
 
 use crate::impls::flavor::{Flavor, FlavorPath, FlavorStore};
 use crate::impls::inert_attr::context::HookTargetSwitch;
+use crate::impls::method::Method;
 
 mod parse;
 
@@ -16,7 +17,7 @@ pub struct RootContext {
 
     // inert_attr でも設定可能
     // flavor の内容を反映させる
-    pub method: TokenStream,
+    pub method: Method,
     pub hook_targets: HookTargetSwitch,
     pub tail_expr_idents: Vec<String>,
     pub ignore_tail_expr_idents: Vec<String>,

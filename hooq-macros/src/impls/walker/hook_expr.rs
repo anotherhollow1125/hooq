@@ -1,5 +1,5 @@
 use proc_macro2::Span;
-use syn::{Expr, parse_quote};
+use syn::Expr;
 
 use crate::impls::inert_attr::context::{HookContext, HookTargetKind};
 
@@ -22,12 +22,7 @@ pub(super) fn hook_expr(
         return Ok(());
     }
 
-    let method = context.generate_method(q_span)?;
-    let original_expr = expr_field.clone();
-
-    *expr_field = parse_quote! {
-        #original_expr #method
-    };
+    context.render_expr_with_method(expr_field, q_span)?;
 
     Ok(())
 }

@@ -1,17 +1,16 @@
 use std::collections::HashMap;
 
-use proc_macro2::TokenStream;
 use syn::{Attribute, Expr};
 
 use crate::impls::inert_attr::context::{HookContext, HookTargetSwitch, SkipStatus};
+use crate::impls::method::Method;
 
 pub mod context;
-pub mod method;
 mod parse;
 
 #[derive(Debug)]
 pub struct InertAttribute {
-    pub method: Option<TokenStream>,
+    pub method: Option<Method>,
     pub hook_targets: Option<HookTargetSwitch>,
     pub tail_expr_idents: Option<Vec<String>>,
     pub ignore_tail_expr_idents: Option<Vec<String>>,

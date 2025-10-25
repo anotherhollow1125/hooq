@@ -6,7 +6,7 @@ use crate::impls::flavor::Flavor;
 pub fn anyhow_flavor() -> Flavor {
     Flavor {
         trait_uses: vec![parse_quote! { anyhow::Context }],
-        method: anyhow_method(),
+        method: anyhow_method().into(),
         ..Default::default()
     }
 }

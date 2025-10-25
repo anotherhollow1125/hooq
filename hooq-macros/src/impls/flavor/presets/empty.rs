@@ -4,11 +4,12 @@ use proc_macro2::TokenStream;
 
 use crate::impls::flavor::Flavor;
 use crate::impls::inert_attr::context::HookTargetSwitch;
+use crate::impls::method::Method;
 
 pub fn empty_flavor() -> Flavor {
     Flavor {
         trait_uses: Vec::new(),
-        method: TokenStream::new(),
+        method: Method::Replace(TokenStream::new(), None),
         hook_targets: HookTargetSwitch {
             question: false,
             return_: false,

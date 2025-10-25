@@ -4,9 +4,10 @@ use std::str::FromStr;
 use meta_vars::{META_VARS_LIST, MetaVars};
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
 use quote::ToTokens;
-use syn::parse_quote;
+use syn::{Expr, parse_quote};
 
 use crate::impls::inert_attr::context::HookInfo;
+use crate::impls::method::Method;
 
 mod meta_vars;
 
@@ -35,13 +36,15 @@ fn get_file_name(q_span: Span) -> String {
 }
 
 impl HookInfo<'_> {
-    pub fn generate_method(&self, q_span: Span) -> syn::Result<TokenStream> {
-        let mut res = TokenStream::new();
+    pub fn render_expr_with_method(&self, expr: &mut Expr, q_span: Span) -> syn::Result<()> {
+        let mut method = TokenStream::new();
 
-        let method = self.method().clone();
-        self.expand_meta_vars(method, &mut res, q_span)?;
+        let Method::Insert(dot, method_template) = self.method().clone() else {
+            unimplemented!()
+        };
+        self.expand_meta_vars(method_template, &mut method, q_span)?;
 
-        let res = res
+        let method: TokenStream = method
             .into_iter()
             .map(|mut tt| {
                 tt.set_span(q_span);
@@ -49,7 +52,13 @@ impl HookInfo<'_> {
             })
             .collect();
 
-        Ok(res)
+        let new_expr: Expr = parse_quote! {
+            #expr #dot #method
+        };
+
+        *expr = new_expr;
+
+        Ok(())
     }
 
     // 再帰的に適用するために ts, res を引数としている

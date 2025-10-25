@@ -7,7 +7,7 @@ mod render;
 #[derive(Debug, Clone)]
 pub enum Method {
     Insert(Token![.], TokenStream),
-    Replace(TokenStream, Option<Token![!]>),
+    Replace(TokenStream),
 }
 
 // Result型を返す処理だが失敗するケースは考えにくい
@@ -18,11 +18,10 @@ impl Parse for Method {
             let dot_token: Token![.] = input.parse()?;
             // TokenStream への変換が失敗することは考えにくい
             let ts: TokenStream = input.parse()?;
+
             Self::Insert(dot_token, ts)
         } else {
-            // TODO: 末尾の!もサポート
-            // TokenStream への変換が失敗することは考えにくい
-            Self::Replace(input.parse()?, None)
+            Self::Replace(input.parse()?)
         };
 
         Ok(res)

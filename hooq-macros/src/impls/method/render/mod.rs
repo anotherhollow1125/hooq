@@ -64,7 +64,7 @@ impl HookInfo<'_> {
                     #expr #dot #method
                 }
             }
-            Method::Replace(method_template, _) => {
+            Method::Replace(method_template) => {
                 /*
                 // NOTE: Span を適切に設定するため、$expr の置換を後に行う
                 // 以下のようなコードの構想があったが、

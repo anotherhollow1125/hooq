@@ -1,3 +1,5 @@
+#![allow(clippy::result_unit_err)]
+
 use hooq::hooq;
 
 #[hooq]
@@ -5,8 +7,9 @@ fn enresult<T>(val: T) -> Result<T, ()> {
     Ok(val)
 }
 
-#[hooq(custom3)]
-fn func() -> Result<(), ()> {
+#[hooq]
+#[hooq::method(Ok($expr.unwrap()))]
+pub fn func_unwrap() -> Result<(), ()> {
     if enresult(false)? {
         return Err::<(), ()>(());
     }
@@ -17,8 +20,15 @@ fn func() -> Result<(), ()> {
 }
 
 #[hooq]
-#[hooq::method(Ok($expr.unwrap()))]
-fn func_unwrap() -> Result<(), ()> {
+#[hooq::method(Ok(()))]
+pub fn func_overridden() -> Result<(), ()> {
+    enresult(())?;
+
+    Ok(())
+}
+
+#[hooq(custom)]
+pub fn func_with_debug() -> Result<(), ()> {
     if enresult(false)? {
         return Err::<(), ()>(());
     }
@@ -26,9 +36,4 @@ fn func_unwrap() -> Result<(), ()> {
     enresult(())?;
 
     Ok(())
-}
-
-fn main() {
-    func().unwrap();
-    func_unwrap().unwrap();
 }

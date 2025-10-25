@@ -20,8 +20,8 @@ fn test_special() {
     macrotest::expand_args("tests/special/fn_special.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/macro.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/nested.rs", &["--ugly"]);
-    macrotest::expand_args("tests/special/skip.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/skip_detail.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/skip.rs", &["--ugly"]);
 
     mask_project_root("tests/special", Mask);
 }

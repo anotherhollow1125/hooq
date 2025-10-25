@@ -11,6 +11,7 @@ pub enum Method {
 }
 
 // Result型を返す処理だが失敗するケースは考えにくい
+// エラーが起きないと言える根拠は各 ? がある処理の直前にコメントを掲載した
 impl Parse for Method {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let res = if input.peek(Token![.]) {
@@ -21,6 +22,7 @@ impl Parse for Method {
 
             Self::Insert(dot_token, ts)
         } else {
+            // TokenStream への変換が失敗することは考えにくい
             Self::Replace(input.parse()?)
         };
 

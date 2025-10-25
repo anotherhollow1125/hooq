@@ -34,6 +34,16 @@ impl From<TokenStream> for Method {
     fn from(value: TokenStream) -> Self {
         // TokenStream から Method への変換
         // Result型を返す処理だが失敗するケースは考えにくいため expect でアンラップ
-        parse2(value).expect("unexpected token stream for Method")
+        parse2(value).unwrap_or_else(|e| {
+            panic!(
+                "unexpected token stream for Method: {}
+
+This error is unexpected for the developers.
+If possible, please post an issue in the repository.
+link: `https://github.com/anotherhollow1125/hooq`
+",
+                e
+            )
+        })
     }
 }

@@ -375,6 +375,7 @@ dependencies = [
  "futures",
  "hooq",
  "macrotest",
+ "prettyplease",
  "proc-macro2",
  "quote",
  "serde",

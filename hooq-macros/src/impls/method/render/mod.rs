@@ -9,6 +9,7 @@ use syn::{Expr, parse_quote};
 use crate::impls::inert_attr::context::HookInfo;
 use crate::impls::method::Method;
 
+mod describe_expr;
 mod meta_vars;
 
 fn get_abs_path(q_span: Span) -> String {
@@ -259,6 +260,13 @@ impl HookInfo<'_> {
 
                 Ok(parse_quote! {
                     #expr_str
+                })
+            }
+            Ok(MetaVars::ExprStrShort) => {
+                let expr_str_short = describe_expr::describe_expr_short(expr, self.kind);
+
+                Ok(parse_quote! {
+                    #expr_str_short
                 })
             }
             Ok(MetaVars::Count) => {

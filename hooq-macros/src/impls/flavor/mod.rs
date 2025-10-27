@@ -58,8 +58,11 @@ fn default_method() -> TokenStream {
         .inspect_err(|e| {
             let path = $abs_path;
             let line = $line;
+            let col = $col;
+            let expr = $expr_str_short;
 
-            ::std::eprintln!("[{path}:L{line}] {e:?}");
+            ::std::eprintln!("[{path}:{line}:{col}] {e:?}
+    {expr}");
         })
     }
 }

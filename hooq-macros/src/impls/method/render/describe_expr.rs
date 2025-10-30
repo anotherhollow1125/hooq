@@ -13,9 +13,16 @@ impl Fold for ShortStrFolder {
     fn fold_lit_str(&mut self, i: syn::LitStr) -> syn::LitStr {
         let value = i.value();
         let value = value.replace('\n', " ");
-        let short_value = if value.len() > MAX_STR_LEN {
-            let start = &value[..STD_START_LEN];
-            let end = &value[value.len() - STD_END_LEN..];
+        let short_value = if value.chars().count() > MAX_STR_LEN {
+            let start: String = value.chars().take(STD_START_LEN).collect();
+            let end: String = value
+                .chars()
+                .rev()
+                .take(STD_END_LEN)
+                .collect::<Vec<_>>()
+                .into_iter()
+                .rev()
+                .collect();
             format!("{}..{}", start, end)
         } else {
             value

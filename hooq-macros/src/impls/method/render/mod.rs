@@ -244,6 +244,18 @@ impl HookInfo<'_> {
                     #expr_str_short
                 })
             }
+            Ok(MetaVars::ExprStrShortOneLine) => {
+                let expr_str_short_oneline: String =
+                    describe_expr::describe_expr_short(expr, self.kind)
+                        .lines()
+                        .map(|line| line.trim())
+                        .collect::<Vec<_>>()
+                        .join(" ");
+
+                Ok(parse_quote! {
+                    #expr_str_short_oneline
+                })
+            }
             Ok(MetaVars::Count) => {
                 let val = self.get_count();
 

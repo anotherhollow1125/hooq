@@ -14,7 +14,7 @@ pub fn log_flavor() -> Flavor {
 fn log_method() -> TokenStream {
     parse_quote! {
         .inspect_err(|e| {
-            let path = $abs_path;
+            let path = $path;
             let line = $line;
             let col = $col;
             let expr = $expr_str_short;

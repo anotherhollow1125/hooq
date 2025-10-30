@@ -15,7 +15,7 @@ pub fn anyhow_flavor() -> Flavor {
 fn anyhow_method() -> TokenStream {
     parse_quote! {
         .with_context(|| {
-            let path = $abs_path;
+            let path = $path;
             let line = $line;
             let col = $col;
             let expr = $expr_str_short;

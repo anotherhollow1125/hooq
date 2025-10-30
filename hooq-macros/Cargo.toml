@@ -16,8 +16,7 @@ readme = "docs/README.md"
 proc-macro = true
 
 [features]
-default = ["log"]
-full = ["anyhow", "log"]
+default = ["anyhow", "log"]
 log = []
 anyhow = []
 

@@ -9,21 +9,13 @@ pub fn a() -> anyhow::Result<()> {
             }),
         )
         .with_context(|| {
-            let file = "hooq_anyhow.rs";
+            let path = "<hooq_root>/src/hooq_anyhow.rs";
             let line = 5usize;
-            let expr_str = "Err(anyhow :: anyhow! (\"error!\"))";
-            let expr_str = if expr_str.len() > 20 {
-                ::alloc::__export::must_use({
-                    ::alloc::fmt::format(
-                        format_args!("...{0}", & expr_str[expr_str.len() - 20..]),
-                    )
-                })
-            } else {
-                expr_str.to_string()
-            };
+            let col = 5usize;
+            let expr = "Err(anyhow::anyhow!(\"error!\"))";
             ::alloc::__export::must_use({
                 ::alloc::fmt::format(
-                    format_args!("[{0}:L{1}] {2}", file, line, expr_str),
+                    format_args!("[{0}:{1}:{2}]\n    {3}", path, line, col, expr),
                 )
             })
         })
@@ -33,21 +25,13 @@ use anyhow::Context as _;
 pub fn b() -> anyhow::Result<()> {
     a()
         .with_context(|| {
-            let file = "hooq_anyhow.rs";
+            let path = "<hooq_root>/src/hooq_anyhow.rs";
             let line = 10usize;
-            let expr_str = "a()";
-            let expr_str = if expr_str.len() > 20 {
-                ::alloc::__export::must_use({
-                    ::alloc::fmt::format(
-                        format_args!("...{0}", & expr_str[expr_str.len() - 20..]),
-                    )
-                })
-            } else {
-                expr_str.to_string()
-            };
+            let col = 8usize;
+            let expr = "a()?";
             ::alloc::__export::must_use({
                 ::alloc::fmt::format(
-                    format_args!("[{0}:L{1}] {2}", file, line, expr_str),
+                    format_args!("[{0}:{1}:{2}]\n    {3}", path, line, col, expr),
                 )
             })
         })?;
@@ -58,21 +42,13 @@ pub fn b() -> anyhow::Result<()> {
             }),
         )
         .with_context(|| {
-            let file = "hooq_anyhow.rs";
+            let path = "<hooq_root>/src/hooq_anyhow.rs";
             let line = 12usize;
-            let expr_str = "Err(anyhow :: anyhow! (\"error!\"))";
-            let expr_str = if expr_str.len() > 20 {
-                ::alloc::__export::must_use({
-                    ::alloc::fmt::format(
-                        format_args!("...{0}", & expr_str[expr_str.len() - 20..]),
-                    )
-                })
-            } else {
-                expr_str.to_string()
-            };
+            let col = 5usize;
+            let expr = "Err(anyhow::anyhow!(\"error!\"))";
             ::alloc::__export::must_use({
                 ::alloc::fmt::format(
-                    format_args!("[{0}:L{1}] {2}", file, line, expr_str),
+                    format_args!("[{0}:{1}:{2}]\n    {3}", path, line, col, expr),
                 )
             })
         })
@@ -82,21 +58,13 @@ use anyhow::Context as _;
 pub fn c() -> anyhow::Result<()> {
     b()
         .with_context(|| {
-            let file = "hooq_anyhow.rs";
+            let path = "<hooq_root>/src/hooq_anyhow.rs";
             let line = 17usize;
-            let expr_str = "b()";
-            let expr_str = if expr_str.len() > 20 {
-                ::alloc::__export::must_use({
-                    ::alloc::fmt::format(
-                        format_args!("...{0}", & expr_str[expr_str.len() - 20..]),
-                    )
-                })
-            } else {
-                expr_str.to_string()
-            };
+            let col = 8usize;
+            let expr = "b()?";
             ::alloc::__export::must_use({
                 ::alloc::fmt::format(
-                    format_args!("[{0}:L{1}] {2}", file, line, expr_str),
+                    format_args!("[{0}:{1}:{2}]\n    {3}", path, line, col, expr),
                 )
             })
         })?;
@@ -107,21 +75,13 @@ pub fn c() -> anyhow::Result<()> {
             }),
         )
         .with_context(|| {
-            let file = "hooq_anyhow.rs";
+            let path = "<hooq_root>/src/hooq_anyhow.rs";
             let line = 19usize;
-            let expr_str = "Err(anyhow :: anyhow! (\"error!\"))";
-            let expr_str = if expr_str.len() > 20 {
-                ::alloc::__export::must_use({
-                    ::alloc::fmt::format(
-                        format_args!("...{0}", & expr_str[expr_str.len() - 20..]),
-                    )
-                })
-            } else {
-                expr_str.to_string()
-            };
+            let col = 5usize;
+            let expr = "Err(anyhow::anyhow!(\"error!\"))";
             ::alloc::__export::must_use({
                 ::alloc::fmt::format(
-                    format_args!("[{0}:L{1}] {2}", file, line, expr_str),
+                    format_args!("[{0}:{1}:{2}]\n    {3}", path, line, col, expr),
                 )
             })
         })

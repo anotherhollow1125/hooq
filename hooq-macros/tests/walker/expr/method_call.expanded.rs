@@ -6,9 +6,13 @@ impl Strct {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/walker/expr/method_call.rs";
                 let line = 8usize;
+                let col = 9usize;
+                let expr = "Err(())";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })

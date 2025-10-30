@@ -7,8 +7,14 @@ fn default(flag: bool) -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
             let line = 10usize;
+            let col = 11usize;
+            let expr = "hoge()?";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })?;
     if !flag {
@@ -16,9 +22,13 @@ fn default(flag: bool) -> Result<(), ()> {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
                 let line = 13usize;
+                let col = 9usize;
+                let expr = "return Err(());";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             });
@@ -27,8 +37,14 @@ fn default(flag: bool) -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
             let line = 16usize;
+            let col = 5usize;
+            let expr = "Err(())";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })
 }
@@ -37,8 +53,14 @@ fn q_only(flag: bool) -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
             let line = 22usize;
+            let col = 11usize;
+            let expr = "hoge()?";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })?;
     if !flag {
@@ -53,9 +75,13 @@ fn return_only(flag: bool) -> Result<(), ()> {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
                 let line = 37usize;
+                let col = 9usize;
+                let expr = "return Err(());";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             });
@@ -71,8 +97,14 @@ fn tailexpr_only(flag: bool) -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
             let line = 52usize;
+            let col = 5usize;
+            let expr = "Err(())";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })
 }
@@ -81,8 +113,14 @@ fn return_and_question(flag: bool) -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
             let line = 58usize;
+            let col = 11usize;
+            let expr = "hoge()?";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })?;
     if !flag {
@@ -90,9 +128,13 @@ fn return_and_question(flag: bool) -> Result<(), ()> {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/hook_targets.rs";
                 let line = 61usize;
+                let col = 9usize;
+                let expr = "return Err(());";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             });

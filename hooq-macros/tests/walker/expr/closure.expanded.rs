@@ -5,9 +5,13 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/walker/expr/closure.rs";
                 let line = 6usize;
+                let col = 9usize;
+                let expr = "return Err(());";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             });

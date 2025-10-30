@@ -19,11 +19,20 @@ mod inert_flavor {
     fn flavor_override() -> Result<(), ()> {
         enresult(())
             .inspect_err(|e| {
-                let path = "<hooq_root>/hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
+                let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                 let line = 24usize;
+                let col = 17usize;
+                let expr = "enresult(())?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                            path,
+                            line,
+                            col,
+                            e,
+                            expr,
+                        ),
                     );
                 };
             })?;
@@ -78,11 +87,20 @@ mod inert_flavor {
                     "{0:?}\n",
                     f()
                         .inspect_err(|e| {
-                            let path = "<hooq_root>/hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
+                            let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                             let line = 48usize;
+                            let col = 25usize;
+                            let expr = "f()?";
                             {
                                 ::std::io::_eprint(
-                                    format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                                    format_args!(
+                                        "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                                        path,
+                                        line,
+                                        col,
+                                        e,
+                                        expr,
+                                    ),
                                 );
                             };
                         })?,
@@ -91,11 +109,20 @@ mod inert_flavor {
         };
         enresult(())
             .inspect_err(|e| {
-                let path = "<hooq_root>/hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
+                let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                 let line = 50usize;
+                let col = 17usize;
+                let expr = "enresult(())?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                            path,
+                            line,
+                            col,
+                            e,
+                            expr,
+                        ),
                     );
                 };
             })?;
@@ -104,11 +131,20 @@ mod inert_flavor {
     fn method_override() -> Result<(), ()> {
         enresult(())
             .inspect_err(|e| {
-                let path = "<hooq_root>/hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
+                let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                 let line = 57usize;
+                let col = 17usize;
+                let expr = "enresult(())?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                            path,
+                            line,
+                            col,
+                            e,
+                            expr,
+                        ),
                     );
                 };
             })?;
@@ -132,11 +168,20 @@ mod inert_flavor {
         enresult(())?;
         enresult(())
             .inspect_err(|e| {
-                let path = "<hooq_root>/hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
+                let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                 let line = 74usize;
+                let col = 17usize;
+                let expr = "enresult(())?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                            path,
+                            line,
+                            col,
+                            e,
+                            expr,
+                        ),
                     );
                 };
             })?;
@@ -364,11 +409,20 @@ mod inert_flavor {
                     "{0}\n",
                     enresult(10)
                         .inspect_err(|e| {
-                            let path = "<hooq_root>/hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
+                            let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                             let line = 220usize;
+                            let col = 32usize;
+                            let expr = "enresult(10)?";
                             {
                                 ::std::io::_eprint(
-                                    format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                                    format_args!(
+                                        "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                                        path,
+                                        line,
+                                        col,
+                                        e,
+                                        expr,
+                                    ),
                                 );
                             };
                         })?,

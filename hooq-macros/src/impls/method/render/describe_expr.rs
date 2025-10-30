@@ -41,19 +41,18 @@ fn short_str(expr: Expr) -> Expr {
 /// - 1行・2行の時: 全体を返す
 /// - 3行以上の時: 先頭行 + "..." + 最終行を返す
 fn get_strs_for_return(s: String) -> String {
-    let mut res = String::new();
     let lines: Vec<&str> = s.lines().collect();
 
     if lines.len() <= 2 {
-        let res = lines
+        return lines
             .into_iter()
             // インデント一つ分削除
             .map(|line| line.strip_prefix("    ").unwrap_or(line))
             .collect::<Vec<&str>>()
             .join("\n");
-
-        return res;
     }
+
+    let mut res = String::new();
 
     for (i, line) in lines.iter().enumerate() {
         // インデント一つ分削除
@@ -78,19 +77,18 @@ fn get_strs_for_return(s: String) -> String {
 /// - 1行・2行の時: 全体を返す
 /// - 3行以上の時: "..." + 最終
 fn get_strs_for_question_or_tail_expr(s: String) -> String {
-    let mut res = String::new();
     let lines: Vec<&str> = s.lines().collect();
 
     if lines.len() <= 2 {
-        let res = lines
+        return lines
             .into_iter()
             // インデント一つ分削除
             .map(|line| line.strip_prefix("    ").unwrap_or(line))
             .collect::<Vec<&str>>()
             .join("\n");
-
-        return res;
     }
+
+    let mut res = String::new();
 
     for (i, line) in lines.iter().enumerate() {
         // インデント一つ分削除

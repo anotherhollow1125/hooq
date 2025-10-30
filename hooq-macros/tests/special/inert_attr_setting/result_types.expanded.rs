@@ -7,9 +7,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 12usize;
+                let col = 9usize;
+                let expr = "Ok(val)";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })
@@ -19,9 +23,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 16usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -30,9 +38,13 @@ mod funcs {
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                     let line = 17usize;
+                    let col = 13usize;
+                    let expr = "return enresult(());";
                     {
                         ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                            format_args!(
+                                "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                            ),
                         );
                     };
                 });
@@ -41,9 +53,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 20usize;
+                let col = 9usize;
+                let expr = "enresult(())";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })
@@ -53,9 +69,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 24usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -64,9 +84,13 @@ mod funcs {
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                     let line = 25usize;
+                    let col = 13usize;
+                    let expr = "return enresult(());";
                     {
                         ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                            format_args!(
+                                "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                            ),
                         );
                     };
                 });
@@ -75,9 +99,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 28usize;
+                let col = 9usize;
+                let expr = "enresult(())";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })
@@ -87,9 +115,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 32usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -103,9 +135,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 45usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -116,9 +152,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 49usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -127,9 +167,13 @@ mod funcs {
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                     let line = 50usize;
+                    let col = 13usize;
+                    let expr = "return Ok(());";
                     {
                         ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                            format_args!(
+                                "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                            ),
                         );
                     };
                 });
@@ -138,9 +182,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 53usize;
+                let col = 9usize;
+                let expr = "Ok(())";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })
@@ -150,9 +198,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 57usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -163,9 +215,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 61usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -176,9 +232,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 67usize;
+                let col = 9usize;
+                let expr = "Ok(())";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })
@@ -188,9 +248,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 75usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -199,9 +263,13 @@ mod funcs {
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                     let line = 76usize;
+                    let col = 13usize;
+                    let expr = "return enresult(());";
                     {
                         ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                            format_args!(
+                                "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                            ),
                         );
                     };
                 });
@@ -210,9 +278,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 79usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -221,9 +293,13 @@ mod funcs {
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                     let line = 80usize;
+                    let col = 13usize;
+                    let expr = "return Err(());";
                     {
                         ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                            format_args!(
+                                "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                            ),
                         );
                     };
                 });
@@ -232,9 +308,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 83usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -243,9 +323,13 @@ mod funcs {
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                     let line = 84usize;
+                    let col = 13usize;
+                    let expr = "return Ok(());";
                     {
                         ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                            format_args!(
+                                "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                            ),
                         );
                     };
                 });
@@ -254,9 +338,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 87usize;
+                let col = 9usize;
+                let expr = "Ok(())";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })
@@ -266,9 +354,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 92usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -277,9 +369,13 @@ mod funcs {
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                     let line = 93usize;
+                    let col = 13usize;
+                    let expr = "return enresult(());";
                     {
                         ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                            format_args!(
+                                "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                            ),
                         );
                     };
                 });
@@ -288,9 +384,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 96usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?
@@ -299,9 +399,13 @@ mod funcs {
                 .inspect_err(|e| {
                     let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                     let line = 97usize;
+                    let col = 13usize;
+                    let expr = "return Err(());";
                     {
                         ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                            format_args!(
+                                "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                            ),
                         );
                     };
                 });
@@ -310,9 +414,13 @@ mod funcs {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/result_types.rs";
                 let line = 100usize;
+                let col = 27usize;
+                let expr = "enresult(false)?";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })?

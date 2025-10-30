@@ -15,16 +15,13 @@ pub fn anyhow_flavor() -> Flavor {
 fn anyhow_method() -> TokenStream {
     parse_quote! {
         .with_context(|| {
-            let file = $file;
+            let path = $path;
             let line = $line;
-            let expr_str = $expr_str;
-            let expr_str = if expr_str.len() > 20 {
-                format!("...{}", &expr_str[expr_str.len() - 20..])
-            } else {
-                expr_str.to_string()
-            };
+            let col = $col;
+            let expr = $expr_str_short;
 
-            format!("[{file}:L{line}] {expr_str}")
+            format!("[{path}:{line}:{col}]
+    {expr}")
         })
     }
 }

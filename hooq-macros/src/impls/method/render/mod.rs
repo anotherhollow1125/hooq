@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use std::str::FromStr;
 
 use meta_vars::{META_VARS_LIST, MetaVars};
@@ -9,24 +8,8 @@ use syn::{Expr, parse_quote};
 use crate::impls::inert_attr::context::HookInfo;
 use crate::impls::method::Method;
 
+mod describe_expr;
 mod meta_vars;
-
-fn get_abs_path(q_span: Span) -> String {
-    // Cargoプロジェクト以下の場合 local_file / file からは相対パスが返る
-    let span_path = q_span.unwrap().local_file().unwrap_or_else(|| {
-        let path = q_span.unwrap().file();
-        PathBuf::from(path)
-    });
-    let cargo_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| String::new());
-    let cargo_path = PathBuf::from(cargo_path);
-
-    let path = if span_path.is_absolute() {
-        span_path.clone()
-    } else {
-        cargo_path.join(&span_path)
-    };
-    path.to_string_lossy().to_string()
-}
 
 fn get_file_name(q_span: Span) -> String {
     let path = q_span.unwrap().file();
@@ -239,13 +222,6 @@ impl HookInfo<'_> {
                     #path
                 })
             }
-            Ok(MetaVars::AbsPath) => {
-                let path = get_abs_path(q_span);
-
-                Ok(parse_quote! {
-                    #path
-                })
-            }
             Ok(MetaVars::File) => {
                 let file = get_file_name(q_span);
 
@@ -259,6 +235,25 @@ impl HookInfo<'_> {
 
                 Ok(parse_quote! {
                     #expr_str
+                })
+            }
+            Ok(MetaVars::ExprStrShort) => {
+                let expr_str_short = describe_expr::describe_expr_short(expr, self.kind);
+
+                Ok(parse_quote! {
+                    #expr_str_short
+                })
+            }
+            Ok(MetaVars::ExprStrShortOneLine) => {
+                let expr_str_short_oneline: String =
+                    describe_expr::describe_expr_short(expr, self.kind)
+                        .lines()
+                        .map(|line| line.trim())
+                        .collect::<Vec<_>>()
+                        .join(" ");
+
+                Ok(parse_quote! {
+                    #expr_str_short_oneline
                 })
             }
             Ok(MetaVars::Count) => {
@@ -287,7 +282,6 @@ impl HookInfo<'_> {
                 let line = q_span.unwrap().line();
                 let column = q_span.unwrap().column();
                 let path = q_span.unwrap().file();
-                let abs_path = get_abs_path(q_span);
                 let file = get_file_name(q_span);
                 let expr_str = self.expr_str;
                 let count = self.get_count();
@@ -298,7 +292,6 @@ impl HookInfo<'_> {
                         line: #line,
                         column: #column,
                         path: #path,
-                        abs_path: #abs_path,
                         file: #file,
                         expr_str: #expr_str,
                         count: #count,

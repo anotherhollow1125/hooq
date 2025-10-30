@@ -5,8 +5,14 @@ fn hoge() -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/walker/item/impl.rs";
             let line = 6usize;
+            let col = 5usize;
+            let expr = "Err(())";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })
 }

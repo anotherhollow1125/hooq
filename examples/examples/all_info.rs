@@ -7,7 +7,6 @@ use hooq::hooq;
 "$line: {}
 $flle: {}
 $path: {}
-$abs_path: {}
 $expr_str: {}
 $nth: {} ($count: {})
 $tag: {}
@@ -17,7 +16,6 @@ $fn_sig: {}
     $line,
     $file,
     $path,
-    $abs_path,
     $expr_str,
     $nth,
     $count,
@@ -31,7 +29,6 @@ $fn_sig: {}
 "$line: {}
 $file: {}
 $path: {}
-$abspath: {}
 $expr_str: {}
 $nth: {} ($count: {})
 $tag: {}
@@ -41,7 +38,6 @@ $fn_sig: {}
     $line,
     $file,
     $path,
-    $abspath,
     $expr_str,
     $nth,
     $count,

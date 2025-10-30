@@ -327,8 +327,14 @@ fn no_hooks_to_macros() -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/macro.rs";
             let line = 172usize;
+            let col = 17usize;
+            let expr = "enresult(())?";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })?;
     {
@@ -338,8 +344,14 @@ fn no_hooks_to_macros() -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/macro.rs";
             let line = 176usize;
+            let col = 5usize;
+            let expr = "Err(())";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })
 }

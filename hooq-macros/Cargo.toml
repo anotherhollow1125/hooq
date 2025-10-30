@@ -16,16 +16,16 @@ readme = "docs/README.md"
 proc-macro = true
 
 [features]
-default = ["log"]
-full = ["anyhow", "log"]
+default = ["anyhow", "log"]
 log = []
 anyhow = []
 
 [dependencies]
+prettyplease = "0.2.37"
 proc-macro2 = { version = "1.0.103", features = ["span-locations"] }
 quote = "1.0.41"
 serde = { version = "1.0.228", features = ["derive"] }
-syn = { version = "2.0.108", features = ["full", "extra-traits"] }
+syn = { version = "2.0.108", features = ["full", "extra-traits", "fold"] }
 toml = "0.9.8"
 
 [dev-dependencies]

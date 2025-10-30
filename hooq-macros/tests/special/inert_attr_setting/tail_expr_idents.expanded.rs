@@ -11,16 +11,28 @@ fn func() -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 24usize;
+            let col = 17usize;
+            let expr = "enresult(())?";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })?;
     if enresult(false)
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 27usize;
+            let col = 23usize;
+            let expr = "enresult(false)?";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })?
     {
@@ -30,8 +42,14 @@ fn func() -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 31usize;
+            let col = 23usize;
+            let expr = "enresult(false)?";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })?
     {
@@ -41,8 +59,14 @@ fn func() -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 36usize;
+            let col = 23usize;
+            let expr = "enresult(false)?";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })?
     {
@@ -50,9 +74,13 @@ fn func() -> Result<(), ()> {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
                 let line = 37usize;
+                let col = 9usize;
+                let expr = "return Left();";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             });
@@ -62,9 +90,13 @@ fn func() -> Result<(), ()> {
             .inspect_err(|e| {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
                 let line = 40usize;
+                let col = 16usize;
+                let expr = "Right()";
                 {
                     ::std::io::_eprint(
-                        format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
+                        format_args!(
+                            "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                        ),
                     );
                 };
             })
@@ -73,8 +105,14 @@ fn func() -> Result<(), ()> {
         .inspect_err(|e| {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 42usize;
+            let col = 5usize;
+            let expr = "Right()";
             {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
+                    ),
+                );
             };
         })
 }

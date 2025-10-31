@@ -1,12 +1,13 @@
 use std::str::FromStr;
 
 use meta_vars::{META_VARS_LIST, MetaVars};
-use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
+use proc_macro2::{Group, Ident, Punct, Span, TokenStream, TokenTree};
 use quote::ToTokens;
 use syn::{Expr, parse_quote};
 
 use crate::impls::inert_attr::context::HookInfo;
 use crate::impls::method::Method;
+use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
 
 mod describe_expr;
 mod meta_vars;
@@ -88,6 +89,7 @@ impl HookInfo<'_> {
         q_span: Span,
     ) -> syn::Result<()> {
         let mut next_is_replace_target = false;
+        let mut dot: Option<Punct> = None;
         for tt in ts.into_iter() {
             match tt {
                 TokenTree::Punct(punct) => {
@@ -95,25 +97,65 @@ impl HookInfo<'_> {
                         return Err(syn::Error::new(punct.span(), "unexpected token after `$`"));
                     }
 
-                    if punct.as_char() == '$' {
-                        next_is_replace_target = true;
-                    } else {
-                        res.extend([TokenTree::Punct(punct)]);
+                    match punct.as_char() {
+                        '$' => next_is_replace_target = true,
+                        '.' => {
+                            match dot.take() {
+                                Some(pre_dot) => {
+                                    // 2連続ドットはrange演算子であるためそのまま追加
+                                    res.extend([TokenTree::Punct(pre_dot)]);
+                                    res.extend([TokenTree::Punct(punct)]);
+                                }
+                                // .$so_far 判定のため一旦保持
+                                None => dot = Some(punct),
+                            }
+                        }
+                        _ => res.extend([TokenTree::Punct(punct)]),
                     }
                 }
                 TokenTree::Ident(ident) => {
                     if !next_is_replace_target {
+                        if let Some(dot) = dot.take() {
+                            // .ident は .$so_far ではないので
+                            // 判定のため一旦保持していたドットを戻す
+                            res.extend([TokenTree::Punct(dot)]);
+                        }
+
                         res.extend([TokenTree::Ident(ident)]);
                         continue;
                     }
 
                     next_is_replace_target = false;
 
-                    res.extend([self.meta_vars2token_stream(expr, &ident, q_span)?]);
+                    let is_so_far = ident.to_string().parse() == Ok(MetaVars::SoFar);
+
+                    match dot.take() {
+                        Some(_dot) if is_so_far => {
+                            todo!(); // .$so_far は別フローで処理
+                        }
+                        None if is_so_far => {
+                            todo!(); // $so_far は別フローで処理
+                        }
+                        Some(dot) => {
+                            // .$so_far ではないので
+                            // 判定のため一旦保持していたドットを戻す
+                            res.extend([TokenTree::Punct(dot)]);
+                            res.extend([self.meta_vars2token_stream(expr, &ident, q_span)?]);
+                        }
+                        None => {
+                            res.extend([self.meta_vars2token_stream(expr, &ident, q_span)?]);
+                        }
+                    }
                 }
                 TokenTree::Group(group) => {
                     if next_is_replace_target {
                         return Err(syn::Error::new(group.span(), "unexpected token after `$`"));
+                    }
+
+                    if let Some(dot) = dot.take() {
+                        // .$so_far ではないので
+                        // 判定のため一旦保持していたドットを戻す
+                        res.extend([TokenTree::Punct(dot)]);
                     }
 
                     let mut res_for_group = TokenStream::new();
@@ -129,6 +171,12 @@ impl HookInfo<'_> {
                             literal.span(),
                             "unexpected token after `$`",
                         ));
+                    }
+
+                    if let Some(dot) = dot.take() {
+                        // .$so_far ではないので
+                        // 判定のため一旦保持していたドットを戻す
+                        res.extend([TokenTree::Punct(dot)]);
                     }
 
                     res.extend([TokenTree::Literal(literal)]);
@@ -277,6 +325,14 @@ impl HookInfo<'_> {
                     #fn_sig
                 })
             }
+            Ok(MetaVars::SoFar) => Err(syn::Error::new(
+                var_ident.span(),
+                format!(
+                    "`$so_far` must be already replaced before this point.
+
+{UNEXPECTED_ERROR_MESSAGE}"
+                ),
+            )),
             Ok(MetaVars::Bindings) => Ok(self.get_bindings_token_stream()),
             Ok(MetaVars::HooqMeta) => {
                 let line = q_span.unwrap().line();

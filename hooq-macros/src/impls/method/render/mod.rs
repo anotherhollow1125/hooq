@@ -103,7 +103,7 @@ impl HookInfo<'_> {
                     if !next_is_replace_target {
                         res.extend([TokenTree::Ident(ident)]);
                         continue;
-                    };
+                    }
 
                     next_is_replace_target = false;
 

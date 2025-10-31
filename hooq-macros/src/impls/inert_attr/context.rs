@@ -88,7 +88,6 @@ impl<T> LocalContextField<T> {
         })
     }
 
-    #[allow(unused)] // TODO: 履歴が必要な機能実装時に外す
     pub fn get_overridden_ancestor(&self) -> Option<Rc<Self>> {
         self.overridden_ancestor.upgrade()
     }
@@ -346,6 +345,17 @@ impl HookContext {
             .as_ref()
             .map(|info| info.return_type_is_result(result_types))
             .unwrap_or(false)
+    }
+
+    pub fn get_overridden_ancestor_of_method(&self) -> Option<Rc<LocalContextField<Method>>> {
+        self.local_context.method.get_overridden_ancestor()
+    }
+
+    #[allow(unused)] // TODO: 履歴が必要な機能実装時に外す
+    pub fn get_overridden_ancestor_of_fn_info(
+        &self,
+    ) -> Option<Rc<LocalContextField<Option<FunctionInfo>>>> {
+        self.local_context.fn_info.get_overridden_ancestor()
     }
 }
 

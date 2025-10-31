@@ -31,15 +31,15 @@ impl InertAttribute {
     }
 }
 
-pub struct HandleInertAttrsResult<'a> {
+pub struct HandleInertAttrsResult {
     pub is_skipped: bool,
-    pub new_context: HookContext<'a>,
+    pub new_context: HookContext,
 }
 
-pub fn handle_inert_attrs<'a>(
+pub fn handle_inert_attrs(
     attrs: &mut Vec<Attribute>,
-    context: &'a HookContext,
-) -> syn::Result<HandleInertAttrsResult<'a>> {
+    context: &HookContext,
+) -> syn::Result<HandleInertAttrsResult> {
     let option = parse::extract_hooq_info_from_attrs(attrs)?;
 
     Ok(HandleInertAttrsResult {

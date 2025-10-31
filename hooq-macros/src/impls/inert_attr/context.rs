@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ops::Deref;
-use std::rc::Rc;
+use std::rc::{Rc, Weak};
 
 use syn::{Expr, Path, Signature};
 
@@ -62,68 +62,66 @@ impl Counter {
 }
 
 #[derive(Debug, Clone)]
-pub enum LocalContextField<'a, T> {
-    Inherit(&'a T),
-    Override(T),
+pub struct LocalContextField<T> {
+    val: Rc<T>,
+    // overridden_ancestor は異なる設定値を持つ祖先を表す
+    overridden_ancestor: Weak<Self>,
 }
 
-impl<'a, 'b: 'a, T> LocalContextField<'a, T> {
-    fn from_parent(val: Option<T>, parent: &'b LocalContextField<'b, T>) -> Self {
-        if let Some(val) = val {
-            return Self::Override(val);
-        }
+impl<T> LocalContextField<T> {
+    fn new(val: T) -> Rc<Self> {
+        Rc::new(Self {
+            val: Rc::new(val),
+            overridden_ancestor: Weak::new(),
+        })
+    }
 
-        match parent {
-            Self::Inherit(original) => Self::Inherit(original),
-            Self::Override(val) => Self::Inherit(val),
-        }
+    fn from_parent(val: Option<T>, parent: &Rc<Self>) -> Rc<Self> {
+        let (val, overridden_ancestor) = match val {
+            Some(new_val) => (Rc::new(new_val), Rc::downgrade(parent)),
+            None => (Rc::clone(&parent.val), parent.overridden_ancestor.clone()),
+        };
+
+        Rc::new(Self {
+            val,
+            overridden_ancestor,
+        })
+    }
+
+    #[allow(unused)] // TODO: 履歴が必要な機能実装時に外す
+    pub fn get_overridden_ancestor(&self) -> Option<Rc<Self>> {
+        self.overridden_ancestor.upgrade()
     }
 }
 
-impl<T> Deref for LocalContextField<'_, T> {
+impl<T> Deref for LocalContextField<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
-        match self {
-            Self::Inherit(local_context_kind) => local_context_kind,
-            Self::Override(val) => val,
-        }
+        &self.val
     }
 }
 
-impl<'a, 'b: 'a, K, V> LocalContextField<'a, HashMap<K, Rc<V>>>
+impl<K, V> LocalContextField<HashMap<K, Rc<V>>>
 where
     K: std::hash::Hash + Eq + Clone,
 {
     fn merged_from_parent(
         new_map: HashMap<K, Rc<V>>,
-        parent: &'b LocalContextField<'b, HashMap<K, Rc<V>>>,
-    ) -> Self {
+        parent: &Rc<LocalContextField<HashMap<K, Rc<V>>>>,
+    ) -> Rc<Self> {
         if new_map.is_empty() {
-            return match parent {
-                Self::Inherit(original) => Self::Inherit(original),
-                Self::Override(val) => Self::Inherit(val),
-            };
+            return Self::from_parent(None, parent);
         }
 
-        let merged_map = match parent {
-            Self::Inherit(original) => {
-                let mut map: HashMap<_, _> = original
-                    .iter()
-                    .map(|(k, v)| (k.clone(), v.clone()))
-                    .collect();
-                map.extend(new_map);
-                map
-            }
-            Self::Override(val) => {
-                let mut map: HashMap<_, _> =
-                    val.iter().map(|(k, v)| (k.clone(), v.clone())).collect();
-                map.extend(new_map);
-                map
-            }
-        };
+        let mut map: HashMap<_, _> = parent
+            .val
+            .iter()
+            .map(|(k, v)| (k.clone(), v.clone()))
+            .collect();
+        map.extend(new_map);
 
-        Self::Override(merged_map)
+        Self::from_parent(Some(map), parent)
     }
 }
 
@@ -169,29 +167,29 @@ impl TryFrom<Vec<String>> for HookTargetSwitch {
 }
 
 #[derive(Debug, Clone)]
-pub struct LocalContext<'a> {
+pub struct LocalContext {
     // ユーザー設定値
-    pub method: LocalContextField<'a, Method>,
-    pub hook_targets: LocalContextField<'a, HookTargetSwitch>,
-    pub tail_expr_idents: LocalContextField<'a, Vec<String>>,
-    pub ignore_tail_expr_idents: LocalContextField<'a, Vec<String>>,
-    pub result_types: LocalContextField<'a, Vec<String>>,
-    pub hook_in_macros: LocalContextField<'a, bool>,
-    pub bindings: LocalContextField<'a, HashMap<String, Rc<Expr>>>,
-    pub skip_status: LocalContextField<'a, Option<SkipStatus>>,
+    pub method: Rc<LocalContextField<Method>>,
+    pub hook_targets: Rc<LocalContextField<HookTargetSwitch>>,
+    pub tail_expr_idents: Rc<LocalContextField<Vec<String>>>,
+    pub ignore_tail_expr_idents: Rc<LocalContextField<Vec<String>>>,
+    pub result_types: Rc<LocalContextField<Vec<String>>>,
+    pub hook_in_macros: Rc<LocalContextField<bool>>,
+    pub bindings: Rc<LocalContextField<HashMap<String, Rc<Expr>>>>,
+    pub skip_status: Rc<LocalContextField<Option<SkipStatus>>>,
 
     // 現在の関数情報
-    pub fn_info: LocalContextField<'a, Option<FunctionInfo>>,
+    pub fn_info: Rc<LocalContextField<Option<FunctionInfo>>>,
 }
 
 #[derive(Debug, Clone)]
-pub struct HookContext<'a> {
+pub struct HookContext {
     pub counter: Rc<RefCell<Counter>>,
-    pub local_context: LocalContext<'a>,
+    pub local_context: LocalContext,
 }
 
-impl<'a> HookContext<'a> {
-    pub fn new<'b: 'a>(
+impl HookContext {
+    pub fn new(
         RootContext {
             trait_uses: _,
             method,
@@ -203,29 +201,26 @@ impl<'a> HookContext<'a> {
             bindings,
         }: RootContext,
     ) -> Self {
-        let method = LocalContextField::Override(method);
+        let method = LocalContextField::new(method);
 
         Self {
             counter: Rc::new(RefCell::new(Counter::new())),
             local_context: LocalContext {
                 method,
-                hook_targets: LocalContextField::Override(hook_targets),
-                tail_expr_idents: LocalContextField::Override(tail_expr_idents),
-                ignore_tail_expr_idents: LocalContextField::Override(ignore_tail_expr_idents),
-                result_types: LocalContextField::Override(result_types),
-                hook_in_macros: LocalContextField::Override(hook_in_macros),
-                bindings: LocalContextField::Override(bindings),
-                skip_status: LocalContextField::Override(None),
+                hook_targets: LocalContextField::new(hook_targets),
+                tail_expr_idents: LocalContextField::new(tail_expr_idents),
+                ignore_tail_expr_idents: LocalContextField::new(ignore_tail_expr_idents),
+                result_types: LocalContextField::new(result_types),
+                hook_in_macros: LocalContextField::new(hook_in_macros),
+                bindings: LocalContextField::new(bindings),
+                skip_status: LocalContextField::new(None),
 
-                fn_info: LocalContextField::Override(None),
+                fn_info: LocalContextField::new(None),
             },
         }
     }
 
-    pub fn updated_by_inert_attr<'b: 'a>(
-        parent_context: &'b HookContext<'b>,
-        inert_attr: InertAttribute,
-    ) -> Self {
+    pub fn updated_by_inert_attr(parent_context: &HookContext, inert_attr: InertAttribute) -> Self {
         let skip_status = LocalContextField::from_parent(
             inert_attr.get_skip_status().map(Option::Some),
             &parent_context.local_context.skip_status,
@@ -286,7 +281,7 @@ impl<'a> HookContext<'a> {
         }
     }
 
-    pub fn as_hook_info(&'a self, expr: &'a str, kind: HookTargetKind) -> HookInfo<'a> {
+    pub fn as_hook_info<'a>(&'a self, expr: &'a str, kind: HookTargetKind) -> HookInfo<'a> {
         HookInfo {
             expr_str: expr,
             kind,
@@ -296,24 +291,28 @@ impl<'a> HookContext<'a> {
     }
 
     pub fn for_sub_scope_context(&self) -> Self {
+        let skip_status = match &**self.local_context.skip_status {
+            Some(SkipStatus::SkipAll) => LocalContextField::from_parent(
+                Some(Some(SkipStatus::SkipAll)),
+                &self.local_context.skip_status,
+            ),
+            _ => LocalContextField::from_parent(Some(None), &self.local_context.skip_status),
+        };
+
         Self {
             counter: self.counter.clone(),
             local_context: LocalContext {
-                skip_status: match self.local_context.skip_status {
-                    LocalContextField::Inherit(&Some(SkipStatus::SkipAll))
-                    | LocalContextField::Override(Some(SkipStatus::SkipAll)) => {
-                        LocalContextField::Override(Some(SkipStatus::SkipAll))
-                    }
-                    _ => LocalContextField::Override(None),
-                },
+                skip_status,
                 ..self.local_context.clone()
             },
         }
     }
 
     pub fn update_fn_info(&mut self, sig: &Signature) {
-        self.local_context.fn_info =
-            LocalContextField::Override(Some(FunctionInfo::new(sig.clone())));
+        self.local_context.fn_info = LocalContextField::from_parent(
+            Some(Some(FunctionInfo::new(sig.clone()))),
+            &self.local_context.fn_info,
+        );
     }
 
     pub fn is_skipped(&self) -> bool {
@@ -321,7 +320,7 @@ impl<'a> HookContext<'a> {
     }
 
     pub fn hook_in_macros(&self) -> bool {
-        *self.local_context.hook_in_macros
+        **self.local_context.hook_in_macros
     }
 
     pub fn path_is_hook_call_like_err(&self, path: &Path) -> bool {
@@ -344,6 +343,7 @@ impl<'a> HookContext<'a> {
         self.local_context
             .fn_info
             .as_ref()
+            .as_ref()
             .map(|info| info.return_type_is_result(result_types))
             .unwrap_or(false)
     }
@@ -354,7 +354,7 @@ pub struct HookInfo<'a> {
     pub expr_str: &'a str,
     pub kind: HookTargetKind,
 
-    pub hook_context: &'a HookContext<'a>,
+    pub hook_context: &'a HookContext,
 }
 
 impl HookInfo<'_> {
@@ -363,7 +363,7 @@ impl HookInfo<'_> {
     }
 
     pub fn fn_info(&self) -> Option<&FunctionInfo> {
-        self.hook_context.local_context.fn_info.as_ref()
+        self.hook_context.local_context.fn_info.as_ref().as_ref()
     }
 
     pub fn method(&self) -> &Method {

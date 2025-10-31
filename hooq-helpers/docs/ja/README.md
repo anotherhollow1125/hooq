@@ -1,4 +1,4 @@
-This is sub-crate for [hooq](../hooq) crate. Please use [hooq](../hooq) crate instead of using this crate directly.
+This is sub-crate for [hooq](https://github.com/anotherhollow1125/hooq/tree/main/hooq) crate. Please use [hooq](https://github.com/anotherhollow1125/hooq/tree/main/hooq) crate instead of using this crate directly.
 
 <div align="center">
 <a href="https://docs.rs/hooq/0.1.2/hooq/" target="_blank">
@@ -148,7 +148,7 @@ hooq = "0.1.2"
 })
 ```
 
-`#[hooq::method(...)]` 不活性アトリビュートでフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` ( `anyhow` feature が必要 ) としてFlavorを指定した場合などは、そのFlavorにちなんだメソッドになります！
+`#[hooq::method(...)]` 不活性アトリビュートでフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` としてFlavorを指定した場合などは、そのFlavorにちなんだメソッドになります！
 
 用意されている Flavor は次のディレクトリから見られます: [hooq-macros/src/impls/flavor/presets/](https://github.com/anotherhollow1125/hooq/tree/main/hooq-macros/src/impls/flavor/presets)
 

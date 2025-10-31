@@ -3,6 +3,7 @@ mod expr_str;
 mod hooq_meta;
 mod line;
 mod path;
+mod so_far;
 
 use test_helpers::MaskMode::*;
 use test_helpers::mask_project_root;
@@ -16,6 +17,7 @@ fn test_special_meta_var() {
     macrotest::expand_args("tests/special/meta_var/hooq_meta.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/meta_var/line.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/meta_var/path.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/meta_var/so_far.rs", &["--ugly"]);
 
     mask_project_root("tests/special/meta_var", Mask);
 }

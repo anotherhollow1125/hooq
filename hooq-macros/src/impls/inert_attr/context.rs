@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::{Rc, Weak};
 
-use syn::{Expr, Path, Signature};
+use syn::{Expr, Path};
 
 use crate::impls::inert_attr::InertAttribute;
 use crate::impls::method::Method;
@@ -307,11 +307,9 @@ impl HookContext {
         }
     }
 
-    pub fn update_fn_info(&mut self, sig: &Signature) {
-        self.local_context.fn_info = LocalContextField::from_parent(
-            Some(Some(FunctionInfo::new(sig.clone()))),
-            &self.local_context.fn_info,
-        );
+    pub fn update_fn_info(&mut self, function_info: FunctionInfo) {
+        self.local_context.fn_info =
+            LocalContextField::from_parent(Some(Some(function_info)), &self.local_context.fn_info);
     }
 
     pub fn is_skipped(&self) -> bool {

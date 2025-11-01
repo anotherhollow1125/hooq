@@ -1,5 +1,6 @@
 mod bindings;
 mod expr_str;
+mod fn_info;
 mod hooq_meta;
 mod line;
 mod path;
@@ -14,6 +15,7 @@ fn test_special_meta_var() {
 
     macrotest::expand_args("tests/special/meta_var/bindings.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/meta_var/expr_str.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/meta_var/fn_info.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/meta_var/hooq_meta.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/meta_var/line.rs", &["--ugly"]);
     macrotest::expand_args("tests/special/meta_var/path.rs", &["--ugly"]);

@@ -10,6 +10,7 @@ pub use crate::impls::flavor::flavor_path::FlavorPath;
 use crate::impls::flavor::toml_load::HooqToml;
 use crate::impls::inert_attr::context::HookTargetSwitch;
 use crate::impls::method::Method;
+use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
 
 mod flavor_path;
 mod presets;
@@ -32,7 +33,7 @@ impl Default for Flavor {
     fn default() -> Self {
         Self {
             trait_uses: Vec::new(),
-            method: default_method().into(),
+            method: default_method(),
             hook_targets: HookTargetSwitch {
                 question: true,
                 return_: true,
@@ -48,13 +49,13 @@ impl Default for Flavor {
     }
 }
 
-fn default_method() -> TokenStream {
+fn default_method() -> Method {
     // NOTE:
     // $path や $line は eprintln! に直接埋め込みたいところだが、
     // CI側のテストの関係でこのようになっている
     // (恨むならeprintln!の仕様を恨んでください)
 
-    parse_quote! {
+    let res: TokenStream = parse_quote! {
         .inspect_err(|e| {
             let path = $path;
             let line = $line;
@@ -64,7 +65,9 @@ fn default_method() -> TokenStream {
             ::std::eprintln!("[{path}:{line}:{col}] {e:?}
     {expr}");
         })
-    }
+    };
+
+    Method::try_from(res).expect(UNEXPECTED_ERROR_MESSAGE)
 }
 
 #[derive(Debug)]

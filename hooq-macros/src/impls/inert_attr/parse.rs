@@ -190,7 +190,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
 
             // method
             Meta::List(MetaList { path, tokens, .. }) if path == &hooq_method => {
-                method = Some(tokens.clone().into());
+                method = Some(tokens.clone().try_into()?);
                 keeps.push(false);
             }
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_method => {

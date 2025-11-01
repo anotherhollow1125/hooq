@@ -1,28 +1,82 @@
 use std::ops::Deref;
+use std::rc::Rc;
 
 use quote::ToTokens;
-use syn::{ReturnType, Signature, Type, TypePath};
+use syn::{ExprClosure, ReturnType, Signature, Type, TypePath, parse_quote};
 
+use crate::impls::inert_attr::context::LocalContextField;
 use crate::impls::utils::path_is_end_of;
 
 #[derive(Clone, Debug)]
-pub struct FunctionInfo(Signature);
+pub struct ClosureInfo {
+    expr: ExprClosure,
+    name: String,
+}
+
+impl ClosureInfo {
+    pub fn new(
+        mut expr: ExprClosure,
+        current: Rc<LocalContextField<Option<FunctionInfo>>>,
+    ) -> Self {
+        // $fn_sig の表示が長くなりすぎないようにするために、
+        // クロージャのbodyは空に置き換える
+        expr.body = Box::new(parse_quote! { {} });
+
+        let mut ptr = current.clone();
+        let mut ancestor_function_name = match &**ptr {
+            Some(FunctionInfo::Function(sig)) => Some(sig.ident.to_string()),
+            _ => None,
+        };
+        while ancestor_function_name.is_none()
+            && let Some(parent) = ptr.get_overridden_ancestor()
+        {
+            if let Some(FunctionInfo::Function(sig)) = &**parent {
+                ancestor_function_name = Some(sig.ident.to_string());
+            }
+            ptr = parent;
+        }
+
+        let anc_name = ancestor_function_name.unwrap_or_else(|| "<unknown>".to_string());
+        let name = format!("__closure_in_{}__", anc_name);
+
+        ClosureInfo { expr, name }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum FunctionInfo {
+    Function(Signature),
+    Closure(ClosureInfo),
+}
+
+impl From<ClosureInfo> for FunctionInfo {
+    fn from(value: ClosureInfo) -> Self {
+        FunctionInfo::Closure(value)
+    }
+}
 
 impl FunctionInfo {
-    pub fn new(sig: Signature) -> Self {
-        Self(sig)
-    }
-
     pub fn name(&self) -> String {
-        self.0.ident.to_string()
+        match self {
+            FunctionInfo::Function(signature) => signature.ident.to_string(),
+            FunctionInfo::Closure(closure_info) => closure_info.name.clone(),
+        }
     }
 
     pub fn sig(&self) -> String {
-        self.0.to_token_stream().to_string()
+        match self {
+            FunctionInfo::Function(signature) => signature.to_token_stream().to_string(),
+            FunctionInfo::Closure(closure_info) => closure_info.expr.to_token_stream().to_string(),
+        }
     }
 
     pub fn return_type_is_result(&self, result_types: &[String]) -> bool {
-        return_type_is_result_inner(&self.0.output, result_types)
+        let output = match self {
+            FunctionInfo::Function(signature) => &signature.output,
+            FunctionInfo::Closure(closure_info) => &closure_info.expr.output,
+        };
+
+        return_type_is_result_inner(output, result_types)
     }
 }
 

@@ -6,6 +6,7 @@ use syn::{Expr, Path};
 
 use crate::impls::flavor::Flavor;
 use crate::impls::flavor::toml_load::{FlavorTable, HooqToml};
+use crate::impls::method::Method;
 
 pub fn update_flavors(
     flavors: &mut HashMap<String, Flavor>,
@@ -89,7 +90,7 @@ fn update_flavor_inner(
             let method_stream = syn::parse_str::<TokenStream>(&method)
                 .map_err(|e| format!("failed to parse method: {e}"))?;
 
-            flavor.method = method_stream.into();
+            flavor.method = Method::try_from(method_stream).map_err(|e| e.to_string())?;
         }
 
         if let Some(hook_targets) = hook_targets {

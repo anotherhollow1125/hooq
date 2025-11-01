@@ -5,11 +5,12 @@ use syn::parse_quote;
 
 use crate::impls::flavor::Flavor;
 use crate::impls::inert_attr::context::HookTargetSwitch;
+use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
 
 pub fn empty_flavor() -> Flavor {
     Flavor {
         trait_uses: Vec::new(),
-        method: empty_method().into(),
+        method: empty_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
         hook_targets: HookTargetSwitch {
             question: false,
             return_: false,

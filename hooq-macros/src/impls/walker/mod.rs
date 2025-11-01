@@ -8,7 +8,8 @@ use syn::{
 
 use crate::impls::inert_attr::context::{HookContext, HookTargetKind};
 use crate::impls::inert_attr::{HandleInertAttrsResult, handle_inert_attrs};
-use crate::impls::utils::{closure_signature, get_attrs_from_expr};
+use crate::impls::utils::function_info::{ClosureInfo, FunctionInfo};
+use crate::impls::utils::get_attrs_from_expr;
 
 mod hook_expr;
 mod walk_macro;
@@ -167,7 +168,8 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                 new_context: mut context,
             } = handle_inert_attrs(&mut item_fn.attrs, context)?;
 
-            context.update_fn_info(&item_fn.sig);
+            let function_info = FunctionInfo::Function(item_fn.sig.clone());
+            context.update_fn_info(function_info);
 
             let stmts_len = item_fn.block.stmts.len();
             let context = context.for_sub_scope_context();
@@ -207,7 +209,8 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                                 new_context: mut context,
                             } = handle_inert_attrs(&mut impl_item_fn.attrs, &context)?;
 
-                            context.update_fn_info(&impl_item_fn.sig);
+                            let function_info = FunctionInfo::Function(impl_item_fn.sig.clone());
+                            context.update_fn_info(function_info);
 
                             let stmts_len = impl_item_fn.block.stmts.len();
                             let context = context.for_sub_scope_context();
@@ -316,7 +319,7 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
                                 new_context: mut context,
                             } = handle_inert_attrs(attrs, &context)?;
 
-                            context.update_fn_info(sig);
+                            context.update_fn_info(FunctionInfo::Function(sig.clone()));
 
                             let stmts_len = block.stmts.len();
                             let context = context.for_sub_scope_context();
@@ -585,7 +588,9 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                 new_context: mut context,
             } = handle_inert_attrs(&mut expr_closure.attrs, context)?;
 
-            context.update_fn_info(&closure_signature(expr_closure));
+            let closure_info =
+                ClosureInfo::new(expr_closure.clone(), context.local_context.fn_info.clone());
+            context.update_fn_info(closure_info.into());
 
             match &mut *expr_closure.body {
                 Expr::Block(expr_block) => {

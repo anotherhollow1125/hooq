@@ -296,7 +296,7 @@ impl HookInfo<'_> {
                     ));
                 };
 
-                let (Method::Insert(_, ts) | Method::Replace(ts)): &Method = &ancestor;
+                let (Method::Insert(_, ts) | Method::Replace(ts)) = &**ancestor;
 
                 let ancestor_method =
                     self.expand_meta_vars(expr, ts.clone(), q_span, Some(ancestor))?;

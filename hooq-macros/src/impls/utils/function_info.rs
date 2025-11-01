@@ -18,6 +18,8 @@ impl ClosureInfo {
         mut expr: ExprClosure,
         current: Rc<LocalContextField<Option<FunctionInfo>>>,
     ) -> Self {
+        // $fn_sig の表示が長くなりすぎないようにするために、
+        // クロージャのbodyは空に置き換える
         expr.body = Box::new(parse_quote! { {} });
 
         let mut ptr = current.clone();

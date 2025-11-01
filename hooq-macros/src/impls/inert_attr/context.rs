@@ -263,7 +263,7 @@ impl HookContext {
         );
 
         // fn_info の更新は別タイミングで行う
-        let fn_info = parent_context.local_context.fn_info.clone();
+        let fn_info = Rc::clone(&parent_context.local_context.fn_info);
 
         Self {
             counter: Rc::clone(&parent_context.counter),

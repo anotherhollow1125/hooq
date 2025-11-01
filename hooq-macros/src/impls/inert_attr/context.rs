@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ops::Deref;
-use std::rc::{Rc, Weak};
+use std::rc::Rc;
 
 use syn::{Expr, Path};
 
@@ -65,31 +65,32 @@ impl Counter {
 pub struct LocalContextField<T> {
     val: Rc<T>,
     // overridden_ancestor は異なる設定値を持つ祖先を表す
-    overridden_ancestor: Weak<Self>,
+    // 子やXxxContextは親を参照するが、親が子を参照することはないため、
+    // WeakではなくRcで保持しても循環参照にはならない
+    overridden_ancestor: Option<Rc<Self>>,
 }
 
 impl<T> LocalContextField<T> {
     fn new(val: T) -> Rc<Self> {
         Rc::new(Self {
             val: Rc::new(val),
-            overridden_ancestor: Weak::new(),
+            overridden_ancestor: None,
         })
     }
 
     fn from_parent(val: Option<T>, parent: &Rc<Self>) -> Rc<Self> {
-        let (val, overridden_ancestor) = match val {
-            Some(new_val) => (Rc::new(new_val), Rc::downgrade(parent)),
-            None => (Rc::clone(&parent.val), parent.overridden_ancestor.clone()),
-        };
-
-        Rc::new(Self {
-            val,
-            overridden_ancestor,
-        })
+        match val {
+            Some(val) => Rc::new(Self {
+                // 親から上書き
+                val: Rc::new(val),
+                overridden_ancestor: Some(Rc::clone(parent)),
+            }),
+            None => Rc::clone(parent), // 親をそのまま引き継ぐ
+        }
     }
 
     pub fn get_overridden_ancestor(&self) -> Option<Rc<Self>> {
-        self.overridden_ancestor.upgrade()
+        self.overridden_ancestor.clone()
     }
 }
 
@@ -262,7 +263,7 @@ impl HookContext {
         );
 
         // fn_info の更新は別タイミングで行う
-        let fn_info = LocalContextField::from_parent(None, &parent_context.local_context.fn_info);
+        let fn_info = parent_context.local_context.fn_info.clone();
 
         Self {
             counter: Rc::clone(&parent_context.counter),
@@ -347,13 +348,6 @@ impl HookContext {
 
     pub fn get_overridden_ancestor_of_method(&self) -> Option<Rc<LocalContextField<Method>>> {
         self.local_context.method.get_overridden_ancestor()
-    }
-
-    #[allow(unused)] // TODO: 履歴が必要な機能実装時に外す
-    pub fn get_overridden_ancestor_of_fn_info(
-        &self,
-    ) -> Option<Rc<LocalContextField<Option<FunctionInfo>>>> {
-        self.local_context.fn_info.get_overridden_ancestor()
     }
 }
 

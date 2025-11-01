@@ -16,16 +16,9 @@ pub struct ClosureInfo {
 impl ClosureInfo {
     pub fn new(
         mut expr: ExprClosure,
-        current: Option<Rc<LocalContextField<Option<FunctionInfo>>>>,
+        current: Rc<LocalContextField<Option<FunctionInfo>>>,
     ) -> Self {
         expr.body = Box::new(parse_quote! { {} });
-
-        let Some(current) = current else {
-            return ClosureInfo {
-                expr,
-                name: "__closure_in_<unknown>__".to_string(),
-            };
-        };
 
         let mut ptr = current.clone();
         let mut ancestor_function_name = match &**ptr {
@@ -35,10 +28,9 @@ impl ClosureInfo {
         while ancestor_function_name.is_none()
             && let Some(parent) = ptr.get_overridden_ancestor()
         {
-            ancestor_function_name = match &**parent {
-                Some(FunctionInfo::Function(sig)) => Some(sig.ident.to_string()),
-                _ => None,
-            };
+            if let Some(FunctionInfo::Function(sig)) = &**parent {
+                ancestor_function_name = Some(sig.ident.to_string());
+            }
             ptr = parent;
         }
 

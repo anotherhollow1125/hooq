@@ -588,10 +588,8 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                 new_context: mut context,
             } = handle_inert_attrs(&mut expr_closure.attrs, context)?;
 
-            let closure_info = ClosureInfo::new(
-                expr_closure.clone(),
-                context.get_overridden_ancestor_of_fn_info(),
-            );
+            let closure_info =
+                ClosureInfo::new(expr_closure.clone(), context.local_context.fn_info.clone());
             context.update_fn_info(closure_info.into());
 
             match &mut *expr_closure.body {

@@ -4,6 +4,7 @@ use syn::{ExprClosure, Ident, Path, Signature};
 
 pub mod function_info;
 mod get_attrs;
+pub mod unexpected_error_message;
 
 pub fn path_is_end_of(path: &Path, target: &str) -> bool {
     path.segments

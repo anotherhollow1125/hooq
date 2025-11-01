@@ -2,6 +2,8 @@ use proc_macro2::TokenStream;
 use syn::parse::Parse;
 use syn::{Token, parse2};
 
+use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
+
 mod render;
 
 #[derive(Debug, Clone)]
@@ -38,9 +40,7 @@ impl From<TokenStream> for Method {
             panic!(
                 "unexpected token stream for Method: {}
 
-This error is unexpected for the developers.
-If possible, please post an issue in the repository.
-link: `https://github.com/anotherhollow1125/hooq`
+{UNEXPECTED_ERROR_MESSAGE}
 ",
                 e
             )

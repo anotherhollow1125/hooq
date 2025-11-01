@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use std::str::FromStr;
 
 use meta_vars::{META_VARS_LIST, MetaVars};
@@ -5,7 +6,7 @@ use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
 use quote::ToTokens;
 use syn::{Expr, parse_quote};
 
-use crate::impls::inert_attr::context::HookInfo;
+use crate::impls::inert_attr::context::{HookInfo, LocalContextField};
 use crate::impls::method::Method;
 
 mod describe_expr;
@@ -38,9 +39,7 @@ impl HookInfo<'_> {
 
         let new_expr: Expr = match self.method().clone() {
             Method::Insert(dot, method_template) => {
-                let mut method = TokenStream::new();
-
-                self.expand_meta_vars(expr, method_template, &mut method, q_span)?;
+                let method = self.expand_meta_vars(expr, method_template, q_span, None)?;
                 let method = spanned(method, q_span);
 
                 parse_quote! {
@@ -64,8 +63,7 @@ impl HookInfo<'_> {
                 self.expand_meta_vars(Some(expr), pre_method, &mut method, q_span)?;
                 */
 
-                let mut method = TokenStream::new();
-                self.expand_meta_vars(expr, method_template, &mut method, q_span)?;
+                let method = self.expand_meta_vars(expr, method_template, q_span, None)?;
                 let method = spanned(method, q_span);
 
                 parse_quote! {
@@ -79,15 +77,16 @@ impl HookInfo<'_> {
         Ok(())
     }
 
-    // 再帰的に適用するために ts, res を引数としている
     fn expand_meta_vars(
         &self,
         expr: &Expr,
         ts: TokenStream,
-        res: &mut TokenStream,
         q_span: Span,
-    ) -> syn::Result<()> {
+        method_context: Option<Rc<LocalContextField<Method>>>,
+    ) -> syn::Result<TokenStream> {
+        let mut res: TokenStream = TokenStream::new();
         let mut next_is_replace_target = false;
+
         for tt in ts.into_iter() {
             match tt {
                 TokenTree::Punct(punct) => {
@@ -95,10 +94,9 @@ impl HookInfo<'_> {
                         return Err(syn::Error::new(punct.span(), "unexpected token after `$`"));
                     }
 
-                    if punct.as_char() == '$' {
-                        next_is_replace_target = true;
-                    } else {
-                        res.extend([TokenTree::Punct(punct)]);
+                    match punct.as_char() {
+                        '$' => next_is_replace_target = true,
+                        _ => res.extend([TokenTree::Punct(punct)]),
                     }
                 }
                 TokenTree::Ident(ident) => {
@@ -109,15 +107,24 @@ impl HookInfo<'_> {
 
                     next_is_replace_target = false;
 
-                    res.extend([self.meta_vars2token_stream(expr, &ident, q_span)?]);
+                    res.extend([self.meta_vars2token_stream(
+                        expr,
+                        &ident,
+                        q_span,
+                        method_context.clone(),
+                    )?]);
                 }
                 TokenTree::Group(group) => {
                     if next_is_replace_target {
                         return Err(syn::Error::new(group.span(), "unexpected token after `$`"));
                     }
 
-                    let mut res_for_group = TokenStream::new();
-                    self.expand_meta_vars(expr, group.stream(), &mut res_for_group, q_span)?;
+                    let res_for_group = self.expand_meta_vars(
+                        expr,
+                        group.stream(),
+                        q_span,
+                        method_context.clone(),
+                    )?;
 
                     let new_group = Group::new(group.delimiter(), res_for_group);
 
@@ -136,7 +143,7 @@ impl HookInfo<'_> {
             }
         }
 
-        Ok(())
+        Ok(res)
     }
 
     fn get_count(&self) -> String {
@@ -198,7 +205,8 @@ impl HookInfo<'_> {
         &self,
         expr: &Expr,
         var_ident: &Ident,
-        #[allow(unused)] q_span: Span,
+        q_span: Span,
+        method_context: Option<Rc<LocalContextField<Method>>>,
     ) -> syn::Result<TokenStream> {
         match MetaVars::from_str(var_ident.to_string().as_str()) {
             Ok(MetaVars::Line) => {
@@ -276,6 +284,24 @@ impl HookInfo<'_> {
                 Ok(parse_quote! {
                     #fn_sig
                 })
+            }
+            Ok(MetaVars::SoFar) => {
+                let Some(ancestor) = (match method_context {
+                    Some(current) => current.get_overridden_ancestor(),
+                    None => self.hook_context.get_overridden_ancestor_of_method(),
+                }) else {
+                    return Err(syn::Error::new(
+                        var_ident.span(),
+                        "`$so_far` used but no overridden method found.",
+                    ));
+                };
+
+                let (Method::Insert(_, ts) | Method::Replace(ts)) = &**ancestor;
+
+                let ancestor_method =
+                    self.expand_meta_vars(expr, ts.clone(), q_span, Some(ancestor))?;
+
+                Ok(ancestor_method)
             }
             Ok(MetaVars::Bindings) => Ok(self.get_bindings_token_stream()),
             Ok(MetaVars::HooqMeta) => {

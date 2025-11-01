@@ -1,4 +1,4 @@
-This is sub-crate for [hooq](../hooq) crate. Please use [hooq](../hooq) crate instead of using this crate directly.
+This is sub-crate for [hooq](https://github.com/anotherhollow1125/hooq/tree/main/hooq) crate. Please use [hooq](https://github.com/anotherhollow1125/hooq/tree/main/hooq) crate instead of using this crate directly.
 
 <div align="center">
 <a href="https://docs.rs/hooq/0.1.2/hooq/" target="_blank">
@@ -151,7 +151,7 @@ If you don't specify anything for `#[hooq]`, the following method is inserted by
 })
 ```
 
-You can switch the method to hook with the inert attribute `#[hooq::method(...)]`. Also, when you specify a flavor at the call site such as `#[hooq(log)]` or `#[hooq(anyhow)]` (the `anyhow` feature is required), the inserted method will change according to that flavor!
+You can switch the method to hook with the inert attribute `#[hooq::method(...)]`. Also, when you specify a flavor at the call site such as `#[hooq(log)]` or `#[hooq(anyhow)]`, the inserted method will change according to that flavor!
 
 You can find the available flavors here: [hooq-macros/src/impls/flavor/presets/](https://github.com/anotherhollow1125/hooq/tree/main/hooq-macros/src/impls/flavor/presets)
 

@@ -1,6 +1,7 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
+#[derive(Eq, PartialEq, Clone, Copy)]
 pub enum MetaVars {
     Line,
     Column,
@@ -13,11 +14,12 @@ pub enum MetaVars {
     Count,
     FnName,
     FnSig,
+    SoFar,
     Bindings,
     HooqMeta,
 }
 
-pub const META_VARS_LIST: [MetaVars; 13] = [
+pub const META_VARS_LIST: [MetaVars; 14] = [
     MetaVars::Line,
     MetaVars::Column,
     MetaVars::Path,
@@ -29,6 +31,7 @@ pub const META_VARS_LIST: [MetaVars; 13] = [
     MetaVars::Count,
     MetaVars::FnName,
     MetaVars::FnSig,
+    MetaVars::SoFar,
     MetaVars::Bindings,
     MetaVars::HooqMeta,
 ];
@@ -51,6 +54,7 @@ impl FromStr for MetaVars {
             "nth" | "count" => Ok(MetaVars::Count),
             "fnname" | "fn_name" => Ok(MetaVars::FnName),
             "fnsig" | "fn_sig" => Ok(MetaVars::FnSig),
+            "sofar" | "so_far" => Ok(MetaVars::SoFar),
             "bindings" | "vars" => Ok(MetaVars::Bindings),
             "hooqmeta" | "hooq_meta" => Ok(MetaVars::HooqMeta),
             binding => Err(binding.to_string()),
@@ -75,6 +79,7 @@ impl Display for MetaVars {
                 MetaVars::Count => "count",
                 MetaVars::FnName => "fn_name",
                 MetaVars::FnSig => "fn_sig",
+                MetaVars::SoFar => "so_far",
                 MetaVars::Bindings => "bindings",
                 MetaVars::HooqMeta => "hooq_meta",
             }

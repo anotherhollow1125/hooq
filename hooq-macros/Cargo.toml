@@ -19,6 +19,7 @@ proc-macro = true
 default = ["anyhow", "log"]
 log = []
 anyhow = []
+consume-question = []
 
 [dependencies]
 prettyplease = "0.2.37"

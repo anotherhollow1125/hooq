@@ -1,0 +1,11 @@
+[package]
+name = "consume-question"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+publish = false
+
+[dependencies]
+hooq = { path = "../../../../hooq", features = ["consume-question"] }
+macrotest = "1.2.0"
+test-helpers = { path = "../../../../test-helpers" }

@@ -5,10 +5,10 @@ members = [
     "hooq",
     "hooq-helpers",
     "hooq-macros",
+    "hooq-macros/tests/special/consume-question",
     "hooq-macros/tests/special/flavor/*",
     "hooq-macros/tests/special/method_replace",
     "hooq-macros/tests/special/other-preset-flavors/*",
-    "hooq-macros/tests/special/consume-question",
     "test-helpers",
 ]
 

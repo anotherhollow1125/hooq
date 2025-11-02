@@ -397,6 +397,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
     match expr {
         // 置換対象となるバリアント
         expr @ Expr::Try(..) => {
+            // 上記マッチングでマッチすることは検証済みのため、
             // 以下のif式は必ず実行される
             // 目的は可変参照の関係でスコープを分けるため
             let new_expr: Option<Expr> = if let Expr::Try(expr_try) = expr {
@@ -427,8 +428,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                     None => None,
                 }
             } else {
-                // unreachable
-                None
+                unreachable!()
             };
 
             if let Some(new_expr) = new_expr {

@@ -32,9 +32,10 @@ workspace = true
 
 [features]
 anyhow = ["hooq-macros/anyhow"]
-default = ["log"]
-full = ["anyhow", "log"]
+default = ["anyhow", "log"]
+full = ["anyhow", "log", "consume-question"]
 log = ["hooq-macros/log"]
+consume-question = ["hooq-macros/consume-question"]
 [dependencies.hooq-helpers]
 path = "../hooq-helpers"
 version = "0.2.0"

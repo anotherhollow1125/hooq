@@ -94,7 +94,7 @@ fn handle_tail_expr(
     {
         let q_span = expr.span();
 
-        hook_expr(
+        let _exc = hook_expr(
             !is_skipped,
             expr,
             &expr_for_display,
@@ -396,26 +396,44 @@ pub fn walk_item(item: &mut Item, context: &HookContext) -> syn::Result<()> {
 fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
     match expr {
         // 置換対象となるバリアント
-        Expr::Try(expr_try) => {
-            let HandleInertAttrsResult {
-                is_skipped,
-                new_context: context,
-            } = handle_inert_attrs(&mut expr_try.attrs, context)?;
+        expr @ Expr::Try(..) => {
+            // 以下のif式は必ず実行される
+            // 目的は可変参照の関係でスコープを分けるため
+            let new_expr: Option<Expr> = if let Expr::Try(expr_try) = expr {
+                let HandleInertAttrsResult {
+                    is_skipped,
+                    new_context: context,
+                } = handle_inert_attrs(&mut expr_try.attrs, context)?;
 
-            let expr_for_display = expr_try.expr.to_token_stream().to_string();
+                let expr_for_display = expr_try.expr.to_token_stream().to_string();
 
-            walk_expr(&mut expr_try.expr, &context)?;
+                walk_expr(&mut expr_try.expr, &context)?;
 
-            let q_span = expr_try.question_token.span();
+                let q_span = expr_try.question_token.span();
 
-            hook_expr(
-                !is_skipped,
-                &mut expr_try.expr,
-                &expr_for_display,
-                HookTargetKind::Question,
-                q_span,
-                &context,
-            )?;
+                let exc = hook_expr(
+                    !is_skipped,
+                    &mut expr_try.expr,
+                    &expr_for_display,
+                    HookTargetKind::Question,
+                    q_span,
+                    &context,
+                )?;
+
+                match exc {
+                    // ? を消去
+                    Some(_) => Some(*expr_try.expr.clone()),
+                    // ? を残す
+                    None => None,
+                }
+            } else {
+                // unreachable
+                None
+            };
+
+            if let Some(new_expr) = new_expr {
+                *expr = new_expr;
+            }
 
             Ok(())
         }
@@ -439,7 +457,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
 
                 // Errの時 or 返り値型がResultでOkでない時フック
                 if is_target_call || context.return_type_is_result() && !is_not_target_call {
-                    hook_expr(
+                    let _exc = hook_expr(
                         !is_skipped,
                         expr,
                         &expr_for_display,

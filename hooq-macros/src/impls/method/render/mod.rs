@@ -4,7 +4,7 @@ use std::str::FromStr;
 use meta_vars::{META_VARS_LIST, MetaVars};
 use proc_macro2::{Group, Ident, Span, TokenStream, TokenTree};
 use quote::ToTokens;
-use syn::{Expr, parse_quote};
+use syn::{Expr, Token, parse_quote};
 
 use crate::impls::inert_attr::context::{HookInfo, LocalContextField};
 use crate::impls::method::Method;
@@ -20,7 +20,11 @@ fn get_file_name(q_span: Span) -> String {
 }
 
 impl HookInfo<'_> {
-    pub fn render_expr_with_method(&self, expr: &mut Expr, q_span: Span) -> syn::Result<()> {
+    pub fn render_expr_with_method(
+        &self,
+        expr: &mut Expr,
+        q_span: Span,
+    ) -> syn::Result<Option<Token![!]>> {
         fn spanned(method: TokenStream, q_span: Span) -> TokenStream {
             // NOTE:
             // parse_quote_spanned! ではなぜか Span が正しく設定されない
@@ -37,16 +41,19 @@ impl HookInfo<'_> {
             method
         }
 
-        let new_expr: Expr = match self.method().clone() {
-            Method::Insert(dot, method_template) => {
+        let (new_expr, exc): (Expr, Option<Token![!]>) = match self.method().clone() {
+            Method::Insert(dot, method_template, exc) => {
                 let method = self.expand_meta_vars(expr, method_template, q_span, None)?;
                 let method = spanned(method, q_span);
 
-                parse_quote! {
-                    #expr #dot #method
-                }
+                (
+                    parse_quote! {
+                        #expr #dot #method
+                    },
+                    exc,
+                )
             }
-            Method::Replace(method_template) => {
+            Method::Replace(method_template, exc) => {
                 /*
                 // NOTE: Span を適切に設定するため、$expr の置換を後に行う
                 // 以下のようなコードの構想があったが、
@@ -66,15 +73,18 @@ impl HookInfo<'_> {
                 let method = self.expand_meta_vars(expr, method_template, q_span, None)?;
                 let method = spanned(method, q_span);
 
-                parse_quote! {
-                    #method
-                }
+                (
+                    parse_quote! {
+                        #method
+                    },
+                    exc,
+                )
             }
         };
 
         *expr = new_expr;
 
-        Ok(())
+        Ok(exc)
     }
 
     fn expand_meta_vars(
@@ -296,7 +306,7 @@ impl HookInfo<'_> {
                     ));
                 };
 
-                let (Method::Insert(_, ts) | Method::Replace(ts)) = &**ancestor;
+                let (Method::Insert(_, ts, _) | Method::Replace(ts, _)) = &**ancestor;
 
                 let ancestor_method =
                     self.expand_meta_vars(expr, ts.clone(), q_span, Some(ancestor))?;

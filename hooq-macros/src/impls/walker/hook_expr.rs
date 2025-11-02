@@ -1,5 +1,5 @@
 use proc_macro2::Span;
-use syn::Expr;
+use syn::{Expr, Token};
 
 use crate::impls::inert_attr::context::{HookContext, HookTargetKind};
 
@@ -10,19 +10,19 @@ pub(super) fn hook_expr(
     kind: HookTargetKind,
     q_span: Span,
     context: &HookContext,
-) -> syn::Result<()> {
+) -> syn::Result<Option<Token![!]>> {
     if !apply {
-        return Ok(());
+        return Ok(None);
     }
 
     context.counter.borrow_mut().count_up(kind);
     let context = context.as_hook_info(expr_field_for_display, kind);
 
     if !context.is_hook_target() {
-        return Ok(());
+        return Ok(None);
     }
 
-    context.render_expr_with_method(expr_field, q_span)?;
+    let exc = context.render_expr_with_method(expr_field, q_span)?;
 
-    Ok(())
+    Ok(exc)
 }

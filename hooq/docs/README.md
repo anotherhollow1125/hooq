@@ -4,7 +4,7 @@
 </a>
 <h1>hooq</h1>
 
-<h3>A simple macro that inserts a method before `?`.</h3>
+<h3>A simple macro that inserts (hooks) a method before question operator (`?`).</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
 [![docs](https://img.shields.io/docsrs/hooq/0.2.0)](https://docs.rs/hooq/0.2.0/hooq/)
@@ -12,7 +12,11 @@
 
 🪝 The name hooq comes from combining 'HOOk' and the 'Question mark operator ( ? )'. 🪝
 
+Enhance your questions by hooq!?
+
 </div>
+
+Keywords: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 Documentations:
 - tutorial: (mdBook coming soon.)

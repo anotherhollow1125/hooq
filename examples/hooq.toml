@@ -1,12 +1,22 @@
-[custom]
-method = """.inspect_err(|_| println!("custom error handler"))"""
+[my_flavor]
+method = """.inspect_err(|_| {
+    eprintln!("Error: `{}` @ Line {}: Col: {}", $expr_str_short_oneline, $line, $col);
+})
+.inspect(|_| {
+    println!("Success: `{}` @ Line {}: Col: {}", $expr_str_short_oneline, $line, $col);
+})"""
+hook_targets = ["?", "return", "tail_expr"]
+tail_expr_idents = ["Ok", "Err"]
+result_types = ["Result"]
+hook_in_macros = true
 
-[custom2]
-method = """.inspect_err(|e| println!("custom error handler 2: {}", e))"""
-
-[custom3]
-method = """{
-    println!("checkpoint: {}", $expr_str);
-
-    $expr
-}"""
+[my_flavor.ok_or_else]
+method = """
+.ok_or_else(|| {
+    format!("{} [Line: {}, {}]",
+        $expr_str_short_oneline,
+        $line,
+        $nth
+    )
+})
+.$so_far"""

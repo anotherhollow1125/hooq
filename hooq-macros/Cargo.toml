@@ -24,9 +24,9 @@ consume-question = []
 [dependencies]
 prettyplease = "0.2.37"
 proc-macro2 = { version = "1.0.103", features = ["span-locations"] }
-quote = "1.0.41"
+quote = "1.0.42"
 serde = { version = "1.0.228", features = ["derive"] }
-syn = { version = "2.0.108", features = ["full", "extra-traits", "fold"] }
+syn = { version = "2.0.110", features = ["full", "extra-traits", "fold"] }
 toml = "0.9.8"
 
 [dev-dependencies]

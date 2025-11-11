@@ -37,9 +37,23 @@ fn short_str(expr: Expr) -> Expr {
     folder.fold_expr(expr)
 }
 
+fn dedent(s: &str) -> &str {
+    s.strip_prefix("    ").unwrap_or(s)
+}
+
+fn adjust_indent_num(last_line: &str, indent: usize) -> usize {
+    if last_line.trim_start().starts_with(['}', ')', ']']) {
+        if indent > 0 { indent * 2 } else { 4 }
+    } else {
+        indent
+    }
+}
+
 /// return 用の文字列を加工する
 /// - 1行・2行の時: 全体を返す
-/// - 3行以上の時: 先頭行 + "..." + 最終行を返す
+/// - 3行以上の時: 先頭行 + ※ + 最終行を返す
+///   - 最後の行が }, ), ] で始まる場合、 ※ = "    ..."
+///   - 上記以外の場合、 ※ = "..."
 fn get_strs_for_return(s: String) -> String {
     let lines: Vec<&str> = s.lines().collect();
 
@@ -54,28 +68,37 @@ fn get_strs_for_return(s: String) -> String {
 
     let mut res = String::new();
 
-    for (i, line) in lines.iter().enumerate() {
-        // インデント一つ分削除
-        let line = line.strip_prefix("    ").unwrap_or(line);
-        if i == 0 {
-            res.push_str(line);
-        } else if i == lines.len() - 1 {
-            // line の前の部分のインデントを得る
-            let indent = line.chars().take_while(|c| c == &' ').count();
-            res.push('\n');
-            res.push_str(&format!("{}{}", " ".repeat(indent), "..."));
-            res.push('\n');
+    let mut lines_iter = lines.iter();
 
-            res.push_str(line);
-        }
-    }
+    let Some(first_line) = lines_iter.next() else {
+        unreachable!() // because lines.len() > 2
+    };
+    res.push_str(dedent(first_line));
+
+    let Some(last_line) = lines_iter.last() else {
+        unreachable!() // because lines.len() > 2
+    };
+
+    let last_line = dedent(last_line);
+    let indent = last_line.chars().take_while(|c| c == &' ').count();
+
+    // "..." の前のインデント数を決定
+    let indent = adjust_indent_num(last_line, indent);
+
+    res.push('\n');
+    res.push_str(&format!("{}{}", " ".repeat(indent), "..."));
+    res.push('\n');
+
+    res.push_str(last_line);
 
     res
 }
 
 /// `?` や tail_expr 用の文字列を加工する
 /// - 1行・2行の時: 全体を返す
-/// - 3行以上の時: "..." + 最終
+/// - 3行以上の時: ※ + 最終行を返す
+///   - 最後の行が }, ), ] で始まる場合、 ※ = "    ..."
+///   - 上記以外の場合、 ※ = "..."
 fn get_strs_for_question_or_tail_expr(s: String) -> String {
     let lines: Vec<&str> = s.lines().collect();
 
@@ -90,18 +113,22 @@ fn get_strs_for_question_or_tail_expr(s: String) -> String {
 
     let mut res = String::new();
 
-    for (i, line) in lines.iter().enumerate() {
-        // インデント一つ分削除
-        let line = line.strip_prefix("    ").unwrap_or(line);
-        if i == lines.len() - 1 {
-            // line の前の部分のインデントを得る
-            let indent = line.chars().take_while(|c| c == &' ').count();
-            res.push_str(&format!("{}{}", " ".repeat(indent), "..."));
-            res.push('\n');
+    let Some(last_line) = lines.last() else {
+        unreachable!() // because lines.len() > 2
+    };
 
-            res.push_str(line);
-        }
-    }
+    let last_line = dedent(last_line);
+
+    // line の前の部分のインデントを得る
+    let indent = last_line.chars().take_while(|c| c == &' ').count();
+
+    // "..." の前のインデント数を決定
+    let indent = adjust_indent_num(last_line, indent);
+
+    res.push_str(&format!("{}{}", " ".repeat(indent), "..."));
+    res.push('\n');
+
+    res.push_str(last_line);
 
     res
 }
@@ -248,6 +275,26 @@ mod tests {
     }
 
     #[test]
+    fn test_question_multi_line_with_brackets() {
+        let expr = parse_quote! {
+            async {
+                hoge().await?;
+                hoge().await?;
+                hoge().await?;
+                hoge().await?;
+                hoge().await?;
+                fuga().await?
+            }
+        };
+        let result = describe_expr_short(&expr, HookTargetKind::Question);
+        assert_eq!(
+            result,
+            "    ...
+}?"
+        );
+    }
+
+    #[test]
     fn test_return_multi_line() {
         let expr = parse_quote! {
             hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
@@ -265,6 +312,37 @@ mod tests {
     }
 
     #[test]
+    fn test_return_multi_line_with_brackets() {
+        let expr = parse_quote! {
+            [
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                hoge(),
+                fuga(),
+            ]
+        };
+        let result = describe_expr_short(&expr, HookTargetKind::Return);
+        assert_eq!(
+            result,
+            "return [
+    ...
+];"
+        );
+    }
+
+    #[test]
     fn test_tail_expr_multi_line() {
         let expr = parse_quote! {
             hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
@@ -277,6 +355,36 @@ mod tests {
             result,
             "    ...
     .baz()"
+        );
+    }
+
+    #[test]
+    fn test_tail_expr_multi_line_with_brackets() {
+        let expr = parse_quote! {
+            (
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                bar(),
+                baz(),
+            )
+        };
+        let result = describe_expr_short(&expr, HookTargetKind::TailExpr);
+        assert_eq!(
+            result,
+            "    ...
+)"
         );
     }
 

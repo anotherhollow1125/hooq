@@ -11,7 +11,6 @@ pub fn log_flavor() -> Flavor {
     }
 }
 
-// TODO: $expr_str_short を追加
 fn log_method() -> TokenStream {
     parse_quote! {
         .inspect_err(|e| {

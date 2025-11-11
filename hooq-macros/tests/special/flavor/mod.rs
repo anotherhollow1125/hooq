@@ -1,4 +1,5 @@
 mod empty;
+mod hook;
 
 use test_helpers::MaskMode::*;
 use test_helpers::mask_project_root;
@@ -8,6 +9,7 @@ fn test_special_flavor() {
     mask_project_root("tests/special/flavor", UnMask);
 
     macrotest::expand_args("tests/special/flavor/empty.rs", &["--ugly"]);
+    macrotest::expand_args("tests/special/flavor/hook.rs", &["--ugly"]);
 
     mask_project_root("tests/special/flavor", Mask);
 }

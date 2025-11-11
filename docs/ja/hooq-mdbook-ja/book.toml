@@ -1,0 +1,11 @@
+[book]
+authors = ["namnium"]
+language = "ja"
+src = "src"
+title = "hooq Reference 日本語版"
+
+[output.html]
+site-url = "/ja/"
+
+[output.html.playground]
+runnable = false

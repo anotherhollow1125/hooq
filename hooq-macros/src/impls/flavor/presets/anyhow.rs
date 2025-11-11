@@ -12,7 +12,6 @@ pub fn anyhow_flavor() -> Flavor {
     }
 }
 
-// TODO: $expr_str_short を追加
 fn anyhow_method() -> TokenStream {
     parse_quote! {
         .with_context(|| {

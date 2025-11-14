@@ -36,7 +36,7 @@ mod custom {
                         column: 13usize,
                         path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                         file: "hooq_meta.rs",
-                        expr_str: "Ok(100)",
+                        expr_str: "return Ok(100)",
                         count: "1st return",
                         bindings: ::std::collections::HashMap::from([
                             (

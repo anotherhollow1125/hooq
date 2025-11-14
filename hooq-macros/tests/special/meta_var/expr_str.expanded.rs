@@ -49,7 +49,7 @@ fn test_expr_str() -> Result<(), String> {
                 ::std::io::_eprint(
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 52usize,
-                        19usize, e, "magic.diacute()"
+                        19usize, e, "magic.diacute() ?"
                     ),
                 );
             };
@@ -60,7 +60,7 @@ fn test_expr_str() -> Result<(), String> {
                 ::std::io::_eprint(
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 53usize,
-                        19usize, e, "magic.diacute() ? .diacute()"
+                        19usize, e, "magic.diacute() ? .diacute() ?"
                     ),
                 );
             };
@@ -71,7 +71,7 @@ fn test_expr_str() -> Result<(), String> {
                 ::std::io::_eprint(
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 54usize,
-                        19usize, e, "magic.diacute() ? .diacute() ? .diacute()"
+                        19usize, e, "magic.diacute() ? .diacute() ? .diacute() ?"
                     ),
                 );
             };
@@ -83,7 +83,7 @@ fn test_expr_str() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 55usize,
                         19usize, e,
-                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute()"
+                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute() ?"
                     ),
                 );
             };
@@ -95,7 +95,7 @@ fn test_expr_str() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 56usize,
                         19usize, e,
-                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute() ? .diacute()"
+                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute() ? .diacute() ?"
                     ),
                 );
             };
@@ -107,7 +107,7 @@ fn test_expr_str() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 57usize,
                         19usize, e,
-                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute() ? .diacute() ?\n.diacute()"
+                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute() ? .diacute() ?\n.diacute() ?"
                     ),
                 );
             };

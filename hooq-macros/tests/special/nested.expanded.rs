@@ -23,7 +23,7 @@ fn nested() -> Result<(), ()> {
                                 .inspect(|_| {
                                     let path = "<hooq_root>/tests/special/nested.rs";
                                     let line = 20usize;
-                                    let expr = "func(())";
+                                    let expr = "func(()) ?";
                                     {
                                         ::std::io::_eprint(
                                             format_args!(
@@ -37,7 +37,7 @@ fn nested() -> Result<(), ()> {
                         .inspect(|_| {
                             let path = "<hooq_root>/tests/special/nested.rs";
                             let line = 20usize;
-                            let expr = "func(func(()) ?)";
+                            let expr = "func(func(()) ?) ?";
                             {
                                 ::std::io::_eprint(
                                     format_args!(
@@ -51,7 +51,7 @@ fn nested() -> Result<(), ()> {
                 .inspect(|_| {
                     let path = "<hooq_root>/tests/special/nested.rs";
                     let line = 20usize;
-                    let expr = "func(func(func(()) ?) ?)";
+                    let expr = "func(func(func(()) ?) ?) ?";
                     {
                         ::std::io::_eprint(
                             format_args!(
@@ -65,7 +65,7 @@ fn nested() -> Result<(), ()> {
         .inspect(|_| {
             let path = "<hooq_root>/tests/special/nested.rs";
             let line = 20usize;
-            let expr = "func(func(func(func(()) ?) ?) ?)";
+            let expr = "func(func(func(func(()) ?) ?) ?) ?";
             {
                 ::std::io::_eprint(
                     format_args!(

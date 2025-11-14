@@ -3,22 +3,46 @@ use syn::{Expr, File, parse_quote};
 
 use crate::impls::inert_attr::context::HookTargetKind;
 
-struct ShortStrFolder;
+struct ShortStrFolder {
+    max_str_len: usize,
+    start_len: usize,
+    end_len: usize,
+}
 
-const MAX_STR_LEN: usize = 10;
-const STD_START_LEN: usize = 4;
-const STD_END_LEN: usize = 4;
+impl ShortStrFolder {
+    fn new(max_str_len: usize) -> Result<Self, String> {
+        if max_str_len < 2 {
+            return Err("max_str_len must be at least 2".to_string());
+        }
+
+        let rest_str_len = max_str_len - 2;
+        let start_len = rest_str_len / 2;
+        let end_len = rest_str_len / 2;
+
+        Ok(Self {
+            max_str_len,
+            start_len,
+            end_len,
+        })
+    }
+}
+
+impl Default for ShortStrFolder {
+    fn default() -> Self {
+        Self::new(10).unwrap()
+    }
+}
 
 impl Fold for ShortStrFolder {
     fn fold_lit_str(&mut self, i: syn::LitStr) -> syn::LitStr {
         let value = i.value();
         let value = value.replace('\n', " ");
-        let short_value = if value.chars().count() > MAX_STR_LEN {
-            let start: String = value.chars().take(STD_START_LEN).collect();
+        let short_value = if value.chars().count() > self.max_str_len {
+            let start: String = value.chars().take(self.start_len).collect();
             let end: String = value
                 .chars()
                 .rev()
-                .take(STD_END_LEN)
+                .take(self.end_len)
                 .collect::<Vec<_>>()
                 .into_iter()
                 .rev()
@@ -33,7 +57,7 @@ impl Fold for ShortStrFolder {
 }
 
 fn short_str(expr: Expr) -> Expr {
-    let mut folder = ShortStrFolder;
+    let mut folder = ShortStrFolder::default();
     folder.fold_expr(expr)
 }
 
@@ -144,7 +168,11 @@ fn get_strs_for_question_or_tail_expr(s: String) -> String {
 ///   - 1, 2行の場合: そのまま返す
 ///   - 3行以上の場合: 先頭行 + "..." + 最終行を返す (return 用)
 ///   - 3行以上の場合: "..." + 最終行を返す (? や tail_expr 用)
-pub fn describe_expr_short(expr: &Expr, hook_target: HookTargetKind) -> String {
+pub fn expr_shorten(expr: &Expr, hook_target: HookTargetKind) -> String {
+    // メモ: マクロで提供することにする
+    // HookTargetKind は文字列として $target_kind などを新たに設けて得ることにする
+    // hooq のクレート名は get_hooq_crate_ident で得ることにする
+
     let expr = short_str(expr.clone());
 
     let file: File = match hook_target {
@@ -186,7 +214,7 @@ pub fn describe_expr_short(expr: &Expr, hook_target: HookTargetKind) -> String {
 mod tests {
     use syn::parse_quote;
 
-    use super::describe_expr_short;
+    use super::expr_shorten;
     use crate::impls::inert_attr::context::HookTargetKind;
 
     #[test]
@@ -194,7 +222,7 @@ mod tests {
         let expr = parse_quote! {
             hoge("aaa")
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Question);
+        let result = expr_shorten(&expr, HookTargetKind::Question);
         assert_eq!(result, "hoge(\"aaa\")?");
     }
 
@@ -203,7 +231,7 @@ mod tests {
         let expr = parse_quote! {
             hoge("aaa")
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Return);
+        let result = expr_shorten(&expr, HookTargetKind::Return);
         assert_eq!(result, "return hoge(\"aaa\");");
     }
 
@@ -212,7 +240,7 @@ mod tests {
         let expr = parse_quote! {
             hoge("aaa")
         };
-        let result = describe_expr_short(&expr, HookTargetKind::TailExpr);
+        let result = expr_shorten(&expr, HookTargetKind::TailExpr);
         assert_eq!(result, "hoge(\"aaa\")");
     }
 
@@ -222,7 +250,7 @@ mod tests {
             hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
                 .foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo()
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Question);
+        let result = expr_shorten(&expr, HookTargetKind::Question);
         assert_eq!(
             result,
             "hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
@@ -236,7 +264,7 @@ mod tests {
             hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
                 .foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo()
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Return);
+        let result = expr_shorten(&expr, HookTargetKind::Return);
         assert_eq!(
             result,
             "return hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
@@ -250,7 +278,7 @@ mod tests {
             hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
                 .foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo()
         };
-        let result = describe_expr_short(&expr, HookTargetKind::TailExpr);
+        let result = expr_shorten(&expr, HookTargetKind::TailExpr);
         assert_eq!(
             result,
             "hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
@@ -266,7 +294,7 @@ mod tests {
                 .bar()
                 .baz()
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Question);
+        let result = expr_shorten(&expr, HookTargetKind::Question);
         assert_eq!(
             result,
             "    ...
@@ -286,7 +314,7 @@ mod tests {
                 fuga().await?
             }
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Question);
+        let result = expr_shorten(&expr, HookTargetKind::Question);
         assert_eq!(
             result,
             "    ...
@@ -302,7 +330,7 @@ mod tests {
                 .bar()
                 .baz()
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Return);
+        let result = expr_shorten(&expr, HookTargetKind::Return);
         assert_eq!(
             result,
             "return hogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge()
@@ -333,7 +361,7 @@ mod tests {
                 fuga(),
             ]
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Return);
+        let result = expr_shorten(&expr, HookTargetKind::Return);
         assert_eq!(
             result,
             "return [
@@ -350,7 +378,7 @@ mod tests {
                 .bar()
                 .baz()
         };
-        let result = describe_expr_short(&expr, HookTargetKind::TailExpr);
+        let result = expr_shorten(&expr, HookTargetKind::TailExpr);
         assert_eq!(
             result,
             "    ...
@@ -380,7 +408,7 @@ mod tests {
                 baz(),
             )
         };
-        let result = describe_expr_short(&expr, HookTargetKind::TailExpr);
+        let result = expr_shorten(&expr, HookTargetKind::TailExpr);
         assert_eq!(
             result,
             "    ...
@@ -393,11 +421,11 @@ mod tests {
         let expr = parse_quote! {
             hoge("12345678901")
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Question);
+        let result = expr_shorten(&expr, HookTargetKind::Question);
         assert_eq!(result, "hoge(\"1234..8901\")?");
-        let result = describe_expr_short(&expr, HookTargetKind::Return);
+        let result = expr_shorten(&expr, HookTargetKind::Return);
         assert_eq!(result, "return hoge(\"1234..8901\");");
-        let result = describe_expr_short(&expr, HookTargetKind::TailExpr);
+        let result = expr_shorten(&expr, HookTargetKind::TailExpr);
         assert_eq!(result, "hoge(\"1234..8901\")");
     }
 
@@ -406,11 +434,11 @@ mod tests {
         let expr = parse_quote! {
             hoge(r#""This is a long string literal that exceeds the limit.""#)
         };
-        let result = describe_expr_short(&expr, HookTargetKind::Question);
+        let result = expr_shorten(&expr, HookTargetKind::Question);
         assert_eq!(result, "hoge(\"\\\"Thi..it.\\\"\")?");
-        let result = describe_expr_short(&expr, HookTargetKind::Return);
+        let result = expr_shorten(&expr, HookTargetKind::Return);
         assert_eq!(result, "return hoge(\"\\\"Thi..it.\\\"\");");
-        let result = describe_expr_short(&expr, HookTargetKind::TailExpr);
+        let result = expr_shorten(&expr, HookTargetKind::TailExpr);
         assert_eq!(result, "hoge(\"\\\"Thi..it.\\\"\")");
     }
 }

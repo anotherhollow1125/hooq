@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::Rc;
+use std::str::FromStr;
 
 use syn::{Expr, Path};
 
@@ -24,6 +25,19 @@ impl std::fmt::Display for HookTargetKind {
             HookTargetKind::Question => write!(f, "?"),
             HookTargetKind::Return => write!(f, "return"),
             HookTargetKind::TailExpr => write!(f, "tail expr"),
+        }
+    }
+}
+
+impl FromStr for HookTargetKind {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "?" | "question" => Ok(HookTargetKind::Question),
+            "return" => Ok(HookTargetKind::Return),
+            "tail_expr" | "tail expr" | "tailexpr" | "tailExpr" => Ok(HookTargetKind::TailExpr),
+            e => Err(e.to_string()),
         }
     }
 }
@@ -149,16 +163,16 @@ impl TryFrom<Vec<String>> for HookTargetSwitch {
         };
 
         for s in value {
-            match s.as_str() {
-                "?" | "question" => switch.question = true,
-                "return" => switch.return_ = true,
-                "tail_expr" | "tail expr" | "tailexpr" | "tailExpr" => switch.tail_expr = true,
-                "all" => {
+            match HookTargetKind::from_str(&s) {
+                Ok(HookTargetKind::Question) => switch.question = true,
+                Ok(HookTargetKind::Return) => switch.return_ = true,
+                Ok(HookTargetKind::TailExpr) => switch.tail_expr = true,
+                Err(s) if s == "all" => {
                     switch.question = true;
                     switch.return_ = true;
                     switch.tail_expr = true;
                 }
-                e => return Err(e.to_string()),
+                Err(e) => return Err(e),
             }
         }
 

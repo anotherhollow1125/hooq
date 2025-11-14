@@ -3,6 +3,7 @@ use syn::Path;
 
 pub mod function_info;
 mod get_attrs;
+pub mod get_hooq_crate_ident;
 pub mod unexpected_error_message;
 
 pub fn path_is_end_of(path: &Path, target: &str) -> bool {

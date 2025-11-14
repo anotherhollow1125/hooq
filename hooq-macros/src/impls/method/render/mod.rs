@@ -9,7 +9,7 @@ use syn::{Expr, Token, parse_quote};
 use crate::impls::inert_attr::context::{HookInfo, LocalContextField};
 use crate::impls::method::Method;
 
-mod describe_expr;
+mod format_expr_helpers;
 mod meta_vars;
 
 fn get_file_name(q_span: Span) -> String {
@@ -256,7 +256,7 @@ impl HookInfo<'_> {
                 })
             }
             Ok(MetaVars::ExprStrShort) => {
-                let expr_str_short = describe_expr::describe_expr_short(expr, self.kind);
+                let expr_str_short = format_expr_helpers::expr_shorten(expr, self.kind);
 
                 Ok(parse_quote! {
                     #expr_str_short
@@ -264,7 +264,7 @@ impl HookInfo<'_> {
             }
             Ok(MetaVars::ExprStrShortOneLine) => {
                 let expr_str_short_oneline: String =
-                    describe_expr::describe_expr_short(expr, self.kind)
+                    format_expr_helpers::expr_shorten(expr, self.kind)
                         .lines()
                         .map(|line| line.trim())
                         .collect::<Vec<_>>()
@@ -272,6 +272,13 @@ impl HookInfo<'_> {
 
                 Ok(parse_quote! {
                     #expr_str_short_oneline
+                })
+            }
+            Ok(MetaVars::TargetKind) => {
+                let kind = self.kind.to_string();
+
+                Ok(parse_quote! {
+                    #kind
                 })
             }
             Ok(MetaVars::Count) => {

@@ -249,7 +249,7 @@ impl HookInfo<'_> {
             }
             Ok(MetaVars::Expr) => Ok(expr.to_token_stream()),
             Ok(MetaVars::ExprStr) => {
-                let expr_str = self.target_tokenstream.to_string();
+                let expr_str = self.source_tokenstream.to_string();
 
                 Ok(parse_quote! {
                     #expr_str
@@ -272,6 +272,13 @@ impl HookInfo<'_> {
 
                 Ok(parse_quote! {
                     #expr_str_short_oneline
+                })
+            }
+            Ok(MetaVars::Source) => {
+                let source_ts = self.source_tokenstream.clone();
+
+                Ok(parse_quote! {
+                    #source_ts
                 })
             }
             Ok(MetaVars::Count) => {
@@ -319,7 +326,7 @@ impl HookInfo<'_> {
                 let column = q_span.unwrap().column();
                 let path = q_span.unwrap().file();
                 let file = get_file_name(q_span);
-                let expr_str = self.target_tokenstream.to_string();
+                let expr_str = self.source_tokenstream.to_string();
                 let count = self.get_count();
                 let bindings = self.get_bindings_token_stream();
 

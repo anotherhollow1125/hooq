@@ -11,6 +11,7 @@ pub enum MetaVars {
     ExprStr,
     ExprStrShort,
     ExprStrShortOneLine,
+    Source,
     Count,
     FnName,
     FnSig,
@@ -19,7 +20,7 @@ pub enum MetaVars {
     HooqMeta,
 }
 
-pub const META_VARS_LIST: [MetaVars; 14] = [
+pub const META_VARS_LIST: [MetaVars; 15] = [
     MetaVars::Line,
     MetaVars::Column,
     MetaVars::Path,
@@ -28,6 +29,7 @@ pub const META_VARS_LIST: [MetaVars; 14] = [
     MetaVars::ExprStr,
     MetaVars::ExprStrShort,
     MetaVars::ExprStrShortOneLine,
+    MetaVars::Source,
     MetaVars::Count,
     MetaVars::FnName,
     MetaVars::FnSig,
@@ -51,6 +53,7 @@ impl FromStr for MetaVars {
             "expr_str_short_oneline" | "expr_str_short_one_line" => {
                 Ok(MetaVars::ExprStrShortOneLine)
             }
+            "source" => Ok(MetaVars::Source),
             "nth" | "count" => Ok(MetaVars::Count),
             "fnname" | "fn_name" => Ok(MetaVars::FnName),
             "fnsig" | "fn_sig" => Ok(MetaVars::FnSig),
@@ -76,6 +79,7 @@ impl Display for MetaVars {
                 MetaVars::ExprStr => "expr_str",
                 MetaVars::ExprStrShort => "expr_str_short",
                 MetaVars::ExprStrShortOneLine => "expr_str_short_one_line",
+                MetaVars::Source => "source",
                 MetaVars::Count => "count",
                 MetaVars::FnName => "fn_name",
                 MetaVars::FnSig => "fn_sig",

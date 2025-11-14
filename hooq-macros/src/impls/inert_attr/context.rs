@@ -284,11 +284,11 @@ impl HookContext {
 
     pub fn as_hook_info<'a>(
         &'a self,
-        target_tokenstream: TokenStream,
+        source_tokenstream: TokenStream,
         kind: HookTargetKind,
     ) -> HookInfo<'a> {
         HookInfo {
-            target_tokenstream,
+            source_tokenstream,
             kind,
 
             hook_context: self,
@@ -358,7 +358,7 @@ impl HookContext {
 
 #[derive(Debug)]
 pub struct HookInfo<'a> {
-    pub target_tokenstream: TokenStream,
+    pub source_tokenstream: TokenStream,
     pub kind: HookTargetKind,
 
     pub hook_context: &'a HookContext,

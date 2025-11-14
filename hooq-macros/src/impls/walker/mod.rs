@@ -70,7 +70,7 @@ fn handle_tail_expr(
         new_context: context,
     } = handle_inert_attrs(attrs, context)?;
 
-    let target_tokenstream = expr.to_token_stream();
+    let source_tokenstream = expr.to_token_stream();
 
     walk_expr(expr, &context)?;
 
@@ -97,7 +97,7 @@ fn handle_tail_expr(
         let _exc = hook_expr(
             !is_skipped,
             expr,
-            target_tokenstream,
+            source_tokenstream,
             HookTargetKind::TailExpr,
             q_span,
             &context,
@@ -406,7 +406,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                     new_context: context,
                 } = handle_inert_attrs(&mut expr_try.attrs, context)?;
 
-                let target_tokenstream = expr_try.to_token_stream();
+                let source_tokenstream = expr_try.to_token_stream();
 
                 walk_expr(&mut expr_try.expr, &context)?;
 
@@ -415,7 +415,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                 let exc = hook_expr(
                     !is_skipped,
                     &mut expr_try.expr,
-                    target_tokenstream,
+                    source_tokenstream,
                     HookTargetKind::Question,
                     q_span,
                     &context,
@@ -443,7 +443,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                 new_context: context,
             } = handle_inert_attrs(&mut expr_return.attrs, context)?;
 
-            let target_tokenstream = expr_return.to_token_stream();
+            let source_tokenstream = expr_return.to_token_stream();
 
             if let Some(expr) = expr_return.expr.as_mut() {
                 walk_expr(expr, &context)?;
@@ -460,7 +460,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                     let _exc = hook_expr(
                         !is_skipped,
                         expr,
-                        target_tokenstream,
+                        source_tokenstream,
                         HookTargetKind::Return,
                         q_span,
                         &context,

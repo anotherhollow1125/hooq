@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::ops::Deref;
 use std::rc::Rc;
 
+use proc_macro2::TokenStream;
 use syn::{Expr, Path};
 
 use crate::impls::inert_attr::InertAttribute;
@@ -281,9 +282,13 @@ impl HookContext {
         }
     }
 
-    pub fn as_hook_info<'a>(&'a self, expr: &'a str, kind: HookTargetKind) -> HookInfo<'a> {
+    pub fn as_hook_info<'a>(
+        &'a self,
+        target_tokenstream: TokenStream,
+        kind: HookTargetKind,
+    ) -> HookInfo<'a> {
         HookInfo {
-            expr_str: expr,
+            target_tokenstream,
             kind,
 
             hook_context: self,
@@ -353,7 +358,7 @@ impl HookContext {
 
 #[derive(Debug)]
 pub struct HookInfo<'a> {
-    pub expr_str: &'a str,
+    pub target_tokenstream: TokenStream,
     pub kind: HookTargetKind,
 
     pub hook_context: &'a HookContext,

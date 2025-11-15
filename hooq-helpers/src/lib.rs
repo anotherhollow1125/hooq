@@ -35,7 +35,7 @@ pub struct HooqMeta {
     pub column: usize,
     pub path: &'static str,
     pub file: &'static str,
-    pub expr_str: &'static str,
+    pub source_str: &'static str,
     pub count: &'static str,
     pub bindings: HashMap<String, BindingPayload>,
 }

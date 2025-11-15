@@ -8,6 +8,8 @@ mod source_excerpt;
 pub mod source_excerpt_macros;
 pub mod unexpected_error_message;
 
+pub use get_hooq_crate_name::get_source_excerpt_helpers_name_space;
+
 pub fn path_is_end_of(path: &Path, target: &str) -> bool {
     path.segments
         .iter()

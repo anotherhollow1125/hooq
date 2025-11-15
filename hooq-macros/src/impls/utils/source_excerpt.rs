@@ -429,7 +429,7 @@ fn add_line_prefix(
     top_padding: bool,
     bottom_padding: bool,
 ) -> IntoPrettyStrRes {
-    let padding_num = end_line.to_string().chars().count();
+    let padding_num = end_line.to_string().chars().count().max(4);
     let mut res = Vec::new();
     let mut index = start_line;
 

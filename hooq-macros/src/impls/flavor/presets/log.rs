@@ -11,17 +11,17 @@ pub fn log_flavor() -> Flavor {
     }
 }
 
-// TODO: $expr_str_short を追加
 fn log_method() -> TokenStream {
+    let excerpted_helpers_path = crate::impls::utils::get_source_excerpt_helpers_name_space();
+
     parse_quote! {
         .inspect_err(|e| {
             let path = $path;
             let line = $line;
             let col = $col;
-            let expr = $expr_str_short;
+            let expr = #excerpted_helpers_path ::excerpted_pretty_stringify!($source);
 
-            ::log::error!("({path}:{line}:{col}) {e}
-    {expr}");
+            ::log::error!("({path}:{line}:{col}) {e}\n{expr}");
         })
     }
 }

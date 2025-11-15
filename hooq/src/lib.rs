@@ -8,5 +8,6 @@
 
 pub use hooq_helpers::{BindingPayload, HooqMeta};
 pub use hooq_macros::hooq;
+pub use source_excerpt_helpers::excerpted_pretty_stringify as summary;
 
 pub mod source_excerpt_helpers;

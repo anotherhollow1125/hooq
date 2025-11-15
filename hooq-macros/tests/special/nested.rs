@@ -9,7 +9,7 @@ fn func(_: ()) -> Result<(), ()> {
 #[hooq::method(.inspect(|_| {
     let path = $path;
     let line = $line;
-    let expr = $expr_str;
+    let expr = stringify!($source);
 
     ::std::eprintln!("nested @
 path: {path},

@@ -1,0 +1,11 @@
+---
+source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
+expression: res
+---
+157|         Err([
+...
+162|             10,
+163|             42,
+164|             "long..acro",
+165|         ])
+   |

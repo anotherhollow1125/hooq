@@ -1,0 +1,10 @@
+---
+source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
+expression: res
+---
+215|         func_call(|| {
+216|             let s = "hello!";
+217| 
+218|             println!("{s}");
+219|         })?
+   |

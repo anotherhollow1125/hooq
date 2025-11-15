@@ -320,8 +320,7 @@ fn into_pretty_str_inner(
         is_top: bool,
     ) {
         if is_top {
-            let indent_num = tt_column.saturating_sub(1);
-            res.push_str(" ".repeat(indent_num).as_str());
+            res.push_str("    ");
         }
 
         if let Some(line) = current_line
@@ -432,9 +431,11 @@ fn add_line_prefix(
     let padding_num = end_line.to_string().chars().count().max(4);
     let mut res = Vec::new();
     let mut index = start_line;
+    let mut punct = '>';
 
     for line in s.lines() {
-        res.push(format!("{index: >padding_num$}| {line}"));
+        res.push(format!("{index: >padding_num$}{punct}{line}"));
+        punct = '|';
         index += 1;
     }
 

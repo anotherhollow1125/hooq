@@ -2,6 +2,6 @@
 source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
 expression: res
 ---
- 270|                                           hoge()
- 271|     .fuga()?
+ 270>    hoge()
+ 271|    .fuga()?
     |

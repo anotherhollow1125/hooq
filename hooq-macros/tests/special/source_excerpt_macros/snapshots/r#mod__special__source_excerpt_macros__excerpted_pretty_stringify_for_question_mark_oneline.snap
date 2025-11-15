@@ -2,5 +2,5 @@
 source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
 expression: res
 ---
- 244|                                           hoge()?
+ 244>    hoge()?
     |

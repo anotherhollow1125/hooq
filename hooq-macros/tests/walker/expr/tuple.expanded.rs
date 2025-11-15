@@ -5,7 +5,7 @@ fn hoge() -> Result<(), ()> {
             let path = "<hooq_root>/tests/walker/expr/tuple.rs";
             let line = 5usize;
             let col = 5usize;
-            let expr = "   5|     Err(())\n    |";
+            let expr = "   5>    Err(())\n    |";
             {
                 ::std::io::_eprint(
                     format_args!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr),

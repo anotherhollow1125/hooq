@@ -49,8 +49,7 @@ fn test_expr_str() -> Result<(), String> {
                 ::std::io::_eprint(
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 52usize,
-                        19usize, e,
-                        "  51|                            magic\n  52|         .diacute()?\n    |"
+                        19usize, e, "  51>    magic\n  52|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -62,7 +61,7 @@ fn test_expr_str() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 53usize,
                         19usize, e,
-                        "  51|                            magic\n  52|         .diacute()?\n  53|         .diacute()?\n    |"
+                        "  51>    magic\n  52|        .diacute()?\n  53|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -74,7 +73,7 @@ fn test_expr_str() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 54usize,
                         19usize, e,
-                        "  51|                            magic\n  52|         .diacute()?\n  53|         .diacute()?\n  54|         .diacute()?\n    |"
+                        "  51>    magic\n  52|        .diacute()?\n  53|        .diacute()?\n  54|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -86,7 +85,7 @@ fn test_expr_str() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 55usize,
                         19usize, e,
-                        "  51|                            magic\n  52|         .diacute()?\n  53|         .diacute()?\n  54|         .diacute()?\n  55|         .diacute()?\n    |"
+                        "  51>    magic\n  52|        .diacute()?\n  53|        .diacute()?\n  54|        .diacute()?\n  55|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -98,7 +97,7 @@ fn test_expr_str() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 56usize,
                         19usize, e,
-                        "  51|                            magic\n...\n  53|         .diacute()?\n  54|         .diacute()?\n  55|         .diacute()?\n  56|         .diacute()?\n    |"
+                        "  51>    magic\n...\n  53|        .diacute()?\n  54|        .diacute()?\n  55|        .diacute()?\n  56|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -110,7 +109,7 @@ fn test_expr_str() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 57usize,
                         19usize, e,
-                        "  51|                            magic\n...\n  54|         .diacute()?\n  55|         .diacute()?\n  56|         .diacute()?\n  57|         .diacute()?\n    |"
+                        "  51>    magic\n...\n  54|        .diacute()?\n  55|        .diacute()?\n  56|        .diacute()?\n  57|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -137,7 +136,7 @@ fn test_expr_str_short() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
                         79usize, 19usize, e,
-                        "  78|                            magic\n  79|         .diacute()?\n    |"
+                        "  78>    magic\n  79|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -149,7 +148,7 @@ fn test_expr_str_short() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
                         80usize, 19usize, e,
-                        "  78|                            magic\n  79|         .diacute()?\n  80|         .diacute()?\n    |"
+                        "  78>    magic\n  79|        .diacute()?\n  80|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -161,7 +160,7 @@ fn test_expr_str_short() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
                         81usize, 19usize, e,
-                        "  78|                            magic\n  79|         .diacute()?\n  80|         .diacute()?\n  81|         .diacute()?\n    |"
+                        "  78>    magic\n  79|        .diacute()?\n  80|        .diacute()?\n  81|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -173,7 +172,7 @@ fn test_expr_str_short() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
                         82usize, 19usize, e,
-                        "  78|                            magic\n  79|         .diacute()?\n  80|         .diacute()?\n  81|         .diacute()?\n  82|         .diacute()?\n    |"
+                        "  78>    magic\n  79|        .diacute()?\n  80|        .diacute()?\n  81|        .diacute()?\n  82|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -185,7 +184,7 @@ fn test_expr_str_short() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
                         83usize, 19usize, e,
-                        "  78|                            magic\n...\n  80|         .diacute()?\n  81|         .diacute()?\n  82|         .diacute()?\n  83|         .diacute()?\n    |"
+                        "  78>    magic\n...\n  80|        .diacute()?\n  81|        .diacute()?\n  82|        .diacute()?\n  83|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -197,7 +196,7 @@ fn test_expr_str_short() -> Result<(), String> {
                     format_args!(
                         "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
                         84usize, 19usize, e,
-                        "  78|                            magic\n...\n  81|         .diacute()?\n  82|         .diacute()?\n  83|         .diacute()?\n  84|         .diacute()?\n    |"
+                        "  78>    magic\n...\n  81|        .diacute()?\n  82|        .diacute()?\n  83|        .diacute()?\n  84|        .diacute()?\n    |"
                     ),
                 );
             };

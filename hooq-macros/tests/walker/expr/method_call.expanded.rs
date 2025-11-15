@@ -7,7 +7,7 @@ impl Strct {
                 let path = "<hooq_root>/tests/walker/expr/method_call.rs";
                 let line = 8usize;
                 let col = 9usize;
-                let expr = "   8|         Err(())\n    |";
+                let expr = "   8>    Err(())\n    |";
                 {
                     ::std::io::_eprint(
                         format_args!(

@@ -12,7 +12,7 @@ fn func() -> Result<(), ()> {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 24usize;
             let col = 17usize;
-            let expr = "  24|     enresult(())?\n    |";
+            let expr = "  24>    enresult(())?\n    |";
             {
                 ::std::io::_eprint(
                     format_args!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr),
@@ -24,7 +24,7 @@ fn func() -> Result<(), ()> {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 27usize;
             let col = 23usize;
-            let expr = "  27|        enresult(false)?\n    |";
+            let expr = "  27>    enresult(false)?\n    |";
             {
                 ::std::io::_eprint(
                     format_args!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr),
@@ -39,7 +39,7 @@ fn func() -> Result<(), ()> {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 31usize;
             let col = 23usize;
-            let expr = "  31|        enresult(false)?\n    |";
+            let expr = "  31>    enresult(false)?\n    |";
             {
                 ::std::io::_eprint(
                     format_args!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr),
@@ -54,7 +54,7 @@ fn func() -> Result<(), ()> {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 36usize;
             let col = 23usize;
-            let expr = "  36|        enresult(false)?\n    |";
+            let expr = "  36>    enresult(false)?\n    |";
             {
                 ::std::io::_eprint(
                     format_args!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr),
@@ -67,7 +67,7 @@ fn func() -> Result<(), ()> {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
                 let line = 37usize;
                 let col = 9usize;
-                let expr = "  37|         return Left()\n    |";
+                let expr = "  37>    return Left()\n    |";
                 {
                     ::std::io::_eprint(
                         format_args!(
@@ -83,7 +83,7 @@ fn func() -> Result<(), ()> {
                 let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
                 let line = 40usize;
                 let col = 16usize;
-                let expr = "  40|                Right()\n    |";
+                let expr = "  40>    Right()\n    |";
                 {
                     ::std::io::_eprint(
                         format_args!(
@@ -98,7 +98,7 @@ fn func() -> Result<(), ()> {
             let path = "<hooq_root>/tests/special/inert_attr_setting/tail_expr_idents.rs";
             let line = 42usize;
             let col = 5usize;
-            let expr = "  42|     Right()\n    |";
+            let expr = "  42>    Right()\n    |";
             {
                 ::std::io::_eprint(
                     format_args!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr),

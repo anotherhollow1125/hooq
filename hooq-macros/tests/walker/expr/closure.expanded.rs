@@ -6,7 +6,7 @@ fn minus(x: u32, y: u32) -> Result<u32, ()> {
                 let path = "<hooq_root>/tests/walker/expr/closure.rs";
                 let line = 6usize;
                 let col = 9usize;
-                let expr = "   6|         return Err(())\n    |";
+                let expr = "   6>    return Err(())\n    |";
                 {
                     ::std::io::_eprint(
                         format_args!(

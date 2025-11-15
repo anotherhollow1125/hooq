@@ -23,6 +23,7 @@ consume-question = []
 
 [dependencies]
 prettyplease = "0.2.37"
+proc-macro-crate = "3.4.0"
 proc-macro2 = { version = "1.0.103", features = ["span-locations"] }
 quote = "1.0.42"
 serde = { version = "1.0.228", features = ["derive"] }

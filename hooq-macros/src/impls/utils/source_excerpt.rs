@@ -4,17 +4,40 @@ use syn::Expr;
 use syn::fold::{Fold, fold_lit_str};
 use syn::spanned::Spanned;
 
-use crate::impls::inert_attr::context::HookTargetKind;
-
 // --- primitives start ---
 
 /// Truncate string literals in the given expression.
 /// eg. "01234567891234" -> "0123..1234"
 /// Truncation is done line by line.
-pub fn truncate_lit_str(ts: TokenStream, max_len: Option<usize>) -> syn::Result<TokenStream> {
-    let expr: Expr = syn::parse2(ts)?;
+pub fn truncate_lit_str(expr: Expr, max_len: Option<usize>) -> syn::Result<TokenStream> {
     let expr = truncate_lit_str_inner(expr, max_len);
     Ok(expr.into_token_stream())
+}
+
+pub struct IntoPrettyStrRes {
+    body: String,
+    padding: Padding,
+}
+
+impl std::fmt::Display for IntoPrettyStrRes {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.padding.wrap(&self.body))
+    }
+}
+
+pub struct Padding {
+    top_padding: Option<String>,
+    bottom_padding: Option<String>,
+}
+
+impl Padding {
+    pub fn wrap(&self, expr_str: &str) -> String {
+        format!(
+            "{}{expr_str}{}",
+            self.top_padding.as_deref().unwrap_or(""),
+            self.bottom_padding.as_deref().unwrap_or(""),
+        )
+    }
 }
 
 /// Convert the given expression into a pretty-printed string representation.
@@ -25,7 +48,7 @@ pub fn into_pretty_str(
         top_padding,
         bottom_padding,
     }: PrettyStrSettings,
-) -> String {
+) -> IntoPrettyStrRes {
     let mut current_line: Option<usize> = None;
     let mut current_column: Option<usize> = None;
 
@@ -42,11 +65,13 @@ pub fn into_pretty_str(
     if with_line {
         add_line_prefix(&res, start_line, end_line, top_padding, bottom_padding)
     } else {
-        format!(
-            "{}{res}{}",
-            if top_padding { "\n" } else { "" },
-            if bottom_padding { "\n" } else { "" }
-        )
+        IntoPrettyStrRes {
+            body: res,
+            padding: Padding {
+                top_padding: top_padding.then(|| "\n".to_string()),
+                bottom_padding: bottom_padding.then(|| "\n".to_string()),
+            },
+        }
     }
 }
 
@@ -84,7 +109,7 @@ pub struct ExcerptSetting {
 impl Default for ExcerptSetting {
     fn default() -> Self {
         Self {
-            max_excerpted_line_num: 3,
+            max_excerpted_line_num: 5,
             truncate_lit_str_setting: TruncateLitStrSetting::Truncate(None),
             pretty_str_settings: PrettyStrSettings {
                 with_line: true,
@@ -98,10 +123,9 @@ impl Default for ExcerptSetting {
 /// Convert the given token stream into a one-line pretty-printed string representation.
 /// lit_str_max_len: If specified, string literals will be truncated to this length.
 pub fn into_one_line_pretty_str(
-    ts: TokenStream,
+    expr: Expr,
     truncate_lit_str_setting: TruncateLitStrSetting,
 ) -> syn::Result<String> {
-    let expr: Expr = syn::parse2(ts)?;
     let expr = truncate_lit_str_setting.apply(expr);
     let expr_str = into_pretty_str(
         expr,
@@ -111,6 +135,7 @@ pub fn into_one_line_pretty_str(
             bottom_padding: false,
         },
     )
+    .body
     .lines()
     .map(|line| line.trim())
     .collect::<Vec<&str>>()
@@ -120,7 +145,7 @@ pub fn into_one_line_pretty_str(
 }
 
 pub fn into_excerpted_line_pretty_str(
-    ts: TokenStream,
+    expr: Expr,
     ExcerptSetting {
         max_excerpted_line_num,
         truncate_lit_str_setting,
@@ -136,71 +161,55 @@ pub fn into_excerpted_line_pretty_str(
 
     // 欲しい行が1行の場合はもとに無関係に1行取る
     if max_excerpted_line_num == 1 {
-        let expr = syn::parse2::<Expr>(ts)?;
         let expr = truncate_lit_str_setting.apply(expr);
-        let expr_str = into_pretty_str(expr, pretty_str_settings);
-        let expr_str = expr_str.lines().last().unwrap_or("");
+        let IntoPrettyStrRes {
+            body: expr_str,
+            padding,
+        } = into_pretty_str(expr, pretty_str_settings);
+        let expr_str = expr_str.lines().last().unwrap_or("").to_string();
 
-        return Ok(expr_str.to_string());
+        return Ok(padding.wrap(&expr_str));
     }
 
     // 以降は欲しい行が2行以上の場合
-    // 後続のため、予めターゲット種別を調べておく
-    let expr = syn::parse2::<Expr>(ts)?;
-    let kind = match expr {
-        Expr::Try(_) => HookTargetKind::Question,
-        Expr::Return(_) => HookTargetKind::Return,
-        _ => HookTargetKind::TailExpr,
-    };
+
     let expr = truncate_lit_str_setting.apply(expr);
-    let expr_str = into_pretty_str(expr, pretty_str_settings);
+    let IntoPrettyStrRes {
+        body: expr_str,
+        padding,
+    } = into_pretty_str(expr, pretty_str_settings);
+    let line_count = expr_str.lines().count();
 
     // 対象の行が2行で収まる場合はすべて取る
-    if expr_str.lines().count() <= 2 {
-        return Ok(expr_str);
+    if line_count <= 2 {
+        return Ok(padding.wrap(&expr_str));
     }
 
-    // 対象の行が3行以上の場合は、省略を行う
-    match kind {
-        // Question, TailExpr の場合は最終行に近い行から順に取る
-        HookTargetKind::Question | HookTargetKind::TailExpr => {
-            let expr_str = expr_str
-                .lines()
-                .rev()
-                .take(max_excerpted_line_num)
-                .collect::<Vec<_>>()
-                .into_iter()
-                .rev()
-                .collect::<Vec<&str>>()
-                .join("\n");
+    // 以降は対象の行が3行以上の場合
+    // 先頭行と、最終行に近い行から順に取る
+    let mut lines_iter = expr_str.lines();
 
-            Ok(format!("...\n{}", expr_str))
-        }
-        // Return の場合は先頭行と、最終行に近い行から順に取る
-        HookTargetKind::Return => {
-            let mut lines_iter = expr_str.lines();
+    let first_line = lines_iter.next().unwrap_or("");
 
-            let first_line = lines_iter.next().unwrap_or("");
+    let mut res = Vec::new();
+    res.push(first_line);
 
-            let mut res = String::new();
-            res.push_str(first_line);
-            res.push('\n');
+    let tail_lines = lines_iter
+        .rev()
+        .take(max_excerpted_line_num - 1)
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+        .collect::<Vec<_>>();
 
-            let tail_lines = lines_iter
-                .rev()
-                .take(max_excerpted_line_num - 1)
-                .collect::<Vec<_>>()
-                .into_iter()
-                .rev()
-                .collect::<Vec<&str>>()
-                .join("\n");
-
-            res.push_str("...\n");
-            res.push_str(&tail_lines);
-
-            Ok(res)
-        }
+    if line_count > max_excerpted_line_num {
+        res.push("...");
     }
+    res.extend(tail_lines);
+
+    let res = res.join("\n");
+
+    Ok(padding.wrap(&res))
 }
 
 struct TruncateStrFolder {
@@ -286,36 +295,50 @@ fn into_pretty_str_inner(
 ) -> String {
     let mut res = String::new();
 
+    struct AddTTPos {
+        line: usize,
+        column: usize,
+        end_column: usize,
+    }
+
     fn add_tt(
         res: &mut String,
         tt_str: &str,
-        tt_span: Span,
+        // NOTE:
+        // Group のデリミタ部分について
+        // span_open().unwrap() が意図通りの
+        // 位置を指示さなかったため、
+        // 行列を別個に受け取るようにした
+        AddTTPos {
+            line: tt_line,
+            column: tt_column,
+            end_column: tt_end_column,
+        }: AddTTPos,
+
         current_line: &mut Option<usize>,
         current_column: &mut Option<usize>,
         is_top: bool,
     ) {
-        let span = tt_span.unwrap();
-
         if is_top {
-            let indent_num = span.column().saturating_sub(1);
+            let indent_num = tt_column.saturating_sub(1);
             res.push_str(" ".repeat(indent_num).as_str());
         }
 
         if let Some(line) = current_line
-            && span.line() > *line
+            && tt_line > *line
         {
-            res.push('\n');
-            res.push_str(" ".repeat(span.column().saturating_sub(1)).as_str());
+            res.push_str("\n".repeat(tt_line.saturating_sub(*line)).as_str());
+            res.push_str(" ".repeat(tt_column.saturating_sub(1)).as_str());
         } else if let Some(column) = current_column
-            && span.column() > *column
+            && tt_column > *column
         {
-            res.push_str(" ".repeat(span.column().saturating_sub(*column)).as_str());
+            res.push_str(" ".repeat(tt_column.saturating_sub(*column)).as_str());
         }
 
         res.push_str(tt_str);
 
-        *current_line = Some(span.line());
-        *current_column = Some(span.end().column());
+        *current_line = Some(tt_line);
+        *current_column = Some(tt_end_column);
     }
 
     for tt in input {
@@ -324,12 +347,16 @@ fn into_pretty_str_inner(
             | proc_macro2::TokenTree::Punct(_)
             | proc_macro2::TokenTree::Literal(_) => {
                 let tt_str = tt.to_string();
-                let tt_span = tt.span();
+                let tt_span = tt.span().unwrap();
 
                 add_tt(
                     &mut res,
                     &tt_str,
-                    tt_span,
+                    AddTTPos {
+                        line: tt_span.start().line(),
+                        column: tt_span.start().column(),
+                        end_column: tt_span.end().column(),
+                    },
                     current_line,
                     current_column,
                     is_top,
@@ -338,11 +365,15 @@ fn into_pretty_str_inner(
             }
             proc_macro2::TokenTree::Group(group) => {
                 let start_delim = delim_start(group.delimiter());
-                let start_delim_span = group.span_open();
+                let start_delim_span = group.span_open().unwrap();
                 add_tt(
                     &mut res,
                     start_delim,
-                    start_delim_span,
+                    AddTTPos {
+                        line: start_delim_span.start().line(),
+                        column: start_delim_span.start().column(),
+                        end_column: start_delim_span.start().column() + 1,
+                    },
                     current_line,
                     current_column,
                     is_top,
@@ -353,11 +384,15 @@ fn into_pretty_str_inner(
                 res.push_str(&s);
 
                 let end_delim = delim_end(group.delimiter());
-                let end_delim_span = group.span_close();
+                let end_delim_span = group.span_close().unwrap();
                 add_tt(
                     &mut res,
                     end_delim,
-                    end_delim_span,
+                    AddTTPos {
+                        line: end_delim_span.end().line(),
+                        column: end_delim_span.end().column().saturating_sub(1),
+                        end_column: end_delim_span.end().column(),
+                    },
                     current_line,
                     current_column,
                     false,
@@ -393,35 +428,30 @@ fn add_line_prefix(
     end_line: usize,
     top_padding: bool,
     bottom_padding: bool,
-) -> String {
+) -> IntoPrettyStrRes {
     let padding_num = end_line.to_string().chars().count();
-    let mut res = String::new();
+    let mut res = Vec::new();
     let mut index = start_line;
 
-    if top_padding {
-        res.push_str(&format!("{}|\n", " ".repeat(padding_num)));
-    }
-
     for line in s.lines() {
-        res.push_str(&format!("{index: >padding_num$}| {line}\n"));
+        res.push(format!("{index: >padding_num$}| {line}"));
         index += 1;
     }
 
-    if bottom_padding {
-        res.push_str(&format!("{}|\n", " ".repeat(padding_num)));
+    IntoPrettyStrRes {
+        body: res.join("\n"),
+        padding: Padding {
+            top_padding: top_padding.then(|| format!("{}|\n", " ".repeat(padding_num))),
+            bottom_padding: bottom_padding.then(|| format!("\n{}|", " ".repeat(padding_num))),
+        },
     }
-
-    res
 }
 
 #[cfg(test)]
 mod tests {
     use syn::Expr;
 
-    use super::{
-        ExcerptSetting, PrettyStrSettings, TruncateLitStrSetting, into_excerpted_line_pretty_str,
-        into_one_line_pretty_str, into_pretty_str, truncate_lit_str,
-    };
+    use super::truncate_lit_str;
 
     #[test]
     fn test_truncate_lit_str() {
@@ -429,12 +459,13 @@ mod tests {
             func_call("0123456789abcdefghijklmnopqrstuvwxyz")
         };
 
-        let res = truncate_lit_str(ts.clone(), None).unwrap();
+        let expr = syn::parse2::<Expr>(ts).unwrap();
+
+        let res = truncate_lit_str(expr.clone(), None).unwrap();
 
         insta::assert_snapshot!(res.to_string(), @r#"func_call ("0123..wxyz")"#);
 
-        let res = truncate_lit_str(ts, Some(36)).unwrap();
-
+        let res = truncate_lit_str(expr, Some(36)).unwrap();
         insta::assert_snapshot!(res.to_string(), @r#"func_call ("0123456789abcdefghijklmnopqrstuvwxyz")"#);
     }
 
@@ -466,7 +497,9 @@ Next line
 ")
         };
 
-        let res = truncate_lit_str(ts, None).unwrap();
+        let expr = syn::parse2::<Expr>(ts).unwrap();
+
+        let res = truncate_lit_str(expr, None).unwrap();
 
         insta::assert_snapshot!(res.to_string(), @r#"func_call ("The ..ters\n\nBeau..gly.\nExpl..cit.\nSimp..lex.\nComp..ted.\nFlat..ted.\nSpar..nse.\nRead..nts.\nSpec..les.\nAlth..ity.\nErro..tly.\nUnle..ced.\nIn t..ess.\nTher.. it.\nAlth..tch.\nNow ..ver.\nAlth..now.\nIf t..dea.\nIf t..dea.\nName..ose!" , "\nNext line\n")"#);
     }

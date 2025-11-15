@@ -20,3 +20,48 @@ pub fn hooq(attr: TokenStream, item: TokenStream) -> TokenStream {
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+/// Utility macro to truncate string literals in an expression.
+///
+/// examples:
+/// - `truncate_lit_str!(func_call("0123456789abcdefghijklmnopqrstuvwxyz"))` becomes `func_call("0123..wxyz")`
+/// - `truncate_lit_str!(@max_len=36, func_call("0123456789abcdefghijklmnopqrstuvwxyz"))` becomes `func_call("0123456789abcdefghijklmnopqrstuvwxyz")`
+#[proc_macro]
+pub fn truncate_lit_str(item: TokenStream) -> TokenStream {
+    impls::utils::source_excerpt_macros::truncate_lit_str(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+/// Utility macro to get pretty source excerpt of an expression.
+///
+/// examples:
+/// TODO
+#[proc_macro]
+pub fn pretty_stringify(item: TokenStream) -> TokenStream {
+    impls::utils::source_excerpt_macros::pretty_stringify(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+/// Utility macro to get one line source excerpt of an expression.
+///
+/// examples:
+/// TODO
+#[proc_macro]
+pub fn one_line_stringify(item: TokenStream) -> TokenStream {
+    impls::utils::source_excerpt_macros::one_line_stringify(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
+
+/// Utility macro to get source excerpt of an expression.
+///
+/// examples:
+/// TODO
+#[proc_macro]
+pub fn excerpted_pretty_stringify(item: TokenStream) -> TokenStream {
+    impls::utils::source_excerpt_macros::excerpted_pretty_stringify(item.into())
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}

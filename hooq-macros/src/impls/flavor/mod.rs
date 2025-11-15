@@ -55,15 +55,16 @@ fn default_method() -> Method {
     // CI側のテストの関係でこのようになっている
     // (恨むならeprintln!の仕様を恨んでください)
 
+    let excerpted_helpers_path = crate::impls::utils::get_source_excerpt_helpers_name_space();
+
     let res: TokenStream = parse_quote! {
         .inspect_err(|e| {
             let path = $path;
             let line = $line;
             let col = $col;
-            let expr = $expr_str_short;
+            let expr = #excerpted_helpers_path ::excerpted_pretty_stringify!($source);
 
-            ::std::eprintln!("[{path}:{line}:{col}] {e:?}
-    {expr}");
+            ::std::eprintln!("[{path}:{line}:{col}] {e:?}\n{expr}");
         })
     };
 

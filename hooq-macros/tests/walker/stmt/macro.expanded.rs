@@ -8,7 +8,7 @@ fn func() -> Result<(), ()> {
             format_args!(
                 "{0}\n", enresult(10).inspect(| _ | { {
                 ::std::io::_print(format_args!("tag: {0}, expr: {1}\n", "outer",
-                "enresult(10)")); }; }) ?
+                "enresult(10) ?")); }; }) ?
             ),
         );
     };
@@ -17,7 +17,7 @@ fn func() -> Result<(), ()> {
             format_args!(
                 "{0}\n", enresult(20).inspect(| _ | { {
                 ::std::io::_print(format_args!("tag: {0}, expr: {1}\n", "inner",
-                "enresult(20)")); }; }) ?
+                "enresult(20) ?")); }; }) ?
             ),
         );
     };

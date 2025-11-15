@@ -8,7 +8,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0}, expr: {1}\n", "outer", "enresult(10)"),
+                        format_args!("tag: {0}, expr: {1}\n", "outer", "enresult(10) ?"),
                     );
                 };
             })?,
@@ -16,7 +16,7 @@ fn func() -> Result<(), ()> {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0}, expr: {1}\n", "outer", "enresult(2)"),
+                        format_args!("tag: {0}, expr: {1}\n", "outer", "enresult(2) ?"),
                     );
                 };
             })?,
@@ -28,7 +28,7 @@ fn func() -> Result<(), ()> {
                     {
                         ::std::io::_print(
                             format_args!(
-                                "tag: {0}, expr: {1}\n", "inner 1", "enresult(10)"
+                                "tag: {0}, expr: {1}\n", "inner 1", "enresult(10) ?"
                             ),
                         );
                     };
@@ -38,7 +38,7 @@ fn func() -> Result<(), ()> {
                     {
                         ::std::io::_print(
                             format_args!(
-                                "tag: {0}, expr: {1}\n", "inner 2", "enresult(20)"
+                                "tag: {0}, expr: {1}\n", "inner 2", "enresult(20) ?"
                             ),
                         );
                     };
@@ -48,7 +48,7 @@ fn func() -> Result<(), ()> {
                     {
                         ::std::io::_print(
                             format_args!(
-                                "tag: {0}, expr: {1}\n", "inner 3", "enresult(30)"
+                                "tag: {0}, expr: {1}\n", "inner 3", "enresult(30) ?"
                             ),
                         );
                     };

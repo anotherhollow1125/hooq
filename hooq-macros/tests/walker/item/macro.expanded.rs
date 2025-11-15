@@ -17,7 +17,7 @@ mod tmp {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0}, expr: {1}\n", "outer", "enresult(())"),
+                        format_args!("tag: {0}, expr: {1}\n", "outer", "enresult(()) ?"),
                     );
                 };
             })?;
@@ -37,7 +37,7 @@ mod tmp {
                     {
                         ::std::io::_print(
                             format_args!(
-                                "tag: {0}, expr: {1}\n", "inner func", "enresult(())"
+                                "tag: {0}, expr: {1}\n", "inner func", "enresult(()) ?"
                             ),
                         );
                     };
@@ -60,7 +60,7 @@ mod tmp {
             .inspect(|_| {
                 {
                     ::std::io::_print(
-                        format_args!("tag: {0}, expr: {1}\n", "inner", "enresult(())"),
+                        format_args!("tag: {0}, expr: {1}\n", "inner", "enresult(()) ?"),
                     );
                 };
             })?;

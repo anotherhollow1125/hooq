@@ -22,11 +22,11 @@ mod inert_flavor {
                 let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                 let line = 24usize;
                 let col = 17usize;
-                let expr = "enresult(())?";
+                let expr = "  24>    enresult(())?\n    |";
                 {
                     ::std::io::_eprint(
                         format_args!(
-                            "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                            "[{0}:{1}:{2}] {3:?}\n{4}\n",
                             path,
                             line,
                             col,
@@ -90,11 +90,11 @@ mod inert_flavor {
                             let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                             let line = 48usize;
                             let col = 25usize;
-                            let expr = "f()?";
+                            let expr = "  48>    f()?\n    |";
                             {
                                 ::std::io::_eprint(
                                     format_args!(
-                                        "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                                        "[{0}:{1}:{2}] {3:?}\n{4}\n",
                                         path,
                                         line,
                                         col,
@@ -112,11 +112,11 @@ mod inert_flavor {
                 let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                 let line = 50usize;
                 let col = 17usize;
-                let expr = "enresult(())?";
+                let expr = "  50>    enresult(())?\n    |";
                 {
                     ::std::io::_eprint(
                         format_args!(
-                            "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                            "[{0}:{1}:{2}] {3:?}\n{4}\n",
                             path,
                             line,
                             col,
@@ -134,11 +134,11 @@ mod inert_flavor {
                 let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                 let line = 57usize;
                 let col = 17usize;
-                let expr = "enresult(())?";
+                let expr = "  57>    enresult(())?\n    |";
                 {
                     ::std::io::_eprint(
                         format_args!(
-                            "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                            "[{0}:{1}:{2}] {3:?}\n{4}\n",
                             path,
                             line,
                             col,
@@ -171,11 +171,11 @@ mod inert_flavor {
                 let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                 let line = 74usize;
                 let col = 17usize;
-                let expr = "enresult(())?";
+                let expr = "  74>    enresult(())?\n    |";
                 {
                     ::std::io::_eprint(
                         format_args!(
-                            "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                            "[{0}:{1}:{2}] {3:?}\n{4}\n",
                             path,
                             line,
                             col,
@@ -412,11 +412,11 @@ mod inert_flavor {
                             let path = "hooq-macros/tests/special/flavor/inert-flavor/tests/tests_inner/inert_flavor.rs";
                             let line = 220usize;
                             let col = 32usize;
-                            let expr = "enresult(10)?";
+                            let expr = " 220>    enresult(10)?\n    |";
                             {
                                 ::std::io::_eprint(
                                     format_args!(
-                                        "[{0}:{1}:{2}] {3:?}\n    {4}\n",
+                                        "[{0}:{1}:{2}] {3:?}\n{4}\n",
                                         path,
                                         line,
                                         col,

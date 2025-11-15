@@ -37,8 +37,8 @@ impl Magic {
 #[hooq]
 #[hooq::method(.inspect_err(|e| {
     eprintln!("[{}:{}:{}] {}
-expr_str:
-{}", $file, $line, $column, e, $expr_str);
+source_str:
+{}", $file, $line, $column, e, ::hooq::summary!($source));
 }))]
 fn test_expr_str() -> Result<(), String> {
     let magic = Magic {
@@ -64,8 +64,8 @@ fn test_expr_str() -> Result<(), String> {
 #[hooq]
 #[hooq::method(.inspect_err(|e| {
     eprintln!("[{}:{}:{}] {}
-expr_str_short:
-{}", $file, $line, $column, e, $expr_str_short);
+source_str_oneline:
+{}", $file, $line, $column, e, ::hooq::summary!($source));
 }))]
 fn test_expr_str_short() -> Result<(), String> {
     let magic = Magic {
@@ -91,8 +91,8 @@ fn test_expr_str_short() -> Result<(), String> {
 #[hooq]
 #[hooq::method(.inspect_err(|e| {
     eprintln!("[{}:{}:{}] {}
-expr_str_short_oneline:
-{}", $file, $line, $column, e, $expr_str_short_oneline);
+source_str_short_oneline:
+{}", $file, $line, $column, e, ::hooq::source_excerpt_helpers::one_line_stringify!($source));
 }))]
 fn test_expr_str_short_oneline() -> Result<(), String> {
     let magic = Magic {
@@ -121,8 +121,8 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
 #[hooq]
 #[hooq::method(.inspect_err(|e| {
     eprintln!("[{}:{}:{}] {}
-expr_str_short_oneline:
-{}", $file, $line, $column, e, $expr_str_short_oneline);
+source_str_short_oneline:
+{}", $file, $line, $column, e, ::hooq::source_excerpt_helpers::one_line_stringify!($source));
 }))]
 fn func(flag: bool) -> Result<(), String> {
     if flag {

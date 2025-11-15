@@ -26,7 +26,8 @@ This is sub-crate for [hooq](https://github.com/anotherhollow1125/hooq/tree/main
 use hooq::hooq;
 
 #[hooq]
-#[hooq::method(.ok_or_else(|| format!("{} (L{}, {})", $expr_str, $line, $nth)))]
+#[hooq::method(.ok_or_else(|| format!("[{}:{}:{}]
+{}", $file, $line, $col, ::hooq::summary!($source))))]
 fn display_name(val: &toml::Value) -> Result<(), String> {
     let name = val.get("package")?.get("name")?.as_str()?;
 

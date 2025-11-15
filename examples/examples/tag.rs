@@ -10,7 +10,7 @@ enum Tag {
 
 #[hooq]
 #[hooq::method(.map(|v| {
-    eprintln!("tag: {} @ {} {}", $tag, $line, $expr_str);
+    eprintln!("tag: {} @ {} {}", $tag, $line, stringify!($source));
     v
 }))]
 #[hooq::tag = "top level tag"]
@@ -55,7 +55,7 @@ fn fuga() -> Result<(), ()> {
 
 #[hooq]
 #[hooq::method(.map(|v| {
-    eprintln!("tag: {} @ {} {}", $tag, $line, $expr_str);
+    eprintln!("tag: {} @ {} {}", $tag, $line, stringify!($source));
     v
 }))]
 #[hooq::tag = "(no tag)"]

@@ -5,7 +5,7 @@ fn enresult<T>(v: T) -> Result<T, ()> {
 
 #[hooq::hooq]
 #[hooq::method(.inspect(|_| {
-    println!("expr: {}, tag: {}", $expr_str, $tag);
+    println!("expr: {}, tag: {}", stringify!($source), $tag);
 }))]
 #[hooq::tag = "main"]
 fn main() -> Result<(), ()> {

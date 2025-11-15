@@ -11,7 +11,7 @@ fn enresult<T>(t: T) -> Result<T, ()> {
 
 #[hooq]
 #[hooq::method(.inspect(|_| {
-    println!("tag: {}, expr: {}", $tag, $expr_str);
+    println!("tag: {}, expr: {}", $tag, stringify!($source));
 }))]
 #[hooq::tag = "(no tag)"]
 fn func() -> Result<(), ()> {

@@ -51,23 +51,23 @@ fn handle_token_stream(
                     .into_iter()
                     .map(|mut item| {
                         walk_item(&mut item, context)?;
-                        Ok(item.to_token_stream())
+                        Ok(item.into_token_stream())
                     })
                     .collect::<syn::Result<_>>()?,
                 Evaluable::Expr(mut expr) => {
                     walk_expr(&mut expr, context)?;
-                    expr.to_token_stream()
+                    expr.into_token_stream()
                 }
                 Evaluable::Item(mut item) => {
                     walk_item(&mut item, context)?;
-                    item.to_token_stream()
+                    item.into_token_stream()
                 }
                 Evaluable::Stmt(mut stmt) => {
                     // マクロ内の最後の TailExpr であったとしても、
                     // これを TailExprTargetKind::*TailExpr としてみなそうとすると
                     // 考え方が煩雑になるので諦める
                     walk_stmt(&mut stmt, super::TailExprTargetKind::NotTarget, context)?;
-                    stmt.to_token_stream()
+                    stmt.into_token_stream()
                 }
             };
 
@@ -146,9 +146,9 @@ impl Parse for EvaluableList {
             let ev = input.parse::<Evaluable>()?;
 
             let punct = if let Ok(p) = input.parse::<Token![,]>() {
-                Some(p.to_token_stream())
+                Some(p.into_token_stream())
             } else if let Ok(p) = input.parse::<Token![;]>() {
-                Some(p.to_token_stream())
+                Some(p.into_token_stream())
             } else {
                 None
             };

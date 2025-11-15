@@ -1,0 +1,6 @@
+---
+source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
+expression: res
+---
+ 228>    Ok(())
+    |

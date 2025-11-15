@@ -1,0 +1,20 @@
+---
+source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
+expression: res
+---
+ 280>    Err([
+ 281|            "aaa",
+ 282|            "bbb",
+ 283|            "ccc",
+ 284|            "ddd",
+ 285|            "eee",
+ 286|            "fff",
+ 287|            "ggg",
+ 288|            "hhh",
+ 289|            "iii",
+ 290|            "jjj",
+ 291|            "kkk",
+ 292|            "lll",
+ 293|            "mmm",
+ 294|        ])
+    |

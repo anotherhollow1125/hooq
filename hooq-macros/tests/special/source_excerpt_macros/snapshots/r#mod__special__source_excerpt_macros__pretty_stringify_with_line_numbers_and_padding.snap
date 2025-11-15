@@ -2,14 +2,14 @@
 source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
 expression: res
 ---
-  |
-64|         Err([
-65|             "aaa",
-66|             "bbb",
-67|             "ccc",
-68|             "ddd",
-69|             10,
-70|             42,
-71|             "long string to test truncation behavior in pretty stringify macro",
-72|         ])
-  |
+    |
+  64|         Err([
+  65|             "aaa",
+  66|             "bbb",
+  67|             "ccc",
+  68|             "ddd",
+  69|             10,
+  70|             42,
+  71|             "long string to test truncation behavior in pretty stringify macro",
+  72|         ])
+    |

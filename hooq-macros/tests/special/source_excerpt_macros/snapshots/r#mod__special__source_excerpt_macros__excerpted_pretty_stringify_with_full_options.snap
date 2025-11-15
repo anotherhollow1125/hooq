@@ -2,10 +2,10 @@
 source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
 expression: res
 ---
-   |
-179|         Err([
+    |
+ 179|         Err([
 ...
-185|             42,
-186|             "long..acro",
-187|         ])
-   |
+ 185|             42,
+ 186|             "long..acro",
+ 187|         ])
+    |

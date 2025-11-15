@@ -36,7 +36,7 @@ mod custom {
                         column: 13usize,
                         path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                         file: "hooq_meta.rs",
-                        expr_str: "return Ok(100)",
+                        source_str: "return Ok(100)",
                         count: "1st return",
                         bindings: ::std::collections::HashMap::from([
                             (
@@ -114,7 +114,7 @@ mod custom {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     file: "hooq_meta.rs",
-                    expr_str: "result",
+                    source_str: "result",
                     count: "1st tail expr",
                     bindings: ::std::collections::HashMap::from([
                         (
@@ -216,7 +216,7 @@ mod custom {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     file: "hooq_meta.rs",
-                    expr_str: "Ok(42)",
+                    source_str: "Ok(42)",
                     count: "1st tail expr",
                     bindings: ::std::collections::HashMap::from([]),
                 }
@@ -232,7 +232,7 @@ mod custom {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     file: "hooq_meta.rs",
-                    expr_str: "Ok(42)",
+                    source_str: "Ok(42)",
                     count: "1st tail expr",
                     bindings: ::std::collections::HashMap::from([]),
                 }
@@ -248,7 +248,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     file: "hooq_meta.rs",
-                    expr_str: "Ok(())",
+                    source_str: "Ok(())",
                     count: "1st tail expr",
                     bindings: ::std::collections::HashMap::from([
                         (
@@ -283,7 +283,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                     file: "hooq_meta.rs",
-                    expr_str: "Ok(())",
+                    source_str: "Ok(())",
                     count: "2nd tail expr",
                     bindings: ::std::collections::HashMap::from([
                         (
@@ -332,7 +332,7 @@ fn using_hooq_meta(flag: bool) -> Result<(), ()> {
                 column: 5usize,
                 path: "<hooq_root>/tests/special/meta_var/hooq_meta.rs",
                 file: "hooq_meta.rs",
-                expr_str: "if flag { Ok(()) } else { #[hooq :: fuga = \"fugafuga\"] Ok(()) }",
+                source_str: "if flag { Ok(()) } else { #[hooq :: fuga = \"fugafuga\"] Ok(()) }",
                 count: "3rd tail expr",
                 bindings: ::std::collections::HashMap::from([
                     (

@@ -5,7 +5,7 @@ pub fn a() -> Result<(), &'static str> {
             let path = "<hooq_root>/src/hooq_log.rs";
             let line = 5usize;
             let col = 5usize;
-            let expr = "Err(\"error!\")";
+            let expr = "   5|     Err(\"error!\")\n    |";
             {
                 {
                     let lvl = ::log::Level::Error;
@@ -13,7 +13,7 @@ pub fn a() -> Result<(), &'static str> {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
                             format_args!(
-                                "({0}:{1}:{2}) {3}\n    {4}", path, line, col, e, expr
+                                "({0}:{1}:{2}) {3}\n{4}", path, line, col, e, expr
                             ),
                             lvl,
                             &("hooq_log", "hooq_log", ::log::__private_api::loc()),
@@ -30,7 +30,7 @@ pub fn b() -> Result<(), &'static str> {
             let path = "<hooq_root>/src/hooq_log.rs";
             let line = 10usize;
             let col = 8usize;
-            let expr = "a()?";
+            let expr = "  10|     a()?\n    |";
             {
                 {
                     let lvl = ::log::Level::Error;
@@ -38,7 +38,7 @@ pub fn b() -> Result<(), &'static str> {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
                             format_args!(
-                                "({0}:{1}:{2}) {3}\n    {4}", path, line, col, e, expr
+                                "({0}:{1}:{2}) {3}\n{4}", path, line, col, e, expr
                             ),
                             lvl,
                             &("hooq_log", "hooq_log", ::log::__private_api::loc()),
@@ -53,7 +53,7 @@ pub fn b() -> Result<(), &'static str> {
             let path = "<hooq_root>/src/hooq_log.rs";
             let line = 12usize;
             let col = 5usize;
-            let expr = "Err(\"err\")";
+            let expr = "  12|     Err(\"err\")\n    |";
             {
                 {
                     let lvl = ::log::Level::Error;
@@ -61,7 +61,7 @@ pub fn b() -> Result<(), &'static str> {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
                             format_args!(
-                                "({0}:{1}:{2}) {3}\n    {4}", path, line, col, e, expr
+                                "({0}:{1}:{2}) {3}\n{4}", path, line, col, e, expr
                             ),
                             lvl,
                             &("hooq_log", "hooq_log", ::log::__private_api::loc()),
@@ -78,7 +78,7 @@ pub fn c() -> Result<(), &'static str> {
             let path = "<hooq_root>/src/hooq_log.rs";
             let line = 17usize;
             let col = 8usize;
-            let expr = "b()?";
+            let expr = "  17|     b()?\n    |";
             {
                 {
                     let lvl = ::log::Level::Error;
@@ -86,7 +86,7 @@ pub fn c() -> Result<(), &'static str> {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
                             format_args!(
-                                "({0}:{1}:{2}) {3}\n    {4}", path, line, col, e, expr
+                                "({0}:{1}:{2}) {3}\n{4}", path, line, col, e, expr
                             ),
                             lvl,
                             &("hooq_log", "hooq_log", ::log::__private_api::loc()),
@@ -101,7 +101,7 @@ pub fn c() -> Result<(), &'static str> {
             let path = "<hooq_root>/src/hooq_log.rs";
             let line = 19usize;
             let col = 5usize;
-            let expr = "Err(\"err\")";
+            let expr = "  19|     Err(\"err\")\n    |";
             {
                 {
                     let lvl = ::log::Level::Error;
@@ -109,7 +109,7 @@ pub fn c() -> Result<(), &'static str> {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
                             format_args!(
-                                "({0}:{1}:{2}) {3}\n    {4}", path, line, col, e, expr
+                                "({0}:{1}:{2}) {3}\n{4}", path, line, col, e, expr
                             ),
                             lvl,
                             &("hooq_log", "hooq_log", ::log::__private_api::loc()),

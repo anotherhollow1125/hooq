@@ -20,7 +20,7 @@ enum Padding {
 struct ExcerptMacroArgs {
     max_excerpted_line_num: Option<usize>, // @excerpt_line = 3,
     truncate_lit_str_max_len: Option<Option<usize>>, // @truncate_str = 10, or @truncate_str
-    with_line: Option<()>,                 // @with_line,
+    show_line_num: Option<()>,             // @show_line_num,
     padding: Option<Padding>,              // @padding = "top", "bottom" or "both"
     expr: Expr,
 }
@@ -29,7 +29,7 @@ impl Parse for ExcerptMacroArgs {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let mut max_excerpted_line_num = None;
         let mut truncate_lit_str_max_len = None;
-        let mut with_line = None;
+        let mut show_line_num = None;
         let mut padding = None;
 
         // @opt = val
@@ -110,8 +110,8 @@ impl Parse for ExcerptMacroArgs {
 
                     truncate_lit_str_max_len = Some(val_opt);
                 }
-                "with_line" => {
-                    with_line = Some(());
+                "show_line_num" => {
+                    show_line_num = Some(());
                 }
                 "padding" => match opt.val {
                     Some(val) => match val {
@@ -159,7 +159,7 @@ impl Parse for ExcerptMacroArgs {
         Ok(ExcerptMacroArgs {
             max_excerpted_line_num,
             truncate_lit_str_max_len,
-            with_line,
+            show_line_num,
             padding,
             expr,
         })
@@ -178,20 +178,20 @@ pub fn truncate_lit_str(ts: TokenStream) -> syn::Result<TokenStream> {
 
 pub fn pretty_stringify(ts: TokenStream) -> syn::Result<TokenStream> {
     let ExcerptMacroArgs {
-        with_line,
+        show_line_num,
         padding,
         expr,
         ..
     } = syn::parse2::<ExcerptMacroArgs>(ts)?;
 
     let mut settings = PrettyStrSettings {
-        with_line: false,
+        show_line_num: false,
         top_padding: false,
         bottom_padding: false,
     };
 
-    if with_line.is_some() {
-        settings.with_line = true;
+    if show_line_num.is_some() {
+        settings.show_line_num = true;
     }
 
     match padding {
@@ -234,7 +234,7 @@ pub fn excerpted_pretty_stringify(ts: TokenStream) -> syn::Result<TokenStream> {
     let ExcerptMacroArgs {
         max_excerpted_line_num,
         truncate_lit_str_max_len,
-        with_line,
+        show_line_num,
         padding,
         expr,
     } = syn::parse2::<ExcerptMacroArgs>(ts)?;
@@ -249,8 +249,8 @@ pub fn excerpted_pretty_stringify(ts: TokenStream) -> syn::Result<TokenStream> {
         excerpt_setting.truncate_lit_str_setting = TruncateLitStrSetting::Truncate(val);
     }
 
-    if let Some(()) = with_line {
-        excerpt_setting.pretty_str_settings.with_line = true;
+    if let Some(()) = show_line_num {
+        excerpt_setting.pretty_str_settings.show_line_num = true;
     }
 
     match padding {

@@ -23,7 +23,7 @@ fn test_pretty_stringify_without_options() {
 #[test]
 fn test_pretty_stringify_with_line_numbers() {
     #[rustfmt::skip]
-    let res = pretty_stringify!(@with_line,
+    let res = pretty_stringify!(@show_line_num,
         Err([
             "aaa",
             "bbb",
@@ -59,7 +59,7 @@ fn test_pretty_stringify_with_padding() {
 fn test_pretty_stringify_with_line_numbers_and_padding() {
     #[rustfmt::skip]
     let res = pretty_stringify!(
-        @with_line,
+        @show_line_num,
         @padding = "both"
         Err([
             "aaa",
@@ -79,7 +79,7 @@ fn test_pretty_stringify_with_line_numbers_and_padding() {
 fn test_pretty_stringify_with_line_numbers_and_bottom_padding() {
     #[rustfmt::skip]
     let res = pretty_stringify!(
-        @with_line,
+        @show_line_num,
         @padding = "bottom"
         Err([
             "aaa",
@@ -174,7 +174,7 @@ fn test_excerpted_pretty_stringify_with_full_options() {
     let res = excerpted_pretty_stringify!(
         @excerpt_line = 4,
         @truncate_str,
-        @with_line,
+        @show_line_num,
         @padding,
         Err([
             "aaa",

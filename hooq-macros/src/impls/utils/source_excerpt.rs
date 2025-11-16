@@ -44,7 +44,7 @@ impl Padding {
 pub fn into_pretty_str(
     expr: Expr,
     PrettyStrSettings {
-        with_line,
+        show_line_num,
         top_padding,
         bottom_padding,
     }: PrettyStrSettings,
@@ -62,7 +62,7 @@ pub fn into_pretty_str(
         true,
     );
 
-    if with_line {
+    if show_line_num {
         add_line_prefix(&res, start_line, end_line, top_padding, bottom_padding)
     } else {
         IntoPrettyStrRes {
@@ -94,7 +94,7 @@ impl TruncateLitStrSetting {
 
 #[derive(Clone, Copy)]
 pub struct PrettyStrSettings {
-    pub with_line: bool,
+    pub show_line_num: bool,
     pub top_padding: bool,
     pub bottom_padding: bool,
 }
@@ -112,7 +112,7 @@ impl Default for ExcerptSetting {
             max_excerpted_line_num: 5,
             truncate_lit_str_setting: TruncateLitStrSetting::Truncate(None),
             pretty_str_settings: PrettyStrSettings {
-                with_line: true,
+                show_line_num: true,
                 top_padding: false,
                 bottom_padding: true,
             },
@@ -130,7 +130,7 @@ pub fn into_one_line_pretty_str(
     let expr_str = into_pretty_str(
         expr,
         PrettyStrSettings {
-            with_line: false,
+            show_line_num: false,
             top_padding: false,
             bottom_padding: false,
         },

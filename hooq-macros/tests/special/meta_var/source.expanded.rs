@@ -48,8 +48,8 @@ fn test_expr_str() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 52usize,
-                        19usize, e, "magic.diacute()"
+                        "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 52usize,
+                        19usize, e, "  51>    magic\n  52|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -59,31 +59,9 @@ fn test_expr_str() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 53usize,
-                        19usize, e, "magic.diacute() ? .diacute()"
-                    ),
-                );
-            };
-        })?
-        .diacute()
-        .inspect_err(|e| {
-            {
-                ::std::io::_eprint(
-                    format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 54usize,
-                        19usize, e, "magic.diacute() ? .diacute() ? .diacute()"
-                    ),
-                );
-            };
-        })?
-        .diacute()
-        .inspect_err(|e| {
-            {
-                ::std::io::_eprint(
-                    format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 55usize,
+                        "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 53usize,
                         19usize, e,
-                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute()"
+                        "  51>    magic\n  52|        .diacute()?\n  53|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -93,9 +71,9 @@ fn test_expr_str() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 56usize,
+                        "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 54usize,
                         19usize, e,
-                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute() ? .diacute()"
+                        "  51>    magic\n  52|        .diacute()?\n  53|        .diacute()?\n  54|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -105,9 +83,33 @@ fn test_expr_str() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str:\n{4}\n", "expr_str.rs", 57usize,
+                        "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 55usize,
                         19usize, e,
-                        "magic.diacute() ? .diacute() ? .diacute() ? .diacute() ? .diacute() ?\n.diacute()"
+                        "  51>    magic\n  52|        .diacute()?\n  53|        .diacute()?\n  54|        .diacute()?\n  55|        .diacute()?\n    |"
+                    ),
+                );
+            };
+        })?
+        .diacute()
+        .inspect_err(|e| {
+            {
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 56usize,
+                        19usize, e,
+                        "  51>    magic\n...\n  53|        .diacute()?\n  54|        .diacute()?\n  55|        .diacute()?\n  56|        .diacute()?\n    |"
+                    ),
+                );
+            };
+        })?
+        .diacute()
+        .inspect_err(|e| {
+            {
+                ::std::io::_eprint(
+                    format_args!(
+                        "[{0}:{1}:{2}] {3}\nsource_str:\n{4}\n", "source.rs", 57usize,
+                        19usize, e,
+                        "  51>    magic\n...\n  54|        .diacute()?\n  55|        .diacute()?\n  56|        .diacute()?\n  57|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -132,8 +134,9 @@ fn test_expr_str_short() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short:\n{4}\n", "expr_str.rs",
-                        79usize, 19usize, e, "magic.diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
+                        79usize, 19usize, e,
+                        "  78>    magic\n  79|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -143,8 +146,9 @@ fn test_expr_str_short() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short:\n{4}\n", "expr_str.rs",
-                        80usize, 19usize, e, "    ...\n    .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
+                        80usize, 19usize, e,
+                        "  78>    magic\n  79|        .diacute()?\n  80|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -154,8 +158,9 @@ fn test_expr_str_short() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short:\n{4}\n", "expr_str.rs",
-                        81usize, 19usize, e, "    ...\n    .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
+                        81usize, 19usize, e,
+                        "  78>    magic\n  79|        .diacute()?\n  80|        .diacute()?\n  81|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -165,8 +170,9 @@ fn test_expr_str_short() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short:\n{4}\n", "expr_str.rs",
-                        82usize, 19usize, e, "    ...\n    .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
+                        82usize, 19usize, e,
+                        "  78>    magic\n  79|        .diacute()?\n  80|        .diacute()?\n  81|        .diacute()?\n  82|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -176,8 +182,9 @@ fn test_expr_str_short() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short:\n{4}\n", "expr_str.rs",
-                        83usize, 19usize, e, "    ...\n    .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
+                        83usize, 19usize, e,
+                        "  78>    magic\n...\n  80|        .diacute()?\n  81|        .diacute()?\n  82|        .diacute()?\n  83|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -187,8 +194,9 @@ fn test_expr_str_short() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short:\n{4}\n", "expr_str.rs",
-                        84usize, 19usize, e, "    ...\n    .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_oneline:\n{4}\n", "source.rs",
+                        84usize, 19usize, e,
+                        "  78>    magic\n...\n  81|        .diacute()?\n  82|        .diacute()?\n  83|        .diacute()?\n  84|        .diacute()?\n    |"
                     ),
                 );
             };
@@ -213,8 +221,8 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 106usize, 19usize, e, "magic.diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 106usize, 19usize, e, "magic .diacute()?"
                     ),
                 );
             };
@@ -224,8 +232,9 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 107usize, 19usize, e, "... .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 107usize, 19usize, e,
+                        "magic .diacute()? .diacute()?"
                     ),
                 );
             };
@@ -235,8 +244,9 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 108usize, 19usize, e, "... .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 108usize, 19usize, e,
+                        "magic .diacute()? .diacute()? .diacute()?"
                     ),
                 );
             };
@@ -246,8 +256,9 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 109usize, 19usize, e, "... .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 109usize, 19usize, e,
+                        "magic .diacute()? .diacute()? .diacute()? .diacute()?"
                     ),
                 );
             };
@@ -257,8 +268,9 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 110usize, 19usize, e, "... .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 110usize, 19usize, e,
+                        "magic .diacute()? .diacute()? .diacute()? .diacute()? .diacute()?"
                     ),
                 );
             };
@@ -268,8 +280,9 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 111usize, 19usize, e, "... .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 111usize, 19usize, e,
+                        "magic .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()?"
                     ),
                 );
             };
@@ -279,8 +292,9 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 112usize, 19usize, e, "... .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 112usize, 19usize, e,
+                        "magic .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()?"
                     ),
                 );
             };
@@ -290,8 +304,9 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 113usize, 19usize, e, "... .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 113usize, 19usize, e,
+                        "magic .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()?"
                     ),
                 );
             };
@@ -301,8 +316,9 @@ fn test_expr_str_short_oneline() -> Result<(), String> {
             {
                 ::std::io::_eprint(
                     format_args!(
-                        "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                        "expr_str.rs", 114usize, 19usize, e, "... .diacute()?"
+                        "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                        "source.rs", 114usize, 19usize, e,
+                        "magic .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()? .diacute()?"
                     ),
                 );
             };
@@ -330,9 +346,9 @@ fn func(flag: bool) -> Result<(), String> {
                 {
                     ::std::io::_eprint(
                         format_args!(
-                            "[{0}:{1}:{2}] {3}\nexpr_str_short_oneline:\n{4}\n",
-                            "expr_str.rs", 129usize, 9usize, e,
-                            "return Err(\"An e..7890\".to_string()) ... .inspect_err(|_| eprintln!(\"beep\"));"
+                            "[{0}:{1}:{2}] {3}\nsource_str_short_oneline:\n{4}\n",
+                            "source.rs", 129usize, 9usize, e,
+                            "return Err(\"An error occurred. 12345678901234567890\".to_string()) .inspect_err(|_| eprintln!(\"beep\")) .inspect_err(|_| eprintln!(\"beep\")) .inspect_err(|_| eprintln!(\"beep\"))"
                         ),
                     );
                 };

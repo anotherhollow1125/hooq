@@ -5,12 +5,10 @@ fn func(_: ()) -> Result<(), ()> {
             let path = "<hooq_root>/tests/special/nested.rs";
             let line = 5usize;
             let col = 5usize;
-            let expr = "Err(())";
+            let expr = "   5>    Err(())\n    |";
             {
                 ::std::io::_eprint(
-                    format_args!(
-                        "[{0}:{1}:{2}] {3:?}\n    {4}\n", path, line, col, e, expr
-                    ),
+                    format_args!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr),
                 );
             };
         })
@@ -23,7 +21,7 @@ fn nested() -> Result<(), ()> {
                                 .inspect(|_| {
                                     let path = "<hooq_root>/tests/special/nested.rs";
                                     let line = 20usize;
-                                    let expr = "func(())";
+                                    let expr = "func(()) ?";
                                     {
                                         ::std::io::_eprint(
                                             format_args!(
@@ -37,7 +35,7 @@ fn nested() -> Result<(), ()> {
                         .inspect(|_| {
                             let path = "<hooq_root>/tests/special/nested.rs";
                             let line = 20usize;
-                            let expr = "func(func(()) ?)";
+                            let expr = "func(func(()) ?) ?";
                             {
                                 ::std::io::_eprint(
                                     format_args!(
@@ -51,7 +49,7 @@ fn nested() -> Result<(), ()> {
                 .inspect(|_| {
                     let path = "<hooq_root>/tests/special/nested.rs";
                     let line = 20usize;
-                    let expr = "func(func(func(()) ?) ?)";
+                    let expr = "func(func(func(()) ?) ?) ?";
                     {
                         ::std::io::_eprint(
                             format_args!(
@@ -65,7 +63,7 @@ fn nested() -> Result<(), ()> {
         .inspect(|_| {
             let path = "<hooq_root>/tests/special/nested.rs";
             let line = 20usize;
-            let expr = "func(func(func(func(()) ?) ?) ?)";
+            let expr = "func(func(func(func(()) ?) ?) ?) ?";
             {
                 ::std::io::_eprint(
                     format_args!(

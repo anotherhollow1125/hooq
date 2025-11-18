@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::rc::Rc;
 
-/// A binding payload that contains the expression string and its value.
+/// Binding payload that contains the expression string and its value.
 ///
 /// Value of this struct is stored in the `bindings` map's value of `HooqMeta` struct.
 pub struct BindingPayload {
@@ -35,7 +35,7 @@ pub struct HooqMeta {
     pub column: usize,
     pub path: &'static str,
     pub file: &'static str,
-    pub expr_str: &'static str,
+    pub source_str: &'static str,
     pub count: &'static str,
     pub bindings: HashMap<String, BindingPayload>,
 }

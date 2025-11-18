@@ -7,6 +7,7 @@ mod meta_var;
 mod nested;
 mod skip;
 mod skip_detail;
+mod source_excerpt_macros;
 
 // ほかのテストでは不十分と考えられるケースをテスト
 

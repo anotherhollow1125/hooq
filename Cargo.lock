@@ -138,8 +138,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
 
 [[package]]
+name = "console"
+version = "0.15.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "054ccb5b10f9f2cbf51eb355ca1d05c2d279ce1804688d0db74b4733a5aeafd8"
+dependencies = [
+ "encode_unicode",
+ "libc",
+ "once_cell",
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "consume-question"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq",
  "macrotest",
@@ -148,7 +160,7 @@ dependencies = [
 
 [[package]]
 name = "custom"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -156,7 +168,7 @@ dependencies = [
 
 [[package]]
 name = "default"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -167,6 +179,12 @@ name = "diff"
 version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56254986775e3233ffa9c4d7d3faaf6d36a2c09d30b20687e9f88bc8bafc16c8"
+
+[[package]]
+name = "encode_unicode"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "34aa73646ffb006b8f5147f3dc182bd4bcb190227ce861fc4a4844bf8e3cb2c0"
 
 [[package]]
 name = "env_filter"
@@ -205,7 +223,7 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
 name = "file-load"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq",
  "macrotest",
@@ -214,7 +232,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-in-sub-mod"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq",
  "macrotest",
@@ -330,7 +348,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
 name = "hooq"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq-helpers",
  "hooq-macros",
@@ -339,7 +357,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-anyhow"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "hooq",
@@ -349,7 +367,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-examples"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -360,7 +378,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-helpers"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq",
  "toml",
@@ -368,7 +386,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-log"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "env_logger",
  "hooq",
@@ -379,12 +397,13 @@ dependencies = [
 
 [[package]]
 name = "hooq-macros"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "futures",
  "hooq",
+ "insta",
  "macrotest",
- "prettyplease",
+ "proc-macro-crate",
  "proc-macro2",
  "quote",
  "serde",
@@ -408,10 +427,21 @@ dependencies = [
 
 [[package]]
 name = "inert-flavor"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq",
  "test-helpers",
+]
+
+[[package]]
+name = "insta"
+version = "1.43.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "46fdb647ebde000f43b5b53f773c30cf9b0cb4300453208713fa38b2c70935a0"
+dependencies = [
+ "console",
+ "once_cell",
+ "similar",
 ]
 
 [[package]]
@@ -497,7 +527,7 @@ checksum = "32a282da65faaf38286cf3be983213fcf1d2e2a58700e808f83f4ea9a4804bc0"
 
 [[package]]
 name = "method_replace"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "hooq",
  "macrotest",
@@ -514,6 +544,12 @@ dependencies = [
  "wasi",
  "windows-sys 0.59.0",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.21.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 
 [[package]]
 name = "once_cell_polyfill"
@@ -579,6 +615,15 @@ checksum = "479ca8adacdd7ce8f1fb39ce9ecccbfe93a3f1344b3d0d97f20bc0196208f62b"
 dependencies = [
  "proc-macro2",
  "syn",
+]
+
+[[package]]
+name = "proc-macro-crate"
+version = "3.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "219cb19e96be00ab2e37d6e299658a0cfa83e52429179969b0f0121b4ac46983"
+dependencies = [
+ "toml_edit",
 ]
 
 [[package]]
@@ -711,6 +756,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "similar"
+version = "2.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa"
+
+[[package]]
 name = "slab"
 version = "0.4.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -751,7 +802,7 @@ dependencies = [
 
 [[package]]
 name = "test-helpers"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "glob",
 ]
@@ -809,6 +860,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "toml_edit"
+version = "0.23.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6485ef6d0d9b5d0ec17244ff7eb05310113c3f316f2d14200d4de56b3cb98f8d"
+dependencies = [
+ "indexmap",
+ "toml_datetime",
+ "toml_parser",
+ "winnow",
+]
+
+[[package]]
 name = "toml_parser"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -837,7 +900,7 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 
 [[package]]
 name = "util_macros"
-version = "0.2.0"
+version = "0.3.0"
 
 [[package]]
 name = "wasi"
@@ -1018,3 +1081,6 @@ name = "winnow"
 version = "0.7.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "21a0236b59786fed61e2a80582dd500fe61f18b5dca67a4a067d0bc9039339cf"
+dependencies = [
+ "memchr",
+]

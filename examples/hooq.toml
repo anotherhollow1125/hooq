@@ -6,7 +6,7 @@ method = """.inspect_err(|e| println!("custom error handler 2: {}", e))"""
 
 [custom3]
 method = """{
-    println!("checkpoint: {}", $expr_str);
+    println!("checkpoint: {}", stringify!($source));
 
     $expr
 }"""

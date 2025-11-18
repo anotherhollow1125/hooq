@@ -1,0 +1,5 @@
+---
+source: hooq-macros/tests/special/source_excerpt_macros/mod.rs
+expression: res
+---
+Err([ "aaa", "bbb", "ccc", "ddd", 10, 42, "long string to test truncation behavior in one line stringify macro", ])

@@ -146,7 +146,12 @@ impl Parse for ExcerptMacroArgs {
                         padding = Some(Padding::Both);
                     }
                 },
-                _ => return Err(syn::Error::new_spanned(opt.name, "unknown option")),
+                _ => {
+                    return Err(syn::Error::new_spanned(
+                        opt.name,
+                        "unknown option\n available options:\n- @excerpt_line\n- @truncate_str\n- @show_line_num\n- @padding",
+                    ));
+                }
             }
 
             if input.peek(Token![,]) {

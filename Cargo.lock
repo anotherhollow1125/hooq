@@ -403,7 +403,6 @@ dependencies = [
  "hooq",
  "insta",
  "macrotest",
- "prettyplease",
  "proc-macro-crate",
  "proc-macro2",
  "quote",

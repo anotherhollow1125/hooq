@@ -14,25 +14,18 @@ clap = { version = "4.5.47", features = ["derive"] }
 hooq = { path = "../../hooq", features = ["anyhow"] }
 reqwest = { version = "0.12.24", features = ["blocking", "json"] }
 chrono = "0.4.42"
+strum = { version = "0.27.2", features = ["derive"] }
 ---
 
 use chrono::DateTime;
 use clap::{Parser, ValueEnum};
 use hooq::hooq;
 
-#[derive(ValueEnum, Clone, Copy, Debug)]
+#[derive(ValueEnum, Clone, Copy, Debug, strum::Display)]
 enum Mode {
     Wip,
     Publish,
-}
-
-impl std::fmt::Display for Mode {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Mode::Wip => write!(f, "wip"),
-            Mode::Publish => write!(f, "publish"),
-        }
-    }
+    AddTag,
 }
 
 #[derive(Parser, Debug)]
@@ -103,13 +96,19 @@ fn main() -> anyhow::Result<()> {
     let current_version = sync_sub_crate_versions(check)?;
     let version = match mode {
         Mode::Wip => get_published_version()?,
-        Mode::Publish => current_version.clone(),
+        Mode::Publish | Mode::AddTag => current_version.clone(),
     };
     let version_info = VersionInfo { version };
 
     cargo_sort(check)?;
     for lang in ["", "/ja"] {
         sync_readme(lang, check, &version_info)?;
+    }
+
+    if let Mode::AddTag = mode
+        && !check
+    {
+        git_tag(&current_version)?;
     }
 
     Ok::<(), anyhow::Error>(())
@@ -274,4 +273,22 @@ fn sync_readme(lang: &str, check_only: bool, version_info: &VersionInfo) -> anyh
     }
 
     Ok::<(), anyhow::Error>(())
+}
+
+#[hooq(anyhow)]
+fn git_tag(current_version: &str) -> anyhow::Result<()> {
+    let tag = format!("v{}", current_version);
+
+    let status = std::process::Command::new("git")
+        .arg("tag")
+        .arg(&tag)
+        .status()?;
+
+    if !status.success() {
+        return Err(anyhow::anyhow!("git tag failed"));
+    }
+
+    println!("Created git tag: {}", tag);
+
+    Ok(())
 }

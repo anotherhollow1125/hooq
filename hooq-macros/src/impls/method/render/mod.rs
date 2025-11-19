@@ -9,7 +9,6 @@ use syn::{Expr, Token, parse_quote};
 use crate::impls::inert_attr::context::{HookInfo, LocalContextField};
 use crate::impls::method::Method;
 
-mod describe_expr;
 mod meta_vars;
 
 fn get_file_name(q_span: Span) -> String {
@@ -248,30 +247,11 @@ impl HookInfo<'_> {
                 })
             }
             Ok(MetaVars::Expr) => Ok(expr.to_token_stream()),
-            Ok(MetaVars::ExprStr) => {
-                let expr_str = self.expr_str;
+            Ok(MetaVars::Source) => {
+                let source_ts = self.source_tokenstream.clone();
 
                 Ok(parse_quote! {
-                    #expr_str
-                })
-            }
-            Ok(MetaVars::ExprStrShort) => {
-                let expr_str_short = describe_expr::describe_expr_short(expr, self.kind);
-
-                Ok(parse_quote! {
-                    #expr_str_short
-                })
-            }
-            Ok(MetaVars::ExprStrShortOneLine) => {
-                let expr_str_short_oneline: String =
-                    describe_expr::describe_expr_short(expr, self.kind)
-                        .lines()
-                        .map(|line| line.trim())
-                        .collect::<Vec<_>>()
-                        .join(" ");
-
-                Ok(parse_quote! {
-                    #expr_str_short_oneline
+                    #source_ts
                 })
             }
             Ok(MetaVars::Count) => {
@@ -319,7 +299,7 @@ impl HookInfo<'_> {
                 let column = q_span.unwrap().column();
                 let path = q_span.unwrap().file();
                 let file = get_file_name(q_span);
-                let expr_str = self.expr_str;
+                let source_str = self.source_tokenstream.to_string();
                 let count = self.get_count();
                 let bindings = self.get_bindings_token_stream();
 
@@ -329,7 +309,7 @@ impl HookInfo<'_> {
                         column: #column,
                         path: #path,
                         file: #file,
-                        expr_str: #expr_str,
+                        source_str: #source_str,
                         count: #count,
                         bindings: #bindings,
                     }

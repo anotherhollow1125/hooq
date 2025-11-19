@@ -32,7 +32,7 @@ enum Mode {
 struct Args {
     #[arg(short, long, default_value_t = false)]
     check: bool,
-    #[arg(short, long, default_value_t = Mode::Wip)]
+    #[arg(short, long, value_enum, default_value_t = Mode::Wip)]
     mode: Mode,
 }
 

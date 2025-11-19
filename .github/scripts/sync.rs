@@ -14,14 +14,13 @@ clap = { version = "4.5.47", features = ["derive"] }
 hooq = { path = "../../hooq", features = ["anyhow"] }
 reqwest = { version = "0.12.24", features = ["blocking", "json"] }
 chrono = "0.4.42"
-strum = { version = "0.27.2", features = ["derive"] }
 ---
 
 use chrono::DateTime;
 use clap::{Parser, ValueEnum};
 use hooq::hooq;
 
-#[derive(ValueEnum, Clone, Copy, Debug, strum::Display)]
+#[derive(ValueEnum, Clone, Copy, Debug)]
 enum Mode {
     Wip,
     Publish,

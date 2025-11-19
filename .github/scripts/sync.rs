@@ -24,22 +24,14 @@ use hooq::hooq;
 enum Mode {
     Wip,
     Publish,
-}
-
-impl std::fmt::Display for Mode {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Mode::Wip => write!(f, "wip"),
-            Mode::Publish => write!(f, "publish"),
-        }
-    }
+    AddTag,
 }
 
 #[derive(Parser, Debug)]
 struct Args {
     #[arg(short, long, default_value_t = false)]
     check: bool,
-    #[arg(short, long, default_value_t = Mode::Wip)]
+    #[arg(short, long, value_enum, default_value_t = Mode::Wip)]
     mode: Mode,
 }
 
@@ -103,13 +95,19 @@ fn main() -> anyhow::Result<()> {
     let current_version = sync_sub_crate_versions(check)?;
     let version = match mode {
         Mode::Wip => get_published_version()?,
-        Mode::Publish => current_version.clone(),
+        Mode::Publish | Mode::AddTag => current_version.clone(),
     };
     let version_info = VersionInfo { version };
 
     cargo_sort(check)?;
     for lang in ["", "/ja"] {
         sync_readme(lang, check, &version_info)?;
+    }
+
+    if let Mode::AddTag = mode
+        && !check
+    {
+        git_tag(&current_version)?;
     }
 
     Ok::<(), anyhow::Error>(())
@@ -274,4 +272,26 @@ fn sync_readme(lang: &str, check_only: bool, version_info: &VersionInfo) -> anyh
     }
 
     Ok::<(), anyhow::Error>(())
+}
+
+#[hooq(anyhow)]
+fn git_tag(current_version: &str) -> anyhow::Result<()> {
+    let tag = format!("v{}", current_version);
+
+    let status = std::process::Command::new("git")
+        .arg("tag")
+        .arg(&tag)
+        .status()?;
+
+    if !status.success() {
+        return Err(anyhow::anyhow!(
+            "Failed to create git tag '{}' ({})",
+            tag,
+            status
+        ));
+    }
+
+    println!("Created git tag: {}", tag);
+
+    Ok(())
 }

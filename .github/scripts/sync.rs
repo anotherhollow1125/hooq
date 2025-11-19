@@ -285,7 +285,11 @@ fn git_tag(current_version: &str) -> anyhow::Result<()> {
         .status()?;
 
     if !status.success() {
-        return Err(anyhow::anyhow!("git tag failed"));
+        return Err(anyhow::anyhow!(
+            "Failed to create git tag '{}' ({})",
+            tag,
+            status
+        ));
     }
 
     println!("Created git tag: {}", tag);

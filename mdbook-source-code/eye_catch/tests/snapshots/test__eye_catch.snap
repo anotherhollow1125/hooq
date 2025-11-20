@@ -1,0 +1,9 @@
+---
+source: mdbook-source-code/eye_catch/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+double_hooked: 42
+double: 42
+
+STDERR:

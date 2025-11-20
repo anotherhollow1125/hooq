@@ -425,6 +425,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "index"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "insta",
+]
+
+[[package]]
+name = "index_without_hooq"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "insta",
+]
+
+[[package]]
 name = "indexmap"
 version = "2.11.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"

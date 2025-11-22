@@ -5,76 +5,23 @@
 そもそも `Result` と `Option` の両方にあるメソッドをフックすることはできないでしょうか...？ [anyhowクレート](https://docs.rs/anyhow/latest/anyhow/)が提供するメソッド [`Context::with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) がまさにうってつけです。 `Option` 型に対して `.with_context(...)` を呼ぶと、 `None` の時は `anyhow::Result` の `Err` バリアントへと変換を行ってくれます。
 
 ```rust
-use anyhow::{Context, Result};
-use hooq::hooq;
-
-#[hooq]
-#[hooq::method(.with_context(|| {
-    let path = $path;
-    let line = $line;
-    let col = $col;
-    let expr = $expr_str_short;
-
-    format!("[{path}:{line}:{col}]
-    {expr}")
-}))]
-fn display_name_by_mista(val: &toml::Value) -> Result<()> {
-    let name = val.get("package")?.get("name")?.as_str()?;
-
-    if name.contains("4") {
-        return Err(anyhow::anyhow!(
-            "name `{name}` contains '4'. Guido Mista disallow this."
-        ));
-    }
-
-    println!("Mista「name: {name}」");
-
-    Ok(())
-}
-
-#[hooq]
-#[hooq::method(.with_context(|| {
-    let path = $path;
-    let line = $line;
-    let col = $col;
-    let expr = $expr_str_short;
-
-    format!("[{path}:{line}:{col}]
-    {expr}")
-}))]
-fn main() -> Result<()> {
-    let path = std::env::args().nth(1).unwrap_or("Cargo.toml".to_string());
-
-    let cargo_toml: toml::Value = toml::from_str(&std::fs::read_to_string(path)?)?;
-
-    display_name_by_mista(&cargo_toml)?;
-
-    Ok(())
-}
+{{#rustdoc_include ../../../../../mdbook-source-code/tutorial-4-with-anyhow/src/main.rs}}
 ```
 
 エラーが発生するように実行すると、 `.with_context(...)` の分だけエラーがスタックされ、トレースが得られます。
 
 ```bash
-Error: [src/main.rs:43:39]
-    display_name_by_mista(&cargo_toml)?
-
-Caused by:
-    0: [src/main.rs:18:9]
-           return Err(
-       ...
-       );
-    1: name `contains_4` contains '4'. Guido Mista disallow this.
+{{#include ../../../../../mdbook-source-code/tutorial-4-with-anyhow/tests/snapshots/test__tutorial-4-with-anyhow.snap:8:18}}
 ```
 
 anyhowクレートはとても良く使われるクレートであり、そして `.with_context(...)` はここまでで示した通りとても便利なメソッドです。
 
-そこで、このフックは頻出であろと考えhooqではanyhowに対し特別なプリセット... **anyhow フレーバー** を設けています。hooqではプリセットのことをわかりやすさのためフレーバー(flavor)と呼称しています。anyhowにとどまらず[log](https://docs.rs/log/latest/log/), [eyre](https://docs.rs/eyre/latest/eyre/)や[tracing](https://docs.rs/tracing/latest/tracing/)といったクレートに対してもフレーバーを用意をしています。
+そこで、このフックは頻出であろと考えhooqではanyhowに対し特別なプリセット... **anyhow フレーバー** を設けています。hooqではプリセットのことをわかりやすさのためフレーバー(flavor)と呼称しています。anyhowにとどまらず[log](https://docs.rs/log/latest/log/), [eyre](https://docs.rs/eyre/latest/eyre/)や[tracing](https://docs.rs/tracing/latest/tracing/)といったクレートに対してもフレーバーを用意しています。
 
 今まで `#[hooq]` と記載していた属性マクロ呼び出しを `#[hooq(フレーバー名)]` とすることでフレーバーを指定できます。
 
 ```rust
-{{#rustdoc_include ../../../../../examples/examples/tutorial/tutorial_with_anyhow.rs}}
+{{#rustdoc_include ../../../../../mdbook-source-code/tutorial-4-with-anyhow-2/src/main.rs}}
 ```
 
 結果はフレーバーを使わないソースコードと同一です！
@@ -85,10 +32,10 @@ anyhowクレートはとても良く使われるクレートであり、そし�
 
 hooqクレート側で予め用意したフレーバーだけでなく、ユーザーが事前に用意したフレーバーを用いることも可能です。
 
-フレーバーはクレートルート( `CARGO_MANIFEST_DIR` )に `hooq.toml` というファイルを設置することで可能です。以下は `hooq.toml` の設定例です。
+フレーバーはクレートルート( `CARGO_MANIFEST_DIR` が示すディレクトリ)に `hooq.toml` というファイルを設置することで可能です。以下は `hooq.toml` の設定例です。
 
 ```toml
-{{#include ../../../../../examples/hooq.toml::22}}
+{{#include ../../../../../mdbook-source-code/tutorial-flavor/hooq.toml}}
 ```
 
 詳細は[フレーバー](../reference/flavors.md)ページにて解説していますが、この時の設定項目の意味は次の通りです。
@@ -107,7 +54,7 @@ hooqクレート側で予め用意したフレーバーだけでなく、ユー�
 設定したフレーバーはソースコードから利用できるようになります。
 
 ```rust,ignore
-{{#rustdoc_include ../../../../../examples/examples/flavor.rs}}
+{{#rustdoc_include ../../../../../mdbook-source-code/tutorial-flavor/src/main.rs}}
 ```
 
 `#[hooq::method = フレーバー名]` という記法が出てきました。こちらはフレーバーの設定項目を部分適用するための機能です。その他の設定項目に関しても同様に部分適用が可能です。詳しくは[属性](../reference/attributes.md)の方を参照ください。

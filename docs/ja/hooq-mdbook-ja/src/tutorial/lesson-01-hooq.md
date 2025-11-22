@@ -3,7 +3,7 @@
 [はじめに](../index.md) で出した次の例を引き続き使って、hooqマクロが一体ソースコードにどのような細工をしたのかを解説し、hooqの使い方を紹介していきます。
 
 ```rust
-{{#rustdoc_include ../../../../../examples/examples/index.rs::28}}
+{{#rustdoc_include ../../../../../mdbook-source-code/index/src/main.rs::28}}
 ```
 
 `#[hooq]` 属性マクロを関数に付与すると、次のhooqマクロデフォルトのメソッド [`inspect_err`](https://doc.rust-lang.org/std/result/enum.Result.html#method.inspect_err) が各 `?` の手前、 `return` の返り値や関数末尾の後ろ(ただし関数シグネチャの返り値型が `Result` などフック対象の型の場合)に挿入(フック)されるようになります。
@@ -13,10 +13,9 @@
     let path = $path;
     let line = $line;
     let col = $col;
-    let expr = $expr_str_short;
+    let expr = ::hooq::summary!($source);
 
-    ::std::eprintln!("[{path}:{line}:{col}] {e:?}
-    {expr}");
+    ::std::eprintln!("[{path}:{line}:{col}] {e:?}\n{expr}");
 })
 ```
 
@@ -27,60 +26,12 @@
 |`$path`|文字列| クレートルート等からのファイル相対パス |
 |`$line`|整数| メソッドがフックされた行 |
 |`$col`|整数| メソッドがフックされた列 |
-|`$expr_str_short`|文字列| フックされた対象の式(表示用加工込み) |
+|`$source`| 対象式のトークン列 | フックされる対象の式(ログ表示用) |
 
 `#[hooq]` が施された `load_host_and_port` 関数は次のように展開されます。 `eprintln!` 等まで展開されてしまうため一致はしませんが `cargo expand` で確かめると似たような出力が得られるでしょう。
 
 ```rust
-fn load_host_and_port() -> Result<String, Box<dyn Error>> {
-    let host = std::env::var("APP_HOST")
-        .inspect_err(|e| {
-            let path = "src/main.rs";
-            let line = 8usize;
-            let col = 41usize;
-            let expr = "std::env::var(\"APP_HOST\")?";
-            eprintln!(
-                "[{0}:{1}:{2}] {3:?}\n    {4}\n",
-                path,
-                line,
-                col,
-                e,
-                expr,
-            );
-        })?;
-    let port = std::env::var("APP_PORT")
-        .inspect_err(|e| {
-            let path = "src/main.rs";
-            let line = 11usize;
-            let col = 41usize;
-            let expr = "std::env::var(\"APP_PORT\")?";
-            eprintln!(
-                "[{0}:{1}:{2}] {3:?}\n    {4}\n",
-                path,
-                line,
-                col,
-                e,
-                expr,
-            );
-        })?;
-    let port: u16 = port
-        .parse()
-        .inspect_err(|e| {
-            let path = "src/main.rs";
-            let line = 14usize;
-            let col = 33usize;
-            let expr = "port.parse()?";
-            eprintln!(
-                "[{0}:{1}:{2}] {3:?}\n    {4}\n",
-                path,
-                line,
-                col,
-                e,
-                expr,
-            );
-        })?;
-    Ok(format!("{host}:{port}"))
-}
+{{#rustdoc_include ../../../../../mdbook-source-code/index/tests/snapshots/test__index_expand.snap:13:40}}
 ```
 
 <div class="warning">
@@ -99,11 +50,7 @@ fn load_host_and_port() -> Result<String, Box<dyn Error>> {
 
 ```bash
 $ APP_PORT=10 cargo run -q
-[src/main.rs:8:41] NotPresent
-    std::env::var("APP_HOST")?
-[src/main.rs:21:45] NotPresent
-    load_host_and_port()?
-Error: NotPresent
+{{#include ../../../../../mdbook-source-code/index/tests/snapshots/test__index_with_app_port.snap:8:14}}
 ```
 
 ところで、デフォルトでフックされるメソッドも十分素敵ですが、カスタムしたいですよね...？メソッドのカスタマイズは [次のレッスン](./lesson-02-method.md) から扱います。

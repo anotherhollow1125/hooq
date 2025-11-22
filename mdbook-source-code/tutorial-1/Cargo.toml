@@ -1,5 +1,5 @@
 [package]
-name = "index"
+name = "tutorial-1"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -12,7 +12,7 @@ categories.workspace = true
 
 [dependencies]
 hooq = { path = "../../hooq" }
+toml = "0.9.8"
 
 [dev-dependencies]
 insta = "1.44.0"
-regex = "1.12.2"

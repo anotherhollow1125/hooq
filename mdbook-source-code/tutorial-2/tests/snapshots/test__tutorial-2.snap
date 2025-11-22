@@ -1,0 +1,11 @@
+---
+source: mdbook-source-code/tutorial-2/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+Success: `std :: fs :: read_to_string(path) ?` @ Line 24: Col: 80
+Success: `toml :: from_str(& std :: fs :: read_to_string(path) ?) ?` @ Line 24: Col: 82
+name: tutorial-2
+Success: `display_name(& cargo_toml) ?` @ Line 26: Col: 30
+
+STDERR:

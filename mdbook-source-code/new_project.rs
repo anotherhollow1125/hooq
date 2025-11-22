@@ -86,10 +86,10 @@ fn snapshot_test() {{
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
 
-    insta::assert_snapshot!("{project_name}", format!(
-        "STDOUT:\n{{}}\nSTDERR:\n{{}}",
-        stdout, stderr
-    ));
+    insta::assert_snapshot!(
+        "{project_name}",
+        format!("STDOUT:\n{{}}\nSTDERR:\n{{}}", stdout, stderr)
+    );
 }}
 "#
     );

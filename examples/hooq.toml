@@ -1,9 +1,9 @@
 [my_flavor]
 method = """.inspect_err(|_| {
-    eprintln!("Error: `{}` @ Line {}: Col: {}", $expr_str_short_oneline, $line, $col);
+    eprintln!("Error @ Line {}: Col: {}\n{}", $line, $col, ::hooq::summary!($source));
 })
 .inspect(|_| {
-    println!("Success: `{}` @ Line {}: Col: {}", $expr_str_short_oneline, $line, $col);
+    println!("Success @ Line {}: Col: {}\n{}", $line, $col, ::hooq::summary!($source));
 })"""
 hook_targets = ["?", "return", "tail_expr"]
 tail_expr_idents = ["Ok", "Err"]
@@ -13,10 +13,10 @@ hook_in_macros = true
 [my_flavor.ok_or_else]
 method = """
 .ok_or_else(|| {
-    format!("{} [Line: {}, {}]",
-        $expr_str_short_oneline,
+    format!("[Line: {}, {}]\n{}",
         $line,
-        $nth
+        $nth,
+        ::hooq::summary!($source),
     )
 })
 .$so_far"""

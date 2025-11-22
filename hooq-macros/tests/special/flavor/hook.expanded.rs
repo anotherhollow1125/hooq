@@ -32,7 +32,7 @@ mod custom {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/flavor/hook.rs",
                     file: "hook.rs",
-                    expr_str: "result",
+                    source_str: "result",
                     count: "1st tail expr",
                     bindings: ::std::collections::HashMap::from([
                         (
@@ -63,7 +63,7 @@ mod custom {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/flavor/hook.rs",
                     file: "hook.rs",
-                    expr_str: "result",
+                    source_str: "result",
                     count: "1st tail expr",
                     bindings: ::std::collections::HashMap::from([]),
                 }
@@ -84,7 +84,7 @@ mod custom2 {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/flavor/hook.rs",
                     file: "hook.rs",
-                    expr_str: "result",
+                    source_str: "result",
                     count: "1st tail expr",
                     bindings: ::std::collections::HashMap::from([]),
                 }
@@ -101,7 +101,7 @@ mod custom2 {
                     column: 9usize,
                     path: "<hooq_root>/tests/special/flavor/hook.rs",
                     file: "hook.rs",
-                    expr_str: "result",
+                    source_str: "result",
                     count: "1st tail expr",
                     bindings: ::std::collections::HashMap::from([]),
                 }

@@ -3,7 +3,7 @@ use hooq::hooq;
 #[hooq]
 #[hooq::method(.ok_or_else(|| {
     format!("{} [Line: {}, {}]",
-        $expr_str_short_oneline,
+        stringify!($source),
         $line,
         $nth
     )
@@ -19,7 +19,7 @@ fn display_name(val: &toml::Value) -> Result<(), String> {
 #[hooq]
 #[hooq::method(.ok_or_else(|| {
     format!("{} [Line: {}, {}]",
-        $expr_str_short_oneline,
+        stringify!($source),
         $line,
         $nth
     )
@@ -41,7 +41,7 @@ fn display_name_by_mista(val: &toml::Value) -> Result<(), String> {
 
 #[hooq]
 #[hooq::method(.$so_far.inspect(|_| {
-    println!("Success: `{}` @ Line {}: Col: {}", $expr_str_short_oneline, $line, $col);
+    println!("Success: `{}` @ Line {}: Col: {}", stringify!($source), $line, $col);
 }))]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args().nth(1).unwrap_or("Cargo.toml".to_string());

@@ -5,7 +5,7 @@ expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
 STDOUT:
 
 STDERR:
-error[E0599]: no method named `ok_or_else` found for enum `Result` in the current scope
+error[E0599]: no method named `ok_or_else` found for enum `Result<T, E>` in the current scope
   --> mdbook-source-code/tutorial-4-compile-error/src/main.rs:15:9
    |
 15 |         return Err(format!(

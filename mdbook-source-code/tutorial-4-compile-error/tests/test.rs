@@ -9,6 +9,7 @@ fn snapshot_test() {
 
     let output_w = std::process::Command::new("cargo")
         .args(["run", "-q"])
+        .env("CARGO_TERM_COLOR", "never")
         .output();
 
     sleep(Duration::from_secs(1));

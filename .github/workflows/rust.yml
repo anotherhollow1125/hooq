@@ -22,6 +22,7 @@ jobs:
       run: cargo sort --workspace --check
     - name: Set up nightly cargo fmt
       run: rustup toolchain install nightly-2025-11-18 --component rustfmt
+      # nightly のバージョンを変更する際は hooq-macros/tests/special/flavor_not_cargo_project/build_script.rs の TOOLCHAIN も合わせて変更すること
     - name: Check format
       run: cargo +nightly-2025-11-18 fmt --all -- --check
     - name: Check clippy

@@ -1,13 +1,13 @@
 use std::error::Error;
 
 fn load_host_and_port() -> Result<String, Box<dyn Error>> {
-    // APP_HOST の読み込み
+    // Loading APP_HOST
     let host = std::env::var("APP_HOST")?;
 
-    // APP_PORT の読み込み
+    // Loading APP_PORT
     let port = std::env::var("APP_PORT")?;
 
-    // u16 への変換
+    // Convert to u16
     let port: u16 = port.parse()?;
 
     Ok(format!("{host}:{port}"))

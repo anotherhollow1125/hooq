@@ -11,8 +11,9 @@
 
 - [リファレンス](./reference/index.md)
     - [属性](./reference/attributes.md)
-    - [フレーバー](./reference/flavors.md)
+    - [メソッド](./reference/method.md)
     - [メタ変数](./reference/meta_vars.md)
+    - [フレーバー](./reference/flavors.md)
     - [features](./reference/features.md)
 
 - [レシピ・アイデア集](./recipe/index.md)

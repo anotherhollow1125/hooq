@@ -4,7 +4,7 @@
 </a>
 <h1>hooq</h1>
 
-<h3>`?` 前にメソッドを挿入するシンプルなマクロ</h3>
+<h3>はてな演算子 (`?`) の前にメソッドを挿入(フック)するシンプルなマクロ</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
 [![docs](https://img.shields.io/docsrs/hooq/0.2.0)](https://docs.rs/hooq/0.2.0/hooq/)
@@ -12,7 +12,11 @@
 
 🪝 hooq という名前は 'HOOk' と 'Question' 演算子 ( `?` ) が由来です 🪝
 
+Enhance your questions by hooq!?
+
 </div>
+
+キーワード: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 ドキュメント:
 - チュートリアル: (mdBook を準備中です)

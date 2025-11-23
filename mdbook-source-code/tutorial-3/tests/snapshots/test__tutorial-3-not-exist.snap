@@ -1,0 +1,11 @@
+---
+source: mdbook-source-code/tutorial-3/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+
+STDERR:
+[mdbook-source-code/tutorial-3/src/main.rs:26:80] Os { code: 2, kind: NotFound, message: "No such file or directory" }
+  26>    std::fs::read_to_string(path)?
+    |
+Error: Os { code: 2, kind: NotFound, message: "No such file or directory" }

@@ -1,0 +1,8 @@
+---
+source: mdbook-source-code/index/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+Server is running on: 127.0.0.1:10
+
+STDERR:

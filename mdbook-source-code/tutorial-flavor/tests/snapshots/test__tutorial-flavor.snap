@@ -1,0 +1,32 @@
+---
+source: mdbook-source-code/tutorial-flavor/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+Success @ Line 24: Col: 80
+  24>    std::fs::read_to_string(path)?
+    |
+Success @ Line 24: Col: 82
+  24>    toml::from_str(&std::fs::read_to_string(path)?)?
+    |
+Success @ Line 7: Col: 34
+   7>    val.get("package")?
+    |
+Success @ Line 7: Col: 47
+   7>    val.get("package")?.get("name")?
+    |
+Success @ Line 7: Col: 57
+   7>    val.get("package")?.get("name")?.as_str()?
+    |
+Mista「name: tutorial-flavor」
+Success @ Line 17: Col: 5
+  17>    Ok(())
+    |
+Success @ Line 26: Col: 39
+  26>    display_name_by_mista(&cargo_toml)?
+    |
+Success @ Line 28: Col: 5
+  28>    Ok(())
+    |
+
+STDERR:

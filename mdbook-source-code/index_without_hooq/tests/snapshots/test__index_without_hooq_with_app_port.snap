@@ -1,0 +1,8 @@
+---
+source: mdbook-source-code/index_without_hooq/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+
+STDERR:
+Error: NotPresent

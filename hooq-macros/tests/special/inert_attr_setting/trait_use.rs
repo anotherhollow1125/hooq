@@ -19,20 +19,6 @@ mod trait_define {
             self
         }
     }
-
-    /* TODO: flavor のテストに移す
-    pub trait CustomHook {
-        fn hook(self, f: impl FnOnce() -> hooq::HooqMeta) -> Self;
-    }
-
-    impl<T, E> CustomHook for Result<T, E> {
-        fn hook(self, f: impl FnOnce() -> hooq::HooqMeta) -> Self {
-            let info = f();
-            eprintln!("{info:?}");
-            self
-        }
-    }
-    */
 }
 
 mod trait_use_inner {
@@ -48,59 +34,8 @@ mod trait_use_inner {
     }
 }
 
-/* TODO: flavor のテストに移す
-mod custom {
-    use hooq_macros::hooq;
-
-    // #[hooq(hook(super::trait_define::CustomHook))]
-    #[hooq(trait_use(super::trait_define::CustomHook), flavor = "hook")]
-    pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
-    where
-        E: std::fmt::Debug,
-    {
-        result
-    }
-}
-
-mod custom2 {
-    use hooq_macros::hooq;
-
-    use super::trait_define::CustomHook;
-
-    #[hooq(hook)]
-    pub fn use_hook<T, E>(result: Result<T, E>) -> Result<T, E>
-    where
-        E: std::fmt::Debug,
-    {
-        result
-    }
-
-    /* 廃止 deprecated
-    #[hooq(hook = true)]
-    pub fn use_hook2<T, E>(result: Result<T, E>) -> Result<T, E>
-    where
-        E: std::fmt::Debug,
-    {
-        result
-    }
-    */
-
-    #[hooq(flavor = "hook")]
-    pub fn use_hook3<T, E>(result: Result<T, E>) -> Result<T, E>
-    where
-        E: std::fmt::Debug,
-    {
-        result
-    }
-}
-*/
-
 #[test]
 fn test() {
     let result: Result<i32, &str> = Ok(42);
     trait_use_inner::use_hook(result).unwrap();
-    // custom::use_hook(result).unwrap();
-    // custom2::use_hook(result).unwrap();
-    // custom2::use_hook2(result).unwrap();
-    // custom2::use_hook3(result).unwrap();
 }

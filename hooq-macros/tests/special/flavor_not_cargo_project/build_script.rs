@@ -59,7 +59,7 @@ impl std::fmt::Display for BuildProfile {
 
 const ORIGINAL_HOOQ_PATH: &str = "../../../../../hooq";
 const SRC_NAME: &str = "main";
-const TOOLCHAIN: &str = "nightly";
+const TOOLCHAIN: &str = "nightly-2025-11-18";
 
 #[hooq(anyhow)]
 fn hooq_build(build_profile: BuildProfile) -> Result<()> {

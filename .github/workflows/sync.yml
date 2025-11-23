@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
     - name: Set up cargo sort
-      run: cargo install cargo-sort
+      run: cargo install cargo-sort --locked --version 2.0.1
     - name: Check docs are updated properly
       run: |
         .github/scripts/sync.rs -- --check

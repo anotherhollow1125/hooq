@@ -627,6 +627,7 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                         .enumerate()
                         .map(|(i, stmt)| {
                             let tail_expr_target_kind = if i == stmts_len - 1 {
+                                // ここがBlockとは異なる点に注意
                                 TailExprTargetKind::FnBlockTailExpr
                             } else {
                                 TailExprTargetKind::NotTarget
@@ -808,7 +809,15 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
                     if let Some((_, guard)) = arm.guard.as_mut() {
                         walk_expr(guard, &context)?;
                     }
-                    walk_expr(&mut arm.body, &context)?;
+
+                    match &mut *arm.body {
+                        expr @ Expr::Block(_) => {
+                            walk_expr(expr, &context)?;
+                        }
+                        expr => {
+                            handle_tail_expr(expr, &context, TailExprTargetKind::BlockTailExpr)?
+                        }
+                    }
 
                     Ok(())
                 })

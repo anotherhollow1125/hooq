@@ -12,6 +12,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "all_attr"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "macrotest",
+ "test-helpers",
+]
+
+[[package]]
 name = "anstream"
 version = "0.6.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -66,6 +75,14 @@ name = "anyhow"
 version = "1.0.100"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
+
+[[package]]
+name = "attribute-flavor-1"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
 
 [[package]]
 name = "autocfg"
@@ -911,6 +928,14 @@ name = "toml_writer"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "df8b2b54733674ad286d16267dcfc7a71ed5c776e4ac7aa3c3e2561f7c637bf2"
+
+[[package]]
+name = "trait_use"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
 
 [[package]]
 name = "tutorial-1"

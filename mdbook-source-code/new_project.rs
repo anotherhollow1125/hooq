@@ -7,25 +7,37 @@ anyhow = "1.0.100"
 toml_edit = "0.23.7"
 ---
 
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use hooq::hooq;
 use toml_edit::{DocumentMut, InlineTable, Table, Value};
+
+#[derive(ValueEnum, Debug, Clone, Copy)]
+enum Mode {
+    StdOutErr,
+    Expand,
+}
 
 #[derive(Parser, Debug)]
 struct Args {
     /// Name of the project
     project_name: String,
+    /// Mode of testing
+    #[clap(short, long, value_enum, default_value_t = Mode::StdOutErr)]
+    mode: Mode,
 }
 
 #[hooq(anyhow)]
 fn main() -> anyhow::Result<()> {
-    let Args { project_name } = Args::parse();
+    let Args { project_name, mode } = Args::parse();
 
     cargo_new(&project_name)?;
 
-    edit_cargo_toml(&project_name)?;
+    edit_cargo_toml(&project_name, mode)?;
 
-    create_tests_dir(&project_name)?;
+    match mode {
+        Mode::StdOutErr => create_tests_dir_for_std_out_err(&project_name)?,
+        Mode::Expand => create_tests_dir_for_expand(&project_name)?,
+    }
 
     Ok(())
 }
@@ -44,7 +56,7 @@ fn cargo_new(project_name: &str) -> anyhow::Result<()> {
 }
 
 #[hooq(anyhow)]
-fn edit_cargo_toml(project_name: &str) -> anyhow::Result<()> {
+fn edit_cargo_toml(project_name: &str, mode: Mode) -> anyhow::Result<()> {
     let cargo_toml_path = format!("{}/Cargo.toml", project_name);
 
     let cargo_toml_content = std::fs::read_to_string(&cargo_toml_path)?;
@@ -61,7 +73,17 @@ fn edit_cargo_toml(project_name: &str) -> anyhow::Result<()> {
 
     let mut dev_dependencies = Table::new();
 
-    dev_dependencies.insert("insta", Value::from("1.44.0").into());
+    match mode {
+        Mode::StdOutErr => {
+            dev_dependencies.insert("insta", Value::from("1.44.0").into());
+        }
+        Mode::Expand => {
+            let mut test_helpers = InlineTable::new();
+            test_helpers.insert("path", Value::from("../../test-helpers"));
+
+            dev_dependencies.insert("test-helpers", test_helpers.into());
+        }
+    }
 
     doc.insert("dev-dependencies", dev_dependencies.into());
 
@@ -71,7 +93,7 @@ fn edit_cargo_toml(project_name: &str) -> anyhow::Result<()> {
 }
 
 #[hooq(anyhow)]
-fn create_tests_dir(project_name: &str) -> anyhow::Result<()> {
+fn create_tests_dir_for_std_out_err(project_name: &str) -> anyhow::Result<()> {
     let tests_dir_path = format!("{}/tests", project_name);
     std::fs::create_dir_all(&tests_dir_path)?;
 
@@ -90,6 +112,50 @@ fn snapshot_test() {{
         "{project_name}",
         format!("STDOUT:\n{{}}\nSTDERR:\n{{}}", stdout, stderr)
     );
+}}
+"#
+    );
+
+    std::fs::write(format!("{}/test.rs", tests_dir_path), &test)?;
+
+    Ok(())
+}
+
+#[hooq(anyhow)]
+fn create_tests_dir_for_expand(project_name: &str) -> anyhow::Result<()> {
+    let tests_dir_path = format!("{}/tests", project_name);
+    std::fs::create_dir_all(&tests_dir_path)?;
+
+    let test = format!(
+        r#"use test_helpers::MaskMode::*;
+use test_helpers::mask_project_root;
+
+#[test]
+fn snapshot_test() {{
+    mask_project_root(".", UnMask);
+
+    let pre_expanded = std::fs::read_to_string("./src/main.expanded.rs").ok();
+
+    let output = String::from_utf8_lossy(
+        &std::process::Command::new("cargo")
+            .args(["expand"])
+            .output()
+            .unwrap()
+            .stdout,
+    )
+    .to_string();
+
+    if let Some(pre_expanded) = pre_expanded
+        && pre_expanded != output
+    {{
+        panic!(
+            "snapshot test failed: \n\n--- pre expanded ---\n{{pre_expanded}}\n\n--- new expanded ---\n{{output}}\n"
+        );
+    }} else {{
+        std::fs::write("./src/main.expanded.rs", output).unwrap();
+    }}
+
+    mask_project_root(".", Mask);
 }}
 "#
     );

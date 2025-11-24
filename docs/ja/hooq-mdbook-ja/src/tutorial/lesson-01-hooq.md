@@ -31,7 +31,7 @@
 `#[hooq]` が施された `load_host_and_port` 関数は次のように展開されます。 `eprintln!` 等まで展開されてしまうため一致はしませんが `cargo expand` で確かめると似たような出力が得られるでしょう。
 
 ```rust
-{{#rustdoc_include ../../../../../mdbook-source-code/index/tests/snapshots/test__index_expand.snap:13:40}}
+{{#rustdoc_include ../../../../../mdbook-source-code/index/tests/snapshots/test__index_expand.snap:12:39}}
 ```
 
 <div class="warning">

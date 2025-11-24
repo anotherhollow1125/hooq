@@ -9,7 +9,7 @@ fn snapshot_test() {
 
     let output = String::from_utf8_lossy(
         &std::process::Command::new("cargo")
-            .args(["expand"])
+            .arg("expand")
             .output()
             .unwrap()
             .stdout,

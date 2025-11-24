@@ -798,6 +798,9 @@ fn walk_expr(expr: &mut Expr, context: &HookContext) -> syn::Result<()> {
             } = handle_inert_attrs(&mut expr_match.attrs, context)?;
 
             walk_expr(&mut expr_match.expr, &context)?;
+
+            let context = context.for_sub_scope_context();
+
             expr_match
                 .arms
                 .iter_mut()

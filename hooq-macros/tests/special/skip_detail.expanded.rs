@@ -715,7 +715,14 @@ fn skip_expr() -> Result<(), ()> {
                 })?
         }),
     )? {
-        Some(()) if enresult(true)? => {
+        Some(
+            (),
+        ) if enresult(true)
+            .inspect(|_| {
+                {
+                    ::std::io::_print(format_args!("tag: {0}\n", "match"));
+                };
+            })? => {
             enresult(())
                 .inspect(|_| {
                     {
@@ -733,15 +740,7 @@ fn skip_expr() -> Result<(), ()> {
                 })?;
             enresult(())
         }
-        None => {
-            enresult(())
-                .inspect(|_| {
-                    {
-                        ::std::io::_print(format_args!("tag: {0}\n", "match"));
-                    };
-                })?;
-            enresult(())
-        }
+        None => enresult(()),
     }?;
     impl Strct {
         fn method(&self, _: ()) -> Result<&Self, ()> {

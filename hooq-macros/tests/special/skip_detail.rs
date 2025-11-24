@@ -447,10 +447,7 @@ fn skip_expr() -> Result<(), ()> {
             enresult(())?;
             enresult(())
         }
-        None => {
-            enresult(())?;
-            enresult(())
-        }
+        None => enresult(()),
     }?;
 
     impl Strct {

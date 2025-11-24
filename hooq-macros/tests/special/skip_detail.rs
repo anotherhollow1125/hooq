@@ -447,6 +447,7 @@ fn skip_expr() -> Result<(), ()> {
             enresult(())?;
             enresult(())
         }
+        None if enresult(true)? => Err(()),
         None => enresult(()),
     }?;
 

@@ -740,6 +740,19 @@ fn skip_expr() -> Result<(), ()> {
                 })?;
             enresult(())
         }
+        None if enresult(true)
+            .inspect(|_| {
+                {
+                    ::std::io::_print(format_args!("tag: {0}\n", "match"));
+                };
+            })? => {
+            Err(())
+                .inspect(|_| {
+                    {
+                        ::std::io::_print(format_args!("tag: {0}\n", "match"));
+                    };
+                })
+        }
         None => enresult(()),
     }?;
     impl Strct {

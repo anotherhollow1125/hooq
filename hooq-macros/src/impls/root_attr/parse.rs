@@ -84,7 +84,7 @@ fn parse_meta_list(
     trait_uses: &mut Vec<Path>,
 ) -> syn::Result<()> {
     match path {
-        p if p.is_ident("trait_use") => {
+        p if p.is_ident("trait_use") || p.is_ident("trait_uses") => {
             trait_uses.extend(get_paths(tokens)?);
 
             Ok(())

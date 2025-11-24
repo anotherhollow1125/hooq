@@ -26,13 +26,13 @@ proc-macro-crate = "3.4.0"
 proc-macro2 = { version = "1.0.103", features = ["span-locations"] }
 quote = "1.0.42"
 serde = { version = "1.0.228", features = ["derive"] }
-syn = { version = "2.0.110", features = ["full", "extra-traits", "fold"] }
+syn = { version = "2.0.111", features = ["full", "extra-traits", "fold"] }
 toml = "0.9.8"
 
 [dev-dependencies]
 futures = "0.3.31"
 hooq = { path = "../hooq" }
-insta = "1.43.2"
+insta = "1.44.1"
 macrotest = "1.2.0"
 serde_json = "1.0.145"
 test-helpers = { path = "../test-helpers" }

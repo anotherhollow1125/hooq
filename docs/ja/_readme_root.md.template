@@ -24,104 +24,30 @@ Enhance your questions by hooq!?
 
 <hr />
 
+`#[hooq::method(...)]` で指定したメソッドを式と `?` 演算子 (Question Operator) の間に挿入します！
+
 ```rust
 use hooq::hooq;
 
 #[hooq]
-#[hooq::method(.ok_or_else(|| format!("[{}:{}:{}]
-{}", $file, $line, $col, ::hooq::summary!($source))))]
-fn display_name(val: &toml::Value) -> Result<(), String> {
-    let name = val.get("package")?.get("name")?.as_str()?;
-
-    #[hooq::skip_all]
-    if name.contains("4") {
-        return Err("name contains '4'. Guido Mista disallow this.".to_string());
-    }
-
-    println!("name: {name}");
-
-    Ok(())
+#[hooq::method(.map(|v| v * 2))]
+fn double(s: &str) -> Result<u32, Box<dyn std::error::Error>> {
+    let res = s.parse::<u32>()?;
+    Ok(res)
 }
 
-#[hooq]
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let cargo_toml = toml::from_str(&std::fs::read_to_string("Cargo.toml")?)?;
+fn double_expanded(s: &str) -> Result<u32, Box<dyn std::error::Error>> {
+    let res = s.parse::<u32>().map(|v| v * 2)?;
+    Ok(res)
+}
 
-    display_name(&cargo_toml)?;
-
-    Ok(())
+#[test]
+fn test() {
+    assert_eq!(double("21").unwrap(), double_expanded("21").unwrap());
 }
 ```
 
-上記が以下のように展開されます。
-
-```ignore
-use hooq::hooq;
-fn display_name(val: &toml::Value) -> Result<(), String> {
-    let name = val
-        .get("package")
-        .ok_or_else(|| ::alloc::__export::must_use({
-            ::alloc::fmt::format(
-                format_args!("{0} (L{1}, {2})", "val.get(\"package\")", 6usize, "1st ?"),
-            )
-        }))?
-        .get("name")
-        .ok_or_else(|| ::alloc::__export::must_use({
-            ::alloc::fmt::format(
-                format_args!(
-                    "{0} (L{1}, {2})", "val.get(\"package\") ? .get(\"name\")", 6usize,
-                    "2nd ?",
-                ),
-            )
-        }))?
-        .as_str()
-        .ok_or_else(|| ::alloc::__export::must_use({
-            ::alloc::fmt::format(
-                format_args!(
-                    "{0} (L{1}, {2})",
-                    "val.get(\"package\") ? .get(\"name\") ? .as_str()", 6usize, "3rd ?",
-                ),
-            )
-        }))?;
-    if name.contains("4") {
-        return Err("name contains '4'. Guido Mista disallow this.".to_string());
-    }
-    {
-        ::std::io::_print(format_args!("name: {0}\n", name));
-    };
-    Ok(())
-}
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let cargo_toml = toml::from_str(
-            &std::fs::read_to_string("Cargo.toml")
-                .inspect_err(|e| {
-                    let path = "/path/to/your/project/src/main.rs";
-                    let line = 20usize;
-                    {
-                        ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
-                        );
-                    };
-                })?,
-        )
-        .inspect_err(|e| {
-            let path = "/path/to/your/project/src/main.rs";
-            let line = 20usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })?;
-    display_name(&cargo_toml)
-        .inspect_err(|e| {
-            let path = "/path/to/your/project/src/main.rs";
-            let line = 22usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })?;
-    Ok(())
-}
-```
+`#[hooq::method(...)]` の指定をわざわざしなくても、予め用意した設定を楽に適用するフレーバーといった仕組みもあります！
 
 ## インストール
 
@@ -146,25 +72,62 @@ hooq = "{{version}}"
 .inspect_err(|e| {
     let path = $path;
     let line = $line;
+    let col = $col;
+    let expr = ::hooq::summary!($source);
 
-    ::std::eprintln!("[{path}:L{line}] {e:?}");
+    ::std::eprintln!("[{path}:{line}:{col}] {e:?}\n{expr}");
 })
 ```
 
-`#[hooq::method(...)]` 不活性アトリビュートでフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` としてFlavorを指定した場合などは、そのFlavorにちなんだメソッドになります！
+`#[hooq::method(...)]` 不活性属性でフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` としてフレーバーを指定した場合などは、そのフレーバーにちなんだメソッドになります！
 
-用意されている Flavor は次のディレクトリから見られます: [hooq-macros/src/impls/flavor/presets/](https://github.com/anotherhollow1125/hooq/tree/main/hooq-macros/src/impls/flavor/presets)
+## 属性 クイックリファレンス
 
-(今後拡充予定です！)
+| 名前 | 種別 | 説明 |
+|:----|:----|:----|
+| flavor | マクロルートのメタ | 指定したフレーバーの設定を適用する |
+| trait_use | マクロルートのメタ | 指定したパス( `XXX` )について `use XXX as _;` をアイテムの前に挿入する |
+| method | 不活性属性 | 挿入/置換するメソッド(置換の場合は式)を設定する |
+| skip_all / skip | 不活性属性 | 本属性を付与した式へのフックは行わないようになる |
+| hook_targets | 不活性属性 | `?`, `return`, 末尾式(tail_expr)それぞれについてフックを行うかを切り替え(デフォルトは3種すべてにフック) |
+| tail_expr_idents | 不活性属性 | 末尾式に来た時にフックを行うidentを指定(デフォルトでは `Err` ) |
+| ignore_tail_expr_idents | 不活性属性 | フック対象であった場合でもフックを行わないidentを指定(デフォルトでは `Ok` ) |
+| result_types | 不活性属性 | `return` と末尾式にフックを行う関数の返り値型を指定(デフォルトは `Result` ) |
+| hook_in_macros | 不活性属性 | マクロ内にもフックを行うかを指定(デフォルトは `true` ) |
+| binding | 不活性属性 | 指定したリテラル・式で置換されるメタ変数を作成 |
 
-## アトリビュート
+詳細はmdbookの[属性]()を見てください！
 
-(WIP)
+## メタ変数 クイックリファレンス
 
-## メタ変数
+| 名前 | リテラル種別 | 説明 |
+|:----|:-----------|:----|
+| `$line` | usize整数 | フック対象がある行番号 |
+| `$column` or `$col` | usize整数 | フック対象がある列番号 |
+| `$path` | 文字列 | フック対象があるファイルの相対パス |
+| `$file` | 文字列 | フック対象があるファイルの名前 |
+| `$source` | 式 | デバッグ・ロギング用に用いる、挿入/置換対象の式 ( `$expr` との違いに注意 ) |
+| `$count` or `$nth` | 文字列 | 何番目の置換対象であるかを表示 |
+| `$fn_name` or `$fnname` | 文字列 | フック対象がある関数の名前 |
+| `$fn_sig` or `$fnsig` | 文字列 | フック対象がある関数のシグネチャ |
+| `$xxx` (一例) | (任意) | `#[hooq::xxx = ...]` という不活性属性によるユーザー定義のメタ変数 |
+| `$bindings` or `$vars` | [`HashMap`](https://doc.rust-lang.org/std/collections/struct.HashMap.html) | メタ変数バインディングすべて |
+| `$hooq_meta` or `$hooqmeta` | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) | `$line`・`$col`・`$path`・`$file`・`$source`・`$count`・`$bindings` をひとまとめにした構造体を表す |
+| `$expr` | 式 | 置換用に用いる、置換対象の式 ( `$source` との違いに注意 ) |
+| `$so_far` or `$sofar` | 式 | 主に挿入用に用いる、これまでに設定されているフック |
 
-(WIP)
+詳細はmdbookの[メタ変数]()を見てください！
 
-## Flavor
+## 組み込みフレーバー クイックリファレンス
 
-(WIP)
+| フレーバー名 | feature | 内容 |
+|:----------|:--------|:----|
+| default | - | 何も指定しない場合に設定されるフレーバー。hooq.tomlで上書き可 |
+| empty | - | 全く何もフックしない場合に用いるフレーバー。上書きは不可 |
+| hook | - | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) を引数に取る `hook` メソッドを挿入するフレーバー。ユーザー定義のトレイト経由での利用を想定。上書き可 |
+| log | log | [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
+| anyhow | anyhow | [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを挿入するフレーバー。上書き可 |
+| eyre | eyre | (WIP) |
+| tracing | tracing | (WIP) |
+
+詳細はmdbookの[フレーバー]()を見てください！

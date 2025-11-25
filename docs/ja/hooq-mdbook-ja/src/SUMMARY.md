@@ -16,4 +16,4 @@
     - [フレーバー](./reference/flavors.md)
     - [features](./reference/features.md)
 
-- [レシピ・アイデア集](./recipe/index.md)
+- [レシピ・アイデア集]()

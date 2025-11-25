@@ -626,6 +626,110 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f52b00d39961fc5b2736ea853c9cc86238e165017a493d1d5c8eac6bdc4cc273"
 
 [[package]]
+name = "meta-vars-all"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-binding"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-bindings"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-column"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-count"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-file"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-fn_name"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-fn_sig"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-hooq_meta"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-line"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-path"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-source"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "meta-vars-source-summary"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "insta",
+]
+
+[[package]]
 name = "method_insert_mode"
 version = "0.3.0"
 dependencies = [

@@ -282,6 +282,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "flavor-hook"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
 name = "flavor-in-sub-mod"
 version = "0.3.0"
 dependencies = [
@@ -763,6 +771,14 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "my-flavor"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
 ]
 
 [[package]]

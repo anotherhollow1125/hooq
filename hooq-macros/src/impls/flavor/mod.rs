@@ -53,7 +53,6 @@ fn default_method() -> Method {
     // NOTE:
     // $path や $line は eprintln! に直接埋め込みたいところだが、
     // CI側のテストの関係でこのようになっている
-    // (恨むならeprintln!の仕様を恨んでください)
 
     let excerpted_helpers_path = crate::impls::utils::get_source_excerpt_helpers_name_space();
 

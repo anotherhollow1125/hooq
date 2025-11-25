@@ -53,7 +53,7 @@
 
 `?` 演算子 (Question Operator) へフックする場合に限り、フックするメソッドの末尾に `!` (Exclamation Mark) を付与すると末尾の `?` 演算子を取り除く機能があります。
 
-本機能を利用するには **[`consume-question`](./features.md) featureが必要** です。
+> 本機能を利用するには **[`consume-question`](./features.md) featureが必要** です。
 
 ```bash
 cargo add hooq --features consume-question

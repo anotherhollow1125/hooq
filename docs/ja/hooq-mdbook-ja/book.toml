@@ -5,7 +5,7 @@ src = "src"
 title = "hooq Reference 日本語版"
 
 [output.html]
-site-url = "/ja/"
+# site-url = "/ja/"
 sidebar-header-nav = true
 
 [output.html.playground]

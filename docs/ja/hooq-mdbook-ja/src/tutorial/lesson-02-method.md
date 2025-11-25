@@ -43,7 +43,7 @@ cargo add toml
 ...このような恣意的な例を持ち出して私が何を言いたいか、もうお分かりですね？ `.ok_or_else(...)` はボイラープレートです！hooqマクロを使えばこの記述は簡略化できます！
 
 ```rust
-{{#rustdoc_include ../../../../../examples/examples/tutorial/tutorial.rs:3:17}}
+{{#rustdoc_include ../../../../../mdbook-source-code/tutorial-3/src/main.rs:3:17}}
 ```
 
 今回、何番目の `?` 演算子であるかを示す `$nth` メタ変数も入れてみました。エラーになるように実行させると次のようになります。

@@ -41,8 +41,7 @@ fn double_expanded(s: &str) -> Result<u32, Box<dyn std::error::Error>> {
     Ok(res)
 }
 
-#[test]
-fn test() {
+fn main() {
     assert_eq!(double("21").unwrap(), double_expanded("21").unwrap());
 }
 ```

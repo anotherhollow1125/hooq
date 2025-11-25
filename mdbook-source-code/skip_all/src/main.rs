@@ -7,7 +7,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     #[hooq::skip_all]
     let f = || -> Option<()> {
-        optional(())?; // When the hook is applied, an error occurs.
+        optional(())?; // If the hook is applied, an compile error occurs.
 
         Some(())
     };

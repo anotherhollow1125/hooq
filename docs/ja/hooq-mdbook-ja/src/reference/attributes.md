@@ -104,13 +104,13 @@ hooq.toml の内容は以下であるとします。
 `#[hooq::method(.method_name())]` のようなフォーマットで、フックするメソッドを設定できる不活性属性です。
 
 ```rust
-{{#rustdoc_include ../../../../../mdbook-source-code/method/src/main.rs}}
+{{#rustdoc_include ../../../../../mdbook-source-code/attribute-method/src/main.rs}}
 ```
 
 上の例のように、「 `#[hooq]` マクロのすぐ下」・「関数内部」のどちらでも設定の変更を行うことができます。これは以降紹介する不活性属性で共通の性質です。 `main` 関数は以下のように展開されます。
 
 ```rust
-{{#rustdoc_include ../../../../../mdbook-source-code/method/src/main.expanded.rs:6:17}}
+{{#rustdoc_include ../../../../../mdbook-source-code/attribute-method/src/main.expanded.rs:6:17}}
 ```
 
 `#[hooq::method(...)]` には **挿入モード** と **置換モード** の2つのモードがあります。
@@ -120,7 +120,20 @@ hooq.toml の内容は以下であるとします。
 
 その他、フックするメソッド内では `$line` や `$source` といった **メタ変数** を利用することが可能です。
 
-これらモードやメタ変数に関する詳細は[メソッド](./method.md)と[メタ変数](./meta_vars.md)のページを参照してください。
+ユーザーが特に何も指定しない場合、defaultフレーバーの設定値である以下のメソッドが挿入されます。
+
+```rust
+.inspect_err(|e| {
+    let path = $path;
+    let line = $line;
+    let col = $col;
+    let expr = ::hooq::summary!($source);
+
+    ::std::eprintln!("[{path}:{line}:{col}] {e:?}\n{expr}");
+})
+```
+
+モードやメタ変数に関する詳細は[メソッド](./method.md)と[メタ変数](./meta_vars.md)のページを参照してください。
 
 - [メソッド](./method.md)
 - [メタ変数](./meta_vars.md)
@@ -152,20 +165,203 @@ hooqは(デフォルトの設定では)かなり貪欲にメソッドを `?` 等
 
 skip_allでは付与対象全体でフックがスキップされましたが、skipでは **付与した(親)スコープでのみ** フックのスキップが起きます。
 
-skipは、末尾式がネストしてしまっており、そのままロギングをフックするとログが見辛くなってしまう場合に有用です。
+skipは、末尾式がネストしてしまっており、そのままロギングをフックするとログが見辛くなってしまう場合等に有用です。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/skip/src/main.rs::24}}
+```
+
+`#[hooq::skip]` がついている `func2` の方ではmatch式の外につく `inspect_err` がなくなっていることがわかります。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/skip/src/main.expanded.rs:7:19}}
+```
 
 ## フック対象判定を制御する
 
+以下は各式に対して、フックするかしないかをカスタマイズするための不活性属性群になります。
+
+| 名前 | 付与方法 | `...` の部分が取りうる値 |
+|:----|:-------|:----------|
+| hook_targets | `#[hooq::hook_targets(...)]` | `?` or `return` or `tail_expr` の中から複数 |
+| tail_expr_idents | `#[hooq::tail_expr_idents(...)]` | `Err` など |
+| ignore_tail_expr_idents | `#[hooq::ignore_tail_expr_idents(...)]` | `Ok` など |
+| result_types | `#[hooq::result_types(...)]` | `Result` など |
+| hook_in_macros | `#[hooq::hook_in_macros(...)]` | `true` or `false` |
+
+設定値詳細は各項目にて示します。ここには、設定の適用優先順位を記します[^flowchart]。
+
+[^flowchart]: フローチャートで示したかったのですがmdbook-mermaidがうまく機能しなかったため普通に箇条書きで示しています。
+
+- `skip_all` が付与されている場合はフックしない
+    - `skip` の場合は子スコープを除いた同スコープ内についてのみフックしない
+- 対象式がマクロ呼び出し内部にあり、かつ `hook_in_macros` が `false` である場合はフックしない
+- `?` へのフックの場合
+    - `hook_targets` に `?` が含まれていればフックする
+- `return` へのフックの場合
+    - `hook_targets` に `return` が含まれていなければフックしない
+    - 返り値の識別子が `tail_expr_idents` に含まれていればフックする
+    - 関数の返り値型が `result_types` に含まれ、かつ返り値の識別子が `ignore_tail_expr_idents` に含まれない場合フックする
+- 末尾式へのフックの場合
+    - `hook_targets` に `tail_expr` が含まれていなければフックしない
+    - 末尾式の識別子が `tail_expr_idents` に含まれていればフックする
+    - 関数・クロージャが持つブロックの末尾式であり、かつその関数・クロージャの返り値型が `result_types` に含まれ、かつ返り値の識別子が `ignore_tail_expr_idents` に含まれない場合フックする
+
 ### hook_targets
+
+`?` 演算子(Question Operator)、 `return`、 末尾式( `tail_expr` )の3つについて、それぞれフックするかしないかを指定できます。デフォルトでは3種類すべてフックされます。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/hook_targets/src/main.rs::56}}
+```
+
+展開結果は次の通りとなります。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/hook_targets/src/main.expanded.rs:10:31}}
+```
+
+今回は個別に書きましたが、 `#[hooq::hook_targets("?", "return")]` のように一つだけ抜く書き方等ももちろんできます。
 
 ### tail_expr_idents
 
+`return` の返り値あるいは末尾式が指定した識別子である際は、関数の返り値型が [`result_types`](#result_types) に含まれるかに関わらずフックを行います。デフォルトは `Err` で、カンマ区切りで複数指定可能です。
+
+<div class="warning">
+
+識別子にはパス( `xxx::yyy::Zzz` )は認められず、単体( `Zzz` )である必要があります。
+
+一致に関しては、パス中で最後の識別子(`xxx::yyy::Zzz` なら `Zzz`)で判別されます。
+</div>
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/tail_expr_idents/src/main.rs}}
+```
+
+`tail_expr_idents` のおかげで、ブロックの返り値などに `Err` が含まれる場合、そこにもフックが行われるようになります。 `Err` 以外にこのような性質を持たせたい識別子がある際は `tail_expr_idents` に加えることで同様の挙動になります。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/tail_expr_idents/src/main.expanded.rs:10:26}}
+```
+
 ### ignore_tail_expr_idents
+
+[`tail_expr_idents`](#tail_expr_idents) とは対照的に、 `return` の返り値あるいは末尾式が指定した識別である際は関数の返り値型が [`result_types`](#result_types) に含まれている場合でも **フックを行いません** 。デフォルトは `Ok` で、カンマ区切りで複数指定可能です。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/ignore_tail_expr_idents/src/main.rs}}
+```
+
+上記例にあるように、 `ignore_tail_expr_idents` を利用せずとも、 `tail_expr_idents` への指定において頭に `!` (Exclamation Mark) を付けることでも同様の設定を行うことが可能です。展開結果は以下の通りとなります。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/ignore_tail_expr_idents/src/main.expanded.rs:10:17}}
+```
+
+<div class="warning">
+<b>両方に含まれる場合の挙動について</b>
+
+同じ識別子が `tail_expr_idents` と `ignore_tail_expr_idents` の両方に含まれる場合、機構が単純なため **フックされてしまいます**。なるべく `!` (Exclamation Mark) を利用して `tail_expr_idents` 経由で設定した方が確実です。
+
+<details><summary><code>Err</code>の例</summary>
+
+`Err` はデフォルトで `tail_expr_idents` に含まれるので、 `ignore_tail_expr_idents` で指定してもフックされてしまいます。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/ignore_tail_expr_idents-warning/src/main.rs}}
+```
+
+クロージャ `g` ではフックしてほしくないのにフックされていることが確認できます。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/ignore_tail_expr_idents-warning/src/main.expanded.rs:7:14}}
+```
+
+</details>
+
+</div>
 
 ### result_types
 
-## hook_in_macros
+hooqマクロを付与した関数の返り値がフック対象であるかを判別するための識別子を設定する不活性属性です。関数の返り値型の識別子が `result_types` で指定した識別子と一致する時、 `return` や末尾式でフックを行うようになります。デフォルトは `Result` で、カンマ区切りで複数指定可能です。
+
+<div class="warning">
+
+[`tail_expr_idents`](#tail_expr_idents)等と同様に、識別子にはパス( `xxx::yyy::Zzz` )は認められず、単体( `Zzz` )である必要があります。
+
+一致に関しては、パス中で最後の識別子(`xxx::yyy::Zzz` なら `Zzz`)で判別されます。
+</div>
+
+`Result` 型以外に独自で別な型を扱う際などに有用です。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/result_types/src/main.rs::39}}
+```
+
+展開結果は次のようになります。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/result_types/src/main.expanded.rs:10:23}}
+```
+
+### hook_in_macros
+
+関数風マクロ呼び出し内に存在する対象の式に対し、フックを行うかを決定します。デフォルトは `true` でありマクロ呼び出し内までフックが行われます。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/hook_in_macros/src/main.rs}}
+```
+
+展開結果は次の通りです。 `println!` マクロも展開されている点に注意してください。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/hook_in_macros/src/main.expanded.rs:10:18}}
+```
+
+関数風マクロの引数部分はRustの文法に従った構文になっているとは限らず、フックを行う場合に解析に少しコストがかかるためオフにできる不活性属性を設けました。マクロの内側までフックする必要がない場合はこちらの設定を `false` にすることで多少コンパイル時間が短くなるかもしれません(多分)。
 
 ## binding
 
-## flavor を利用した各属性の指定方法
+[メタ変数](./meta_vars.md) において、ユーザーが自由に式を保存できる **バインディング** 機能があります。同じ意味を表すいくつかの書き方があります。
+
+| 付与方法 |備考|
+|:-------|:--|
+| `#[hooq::binding(xxx = ...)]` ||
+| `#[hooq::var(xxx = ...)]` ||
+| `#[hooq::xxx = ...]`| この方法で記述する場合 `xxx` は他不活性属性と名前衝突不可 |
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/attribute-binding/src/main.rs}}
+```
+
+展開結果は次のようになります。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/attribute-binding/src/main.expanded.rs:10:34}}
+```
+
+[バインディング](./meta_vars.md#bindings) については当該ページの方も参照してください。
+
+- [bindings](./meta_vars.md#bindings)
+
+## flavor を利用した設定の部分適用
+
+ここまで紹介してきた不活性属性による設定は、フレーバーを用いた部分適用が可能です。部分適用は `#[hooq::属性 = フレーバー名]` で行います。
+
+また、すべての設定を不活性属性で上書きしたい場合は `#[hooq::flavor = フレーバー名]`、存在するユーザー定義のバインディングを上書きしたい場合は `#[hooq::bindings = フレーバー名]` という記法が使えます。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/attribute-part-flavor/src/main.rs}}
+```
+
+hooq.tomlの内容は以下である時、
+
+```toml
+{{#include ../../../../../mdbook-source-code/attribute-part-flavor/hooq.toml}}
+```
+
+展開結果は次のようになります。
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/attribute-part-flavor/src/main.expanded.rs:6:43}}
+```

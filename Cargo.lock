@@ -77,7 +77,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 
 [[package]]
+name = "attribute-binding"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
 name = "attribute-flavor-1"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "attribute-method"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "attribute-part-flavor"
 version = "0.3.0"
 dependencies = [
  "hooq",
@@ -366,6 +390,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
+name = "hook_in_macros"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "hook_targets"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
 name = "hooq"
 version = "0.3.0"
 dependencies = [
@@ -433,6 +473,22 @@ dependencies = [
  "tokio",
  "toml",
  "util_macros",
+]
+
+[[package]]
+name = "ignore_tail_expr_idents"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "ignore_tail_expr_idents-warning"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
 ]
 
 [[package]]
@@ -560,14 +616,6 @@ name = "memchr"
 version = "2.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f52b00d39961fc5b2736ea853c9cc86238e165017a493d1d5c8eac6bdc4cc273"
-
-[[package]]
-name = "method"
-version = "0.3.0"
-dependencies = [
- "hooq",
- "test-helpers",
-]
 
 [[package]]
 name = "method_replace"
@@ -727,6 +775,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a2d987857b319362043e95f5353c0535c1f58eec5336fdfcf626430af7def58"
 
 [[package]]
+name = "result_types"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
 name = "ryu"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -858,6 +914,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "tail_expr_idents"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
 ]
 
 [[package]]

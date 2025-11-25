@@ -282,6 +282,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "flavor-anyhow"
+version = "0.3.0"
+dependencies = [
+ "anyhow",
+ "hooq",
+ "insta",
+]
+
+[[package]]
+name = "flavor-default"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "insta",
+]
+
+[[package]]
 name = "flavor-hook"
 version = "0.3.0"
 dependencies = [
@@ -296,6 +313,16 @@ dependencies = [
  "hooq",
  "macrotest",
  "test-helpers",
+]
+
+[[package]]
+name = "flavor-log"
+version = "0.3.0"
+dependencies = [
+ "env_logger",
+ "hooq",
+ "insta",
+ "log",
 ]
 
 [[package]]

@@ -1,0 +1,11 @@
+---
+source: mdbook-source-code/flavor-default/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+
+STDERR:
+[mdbook-source-code/flavor-default/src/main.rs:5:5] "Hello, world!"
+   5>    Err("Hell..rld!".into())
+    |
+Error: "Hello, world!"

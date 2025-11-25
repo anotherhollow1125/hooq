@@ -1,0 +1,11 @@
+---
+source: mdbook-source-code/flavor-log/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+
+STDERR:
+[2025-11-25T13:48:11Z ERROR flavor_log] (mdbook-source-code/flavor-log/src/main.rs:7:5) Hello, world!
+       7>    Err("Hell..rld!".into())
+        |
+Error: "Hello, world!"

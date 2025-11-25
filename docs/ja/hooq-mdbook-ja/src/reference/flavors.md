@@ -47,7 +47,7 @@ hooq.tomlの例:
 {{#include ../../../../../mdbook-source-code/my-flavor/hooq.toml}}
 ```
 
-<details><summary>実際の使用例と展開例</summary>
+使用例:
 
 ```rust
 {{#rustdoc_include ../../../../../mdbook-source-code/my-flavor/src/main.rs}}
@@ -58,7 +58,6 @@ hooq.tomlの例:
 ```rust
 {{#rustdoc_include ../../../../../mdbook-source-code/my-flavor/src/main.expanded.rs:13:25}}
 ```
-</details>
 
 ## default
 
@@ -78,6 +77,18 @@ hooq.tomlの例:
 
 この設定はhooq.tomlで上書きが可能です。その場合、 `#[hooq]` とした際の設定値が上書きした設定値になります。
 
+使用例:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-default/src/main.rs}}
+```
+
+実行結果:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-default/tests/snapshots/test__flavor-default.snap:8:11}}
+```
+
 ## empty
 
 全くフックを行わないフレーバーです。 `#[cfg_attr(feature = "...", hooq(empty))]` のようにコンパイル条件分岐のような特殊な用法を想定しています。(何もフックをしないものの、不活性属性のハンドリングは行うので有用な指定です。)
@@ -91,6 +102,13 @@ hooq.tomlの例:
 特殊なフレーバーであるため **唯一上書き不可** としています。
 
 ## hook
+
+hookフレーバーの設定は次の通りです。(コメント部分は気にしないでください。)
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/hook.rs:7:22}}
+```
+
 
 ユーザー側でトレイトを定義し、そこでロギングをする場合に便利なフレーバーです。hooq.tomlを使いたくない際に利用できます。
 
@@ -108,12 +126,6 @@ hooq.tomlの例:
 {{#rustdoc_include ../../../../../mdbook-source-code/flavor-hook/src/main.expanded.rs:37:53}}
 ```
 
-hookフレーバーの設定は次の通りです。(コメント部分は気にしないでください。)
-
-```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/hook.rs:7:22}}
-```
-
 ## log
 
 > `log` feature が必要ですが、defaultに含まれています。
@@ -124,6 +136,18 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 
 ```rust
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:7:27}}
+```
+
+使用例:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-log/src/main.rs}}
+```
+
+実行結果:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:11}}
 ```
 
 ## anyhow
@@ -139,6 +163,19 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 ```
 
 [`.with_context(...)`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを利用するために、 `anyhow::Context` トレイトをuseしています。
+
+
+使用例:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-anyhow/src/main.rs}}
+```
+
+実行結果:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:13}}
+```
 
 ## eyre / color-eyre
 

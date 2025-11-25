@@ -1,0 +1,18 @@
+[package]
+name = "flavor-anyhow"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+anyhow = "1.0.100"
+hooq = { path = "../../hooq" }
+
+[dev-dependencies]
+insta = "1.44.0"

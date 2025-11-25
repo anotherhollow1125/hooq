@@ -12,19 +12,3 @@ env_logger = "0.11.8"
 hooq = { path = "../hooq", features = ["full"] }
 log = "0.4.27"
 toml = "0.9.8"
-
-[[example]]
-name = "index_without_hooq"
-path = "examples/without_hooq/index.rs"
-
-[[example]]
-name = "eye_catch"
-path = "examples/etc/eye_catch.rs"
-
-[[example]]
-name = "tutorial"
-path = "examples/tutorial/tutorial.rs"
-
-[[example]]
-name = "tutorial_with_anyhow"
-path = "examples/tutorial/tutorial_with_anyhow.rs"

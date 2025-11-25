@@ -1,8 +1,0 @@
-[book]
-authors = ["namnium"]
-language = "en"
-src = "src"
-title = "hooq Reference"
-
-[output.html]
-site-url = "/en/"

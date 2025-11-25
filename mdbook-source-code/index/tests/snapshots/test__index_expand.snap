@@ -1,0 +1,53 @@
+---
+source: mdbook-source-code/index/tests/test.rs
+expression: "format!(\"{stdout}\")"
+---
+#![feature(prelude_import)]
+#[macro_use]
+extern crate std;
+#[prelude_import]
+use std::prelude::rust_2024::*;
+use std::error::Error;
+use hooq::hooq;
+fn load_host_and_port() -> Result<String, Box<dyn Error>> {
+    let host = std::env::var("APP_HOST")
+        .inspect_err(|e| {
+            let path = "mdbook-source-code/index/src/main.rs";
+            let line = 8usize;
+            let col = 41usize;
+            let expr = "   8>    std::env::var(\"APP_HOST\")?\n    |";
+            ::std::eprintln!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr);
+        })?;
+    let port = std::env::var("APP_PORT")
+        .inspect_err(|e| {
+            let path = "mdbook-source-code/index/src/main.rs";
+            let line = 11usize;
+            let col = 41usize;
+            let expr = "  11>    std::env::var(\"APP_PORT\")?\n    |";
+            ::std::eprintln!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr);
+        })?;
+    let port: u16 = port
+        .parse()
+        .inspect_err(|e| {
+            let path = "mdbook-source-code/index/src/main.rs";
+            let line = 14usize;
+            let col = 33usize;
+            let expr = "  14>    port.parse()?\n    |";
+            ::std::eprintln!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr);
+        })?;
+    Ok(format!("{0}:{1}", host, port))
+}
+fn main() -> Result<(), Box<dyn Error>> {
+    let host_and_port = load_host_and_port()
+        .inspect_err(|e| {
+            let path = "mdbook-source-code/index/src/main.rs";
+            let line = 21usize;
+            let col = 45usize;
+            let expr = "  21>    load_host_and_port()?\n    |";
+            ::std::eprintln!("[{0}:{1}:{2}] {3:?}\n{4}\n", path, line, col, e, expr);
+        })?;
+    {
+        ::std::io::_print(format_args!("Server is running on: {0}\n", host_and_port));
+    };
+    Ok(())
+}

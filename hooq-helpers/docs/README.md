@@ -6,7 +6,7 @@ This is sub-crate for [hooq](https://github.com/anotherhollow1125/hooq/tree/main
 </a>
 <h1>hooq</h1>
 
-<h3>A simple macro that inserts a method before `?`.</h3>
+<h3>A simple macro that inserts (hooks) a method before question operator (`?`).</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
 [![docs](https://img.shields.io/docsrs/hooq/0.2.0)](https://docs.rs/hooq/0.2.0/hooq/)
@@ -14,7 +14,11 @@ This is sub-crate for [hooq](https://github.com/anotherhollow1125/hooq/tree/main
 
 🪝 The name hooq comes from combining 'HOOk' and the 'Question mark operator ( ? )'. 🪝
 
+Enhance your questions by hooq!?
+
 </div>
+
+Keywords: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 Documentations:
 - tutorial: (mdBook coming soon.)
@@ -25,104 +29,29 @@ Documentations:
 
 <hr />
 
+Insert methods specified with `#[hooq::method(...)]` between expressions and the `?` operator (Question Operator)!
+
 ```rust
 use hooq::hooq;
 
 #[hooq]
-#[hooq::method(.ok_or_else(|| format!("[{}:{}:{}]
-{}", $file, $line, $col, ::hooq::summary!($source))))]
-fn display_name(val: &toml::Value) -> Result<(), String> {
-    let name = val.get("package")?.get("name")?.as_str()?;
-
-    #[hooq::skip_all]
-    if name.contains("4") {
-        return Err("name contains '4'. Guido Mista disallow this.".to_string());
-    }
-
-    println!("name: {name}");
-
-    Ok(())
+#[hooq::method(.map(|v| v * 2))]
+fn double(s: &str) -> Result<u32, Box<dyn std::error::Error>> {
+    let res = s.parse::<u32>()?;
+    Ok(res)
 }
 
-#[hooq]
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let cargo_toml = toml::from_str(&std::fs::read_to_string("Cargo.toml")?)?;
+fn double_expanded(s: &str) -> Result<u32, Box<dyn std::error::Error>> {
+    let res = s.parse::<u32>().map(|v| v * 2)?;
+    Ok(res)
+}
 
-    display_name(&cargo_toml)?;
-
-    Ok(())
+fn main() {
+    assert_eq!(double("21").unwrap(), double_expanded("21").unwrap());
 }
 ```
 
-The above expands to the following.
-
-```ignore
-use hooq::hooq;
-fn display_name(val: &toml::Value) -> Result<(), String> {
-    let name = val
-        .get("package")
-        .ok_or_else(|| ::alloc::__export::must_use({
-            ::alloc::fmt::format(
-                format_args!("{0} (L{1}, {2})", "val.get(\"package\")", 6usize, "1st ?"),
-            )
-        }))?
-        .get("name")
-        .ok_or_else(|| ::alloc::__export::must_use({
-            ::alloc::fmt::format(
-                format_args!(
-                    "{0} (L{1}, {2})", "val.get(\"package\") ? .get(\"name\")", 6usize,
-                    "2nd ?",
-                ),
-            )
-        }))?
-        .as_str()
-        .ok_or_else(|| ::alloc::__export::must_use({
-            ::alloc::fmt::format(
-                format_args!(
-                    "{0} (L{1}, {2})",
-                    "val.get(\"package\") ? .get(\"name\") ? .as_str()", 6usize, "3rd ?",
-                ),
-            )
-        }))?;
-    if name.contains("4") {
-        return Err("name contains '4'. Guido Mista disallow this.".to_string());
-    }
-    {
-        ::std::io::_print(format_args!("name: {0}\n", name));
-    };
-    Ok(())
-}
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let cargo_toml = toml::from_str(
-            &std::fs::read_to_string("Cargo.toml")
-                .inspect_err(|e| {
-                    let path = "/path/to/your/project/src/main.rs";
-                    let line = 20usize;
-                    {
-                        ::std::io::_eprint(
-                            format_args!("[{0}:L{1}] {2:?}\n", path, line, e),
-                        );
-                    };
-                })?,
-        )
-        .inspect_err(|e| {
-            let path = "/path/to/your/project/src/main.rs";
-            let line = 20usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })?;
-    display_name(&cargo_toml)
-        .inspect_err(|e| {
-            let path = "/path/to/your/project/src/main.rs";
-            let line = 22usize;
-            {
-                ::std::io::_eprint(format_args!("[{0}:L{1}] {2:?}\n", path, line, e));
-            };
-        })?;
-    Ok(())
-}
-```
+You don't have to explicitly specify `#[hooq::method(...)]`—there's also a mechanism called "flavors" for easily applying pre-configured settings!
 
 ## Install
 
@@ -141,31 +70,68 @@ hooq = "0.2.0"
 
 ## Method inserted by default
 
-If you don't specify anything for `#[hooq]`, the following method is inserted by default.
+If you don't specify anything for `#[hooq]`, the following method is inserted by default:
 
 ```ignore
 .inspect_err(|e| {
     let path = $path;
     let line = $line;
+    let col = $col;
+    let expr = ::hooq::summary!($source);
 
-    ::std::eprintln!("[{path}:L{line}] {e:?}");
+    ::std::eprintln!("[{path}:{line}:{col}] {e:?}\n{expr}");
 })
 ```
 
-You can switch the method to hook with the inert attribute `#[hooq::method(...)]`. Also, when you specify a flavor at the call site such as `#[hooq(log)]` or `#[hooq(anyhow)]`, the inserted method will change according to that flavor!
+You can switch the method to hook with the inert attribute `#[hooq::method(...)]`. Also, when you specify a flavor at the macro call site such as `#[hooq(log)]` or `#[hooq(anyhow)]`, the inserted method will change according to that flavor!
 
-You can find the available flavors here: [hooq-macros/src/impls/flavor/presets/](https://github.com/anotherhollow1125/hooq/tree/main/hooq-macros/src/impls/flavor/presets)
+## Attributes Quick Reference
 
-(More to come!)
+| Name | Type | Description |
+|:----|:----|:----|
+| flavor | Macro root meta | Apply settings for the specified flavor |
+| trait_use | Macro root meta | Insert `use XXX as _;` before the item for the specified path (`XXX`) |
+| method | Inert attribute | Set the method to insert (or expression to replace in replace mode) |
+| skip_all / skip | Inert attribute | Disable hooking for expressions with this attribute |
+| hook_targets | Inert attribute | Toggle hooking for `?`, `return`, and tail expressions (default: all three) |
+| tail_expr_idents | Inert attribute | Specify idents to hook when they appear in tail position (default: `Err`) |
+| ignore_tail_expr_idents | Inert attribute | Specify idents to not hook even when they would be hooked (default: `Ok`) |
+| result_types | Inert attribute | Specify return types for functions to hook `return` and tail expressions (default: `Result`) |
+| hook_in_macros | Inert attribute | Specify whether to hook inside macros (default: `true`) |
+| binding | Inert attribute | Create meta variables that are replaced with specified literals/expressions |
 
-## Attributes
+See mdbook's [Attributes]() for more details!
 
-(WIP)
+## Meta Variables Quick Reference
 
-## Meta variables
+| Name | Literal Type | Description |
+|:----|:-----------|:----|
+| `$line` | usize integer | Line number where the hook target is located |
+| `$column` or `$col` | usize integer | Column number where the hook target is located |
+| `$path` | string | Relative path to the file containing the hook target |
+| `$file` | string | Name of the file containing the hook target |
+| `$source` | expression | Expression for insertion/replacement target used for debugging/logging (note the difference from `$expr`) |
+| `$count` or `$nth` | string | Indicates which replacement target this is |
+| `$fn_name` or `$fnname` | string | Name of the function containing the hook target |
+| `$fn_sig` or `$fnsig` | string | Signature of the function containing the hook target |
+| `$xxx` (example) | (arbitrary) | User-defined meta variable via inert attribute `#[hooq::xxx = ...]` |
+| `$bindings` or `$vars` | [`HashMap`](https://doc.rust-lang.org/std/collections/struct.HashMap.html) | All meta variable bindings |
+| `$hooq_meta` or `$hooqmeta` | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) | Struct combining `$line`, `$col`, `$path`, `$file`, `$source`, `$count`, and `$bindings` |
+| `$expr` | expression | Expression for replacement target used for replacement (note the difference from `$source`) |
+| `$so_far` or `$sofar` | expression | Hook set so far, mainly used for insertion |
 
-(WIP)
+See mdbook's [Meta Variables]() for more details!
 
-## Flavor
+## Built-in Flavors Quick Reference
 
-(WIP)
+| Flavor Name | Feature | Description |
+|:----------|:--------|:----|
+| default | - | The flavor used when nothing is specified. Can be overridden with hooq.toml |
+| empty | - | A flavor for when you don't want to hook anything. Cannot be overridden |
+| hook | - | A flavor that inserts a `hook` method taking [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) as an argument. Intended for use via user-defined traits. Can be overridden |
+| log | log | A flavor that inserts an `inspect_err` method calling [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html). Can be overridden |
+| anyhow | anyhow | A flavor that inserts the [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) method. Can be overridden |
+| eyre | eyre | (WIP) |
+| tracing | tracing | (WIP) |
+
+See mdbook's [Flavors]() for more details!

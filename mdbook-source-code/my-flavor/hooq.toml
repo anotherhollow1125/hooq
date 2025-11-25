@@ -1,0 +1,14 @@
+[my_flavor]
+trait_uses = ["sub::MyTrait"]
+method = """.inspect_err(|_| {
+    let _ = $xxx;
+})"""
+hook_targets = ["?", "return", "tail_expr"]
+tail_expr_idents = ["Err"]
+ignore_tail_expr_idents = ["Ok"]
+result_types = ["Result"]
+hook_in_macros = true
+bindings = { xxx = "\"my_flavor\"" }
+
+[my_flavor.sub_flavor]
+bindings = { xxx = "\"my_flavor_sub\"" }

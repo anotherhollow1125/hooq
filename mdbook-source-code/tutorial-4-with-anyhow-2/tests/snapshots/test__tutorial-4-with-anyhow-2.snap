@@ -1,0 +1,18 @@
+---
+source: mdbook-source-code/tutorial-4-with-anyhow-2/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+
+STDERR:
+Error: [mdbook-source-code/tutorial-4-with-anyhow-2/src/main.rs:25:39]
+  25>    display_name_by_mista(&cargo_toml)?
+    |
+
+Caused by:
+    0: [mdbook-source-code/tutorial-4-with-anyhow-2/src/main.rs:9:9]
+          9>    return Err(anyhow::anyhow!(
+         10|            "name `{name}` contains '4'. Guido Mista disallow this."
+         11|        ))
+           |
+    1: name `tutorial-4-with-anyhow-2` contains '4'. Guido Mista disallow this.

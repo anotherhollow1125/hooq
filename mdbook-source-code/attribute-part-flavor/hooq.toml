@@ -1,0 +1,8 @@
+[my_flavor]
+method = """.inspect_err(|_| {
+    let _ = "from my_flavor";
+    let _x = $xxx;
+    let _y = $yyy;
+})"""
+result_types = ["Result", "MyResult"]
+bindings = { xxx = "\"xxx from my_flavor\"", yyy = "\"yyy from my_flavor\"" }

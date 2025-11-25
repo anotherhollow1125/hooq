@@ -1,0 +1,9 @@
+[my_flavor]
+method = """.inspect(|_| {
+    let _ = $tag;
+})"""
+bindings = { tag = "\"my_flavor\"" }
+
+[my_flavor.sub_flavor]
+bindings = { tag = "\"my_flavor.sub_flavor\"" }
+tail_expr_idents = ["Ok"]

@@ -1,0 +1,10 @@
+---
+source: mdbook-source-code/tutorial-3/tests/test.rs
+expression: "format!(\"{}{}\", stdout, stderr)"
+---
+Success: `std :: fs :: read_to_string(path) ?` @ Line 26: Col: 80
+Success: `toml :: from_str(& std :: fs :: read_to_string(path) ?) ?` @ Line 26: Col: 82
+[mdbook-source-code/tutorial-3/src/main.rs:28:30] "val.get(\"package\") ? .get(\"name\") ? [Line: 12, 2nd ?]"
+  28>    display_name(&cargo_toml)?
+    |
+Error: "val.get(\"package\") ? .get(\"name\") ? [Line: 12, 2nd ?]"

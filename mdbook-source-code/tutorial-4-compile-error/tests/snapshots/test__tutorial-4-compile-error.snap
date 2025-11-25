@@ -1,0 +1,21 @@
+---
+source: mdbook-source-code/tutorial-4-compile-error/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+
+STDERR:
+error[E0599]: no method named `ok_or_else` found for enum `Result<T, E>` in the current scope
+  --> mdbook-source-code/tutorial-4-compile-error/src/main.rs:15:9
+   |
+15 |         return Err(format!(
+   |         ^^^^^^
+   |
+help: there is a method `or_else` with a similar name
+   |
+15 -         return Err(format!(
+15 +         or_else Err(format!(
+   |
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `tutorial-4-compile-error` (bin "tutorial-4-compile-error") due to 1 previous error

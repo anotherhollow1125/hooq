@@ -1,0 +1,14 @@
+---
+source: mdbook-source-code/index/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+
+STDERR:
+[mdbook-source-code/index/src/main.rs:8:41] NotPresent
+   8>    std::env::var("APP_HOST")?
+    |
+[mdbook-source-code/index/src/main.rs:21:45] NotPresent
+  21>    load_host_and_port()?
+    |
+Error: NotPresent

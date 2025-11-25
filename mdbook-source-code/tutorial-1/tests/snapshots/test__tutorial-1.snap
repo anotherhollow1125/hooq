@@ -1,0 +1,9 @@
+---
+source: mdbook-source-code/tutorial-1/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+Success: `std :: fs :: read_to_string(path) ?` @ Line 10: Col: 81
+Success: `toml :: from_str(& std :: fs :: read_to_string(path) ?) ?` @ Line 10: Col: 83
+
+STDERR:

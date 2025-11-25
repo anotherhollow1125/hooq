@@ -1,0 +1,18 @@
+[package]
+name = "all_attr"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+hooq = { path = "../../hooq" }
+
+[dev-dependencies]
+macrotest = "1.2.0"
+test-helpers = { path = "../../test-helpers" }

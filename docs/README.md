@@ -20,6 +20,7 @@ Keywords: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `q
 
 Documentations:
 - tutorial: (mdBook coming soon.)
+- reference: (mdBook coming soon.)
 - docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
 
 > [!NOTE]

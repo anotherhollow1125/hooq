@@ -22,6 +22,7 @@ Enhance your questions by hooq!?
 
 ドキュメント:
 - チュートリアル: (mdBook を準備中です)
+- リファレンス: (mdBook を準備中です)
 - docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
 
 <hr />
@@ -81,6 +82,10 @@ hooq = "0.2.0"
 ```
 
 `#[hooq::method(...)]` 不活性属性でフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` としてフレーバーを指定した場合などは、そのフレーバーにちなんだメソッドになります！
+
+## ドキュメント
+
+mdbook: ...
 
 ## 属性 クイックリファレンス
 

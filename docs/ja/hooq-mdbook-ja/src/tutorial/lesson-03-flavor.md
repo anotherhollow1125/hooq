@@ -53,7 +53,7 @@ hooqクレート側で予め用意したフレーバーだけでなく、ユー�
 
 設定したフレーバーはソースコードから利用できるようになります。
 
-```rust,ignore
+```rust
 {{#rustdoc_include ../../../../../mdbook-source-code/tutorial-flavor/src/main.rs}}
 ```
 

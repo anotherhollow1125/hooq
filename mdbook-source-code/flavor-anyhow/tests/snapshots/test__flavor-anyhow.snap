@@ -5,9 +5,15 @@ expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
 STDOUT:
 
 STDERR:
-Error: [mdbook-source-code/flavor-anyhow/src/main.rs:5:5]
-   5>    Err(anyhow::anyhow!("Hello, world!"))
+Error: [mdbook-source-code/flavor-anyhow/src/main.rs:15:12]
+  15>    func2()?
     |
 
 Caused by:
-    Hello, world!
+    0: [mdbook-source-code/flavor-anyhow/src/main.rs:10:5]
+         10>    func1()
+           |
+    1: [mdbook-source-code/flavor-anyhow/src/main.rs:5:5]
+          5>    Err(anyhow::anyhow!("Error in func1"))
+           |
+    2: Error in func1

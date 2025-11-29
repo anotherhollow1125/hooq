@@ -4,9 +4,6 @@ language = "ja"
 src = "src"
 title = "hooq Reference 日本語版"
 
-[output.test]
-enable = false
-
 [output.html]
 # site-url = "/ja/"
 sidebar-header-nav = true

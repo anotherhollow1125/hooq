@@ -118,7 +118,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 {{#rustdoc_include ../../../../../mdbook-source-code/flavor-hook/src/main.rs}}
 ```
 
-第2引数部分が `meta_fn` というクロージャにしているのは、遅延評価のためです。ここをクロージャにしない場合すべての場所で `HooqMeta` が生成されてしまうため処理が重くなってしまいます。
+第2引数部分を `meta_fn` というクロージャにしているのは、遅延評価のためです。ここをクロージャにしない場合すべての場所で `HooqMeta` が生成されてしまうため処理が重くなってしまいます。
 
 展開結果:
 
@@ -174,7 +174,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 実行結果:
 
 ```bash
-{{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:13}}
+{{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:19}}
 ```
 
 ## eyre / color-eyre

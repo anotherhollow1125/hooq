@@ -86,7 +86,15 @@ If you don't specify anything for `#[hooq]`, the following method is inserted by
 
 You can switch the method to hook with the inert attribute `#[hooq::method(...)]`. Also, when you specify a flavor at the macro call site such as `#[hooq(log)]` or `#[hooq(anyhow)]`, the inserted method will change according to that flavor!
 
+## Documentations
+
+mdbook: ...
+
 ## Attributes Quick Reference
+
+The hooq macro can modify its behavior using inert attributes such as `#[hooq::method(...)]`.
+
+See mdbook's [Attributes]() for more details!
 
 | Name | Type | Description |
 |:----|:----|:----|
@@ -101,9 +109,53 @@ You can switch the method to hook with the inert attribute `#[hooq::method(...)]
 | hook_in_macros | Inert attribute | Specify whether to hook inside macros (default: `true`) |
 | binding | Inert attribute | Create meta variables that are replaced with specified literals/expressions |
 
-See mdbook's [Attributes]() for more details!
+Usage example:
+
+```rust
+use hooq::hooq;
+
+mod sub {
+    pub trait Trait {}
+}
+
+fn failable<T>(val: T) -> Result<T, String> {
+    Ok(val)
+}
+
+#[hooq(flavor = "hook", trait_use(sub::Trait))] // Attribute macro root.
+#[hooq::method(.inspect_err(|_| { let _ = "error!"; }))] // All following attributes are inert.
+#[hooq::hook_targets("?", "return", "tail_expr")]
+#[hooq::tail_expr_idents("Err")]
+#[hooq::ignore_tail_expr_idents("Ok")]
+#[hooq::result_types("Result")]
+#[hooq::hook_in_macros(true)]
+#[hooq::binding(xxx = "xxx_value")]
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    failable(())?;
+
+    #[hooq::skip_all]
+    if failable(false)? {
+        failable(())?;
+    }
+
+    #[hooq::skip]
+    if failable(false)? {
+        // Next line is not skipped.
+        failable(())?;
+    }
+
+    #[hooq::method(.inspect_err(|_| { let _ = $xxx; }))]
+    failable(())?;
+
+    Ok(())
+}
+```
 
 ## Meta Variables Quick Reference
+
+With method settings for insertion such as `#[hooq::method(...)]`, you can use information convenient for debugging and logging through meta variables such as `$line`.
+
+See mdbook's [Meta Variables]() for more details!
 
 | Name | Literal Type | Description |
 |:----|:-----------|:----|
@@ -121,9 +173,49 @@ See mdbook's [Attributes]() for more details!
 | `$expr` | expression | Expression for replacement target used for replacement (note the difference from `$source`) |
 | `$so_far` or `$sofar` | expression | Hook set so far, mainly used for insertion |
 
-See mdbook's [Meta Variables]() for more details!
+Usage example:
+
+```rust
+use hooq::hooq;
+
+fn failable<T>(val: T) -> Result<T, String> {
+    Ok(val)
+}
+
+#[hooq]
+#[hooq::xxx = "user defined binding."]
+#[hooq::method(.inspect_err(|_| {
+    // Fundamental information provided by hooq.
+    let _line = $line;
+    let _column = $column;
+    let _path = $path;
+    let _file = $file;
+    let _source = stringify!($source);
+    let _count = $count;
+    let _fn_name = $fn_name;
+    let _fn_sig = $fn_sig;
+
+    // Meta vars defined by user.
+    let _xxx = $xxx;
+    let _bindings = $bindings;
+
+    // All information summarized up to this point.
+    let _hooq_meta = $hooq_meta;
+}))]
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    failable(())?;
+
+    Ok(())
+}
+```
 
 ## Built-in Flavors Quick Reference
+
+Configuring settings with attributes every time is tedious. hooq has a feature called "flavors" that allows you to pre-configure settings.
+
+Flavors can be user-defined, and hooq also provides several built-in ones!
+
+See mdbook's [Flavors]() for more details! Below are the pre-configured flavors (built-in flavors).
 
 | Flavor Name | Feature | Description |
 |:----------|:--------|:----|
@@ -135,4 +227,44 @@ See mdbook's [Meta Variables]() for more details!
 | eyre | eyre | (WIP) |
 | tracing | tracing | (WIP) |
 
-See mdbook's [Flavors]() for more details!
+Usage example:
+
+(The following may be outdated due to update lag. Please refer to mdbook's [Flavors > anyhow]().)
+
+```rust,should_panic
+use hooq::hooq;
+
+#[hooq(anyhow)]
+fn func1() -> anyhow::Result<i32> {
+    Err(anyhow::anyhow!("Error in func1"))
+}
+
+#[hooq(anyhow)]
+fn func2() -> anyhow::Result<i32> {
+    func1()
+}
+
+#[hooq(anyhow)]
+fn main() -> anyhow::Result<()> {
+    func2()?;
+
+    Ok(())
+}
+```
+
+Output example:
+
+```plaintext
+Error: [mdbook-source-code/flavor-anyhow/src/main.rs:15:12]
+  15>    func2()?
+    |
+
+Caused by:
+    0: [mdbook-source-code/flavor-anyhow/src/main.rs:10:5]
+         10>    func1()
+           |
+    1: [mdbook-source-code/flavor-anyhow/src/main.rs:5:5]
+          5>    Err(anyhow::anyhow!("Error in func1"))
+           |
+    2: Error in func1
+```

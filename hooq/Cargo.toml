@@ -46,4 +46,5 @@ path = "../hooq-macros"
 version = "0.3.0"
 
 [dev-dependencies]
+anyhow = "1.0.100"
 toml = "0.9.8"

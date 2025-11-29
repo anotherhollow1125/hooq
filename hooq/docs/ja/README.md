@@ -87,6 +87,10 @@ mdbook: ...
 
 ## 属性 クイックリファレンス
 
+hooqマクロは `#[hooq::method(...)]` などをはじめとした不活性属性を用いて挙動を変更することが可能です。
+
+詳細はmdbookの[属性]()を見てください！
+
 | 名前 | 種別 | 説明 |
 |:----|:----|:----|
 | flavor | マクロルートのメタ | 指定したフレーバーの設定を適用する |
@@ -100,9 +104,53 @@ mdbook: ...
 | hook_in_macros | 不活性属性 | マクロ内にもフックを行うかを指定(デフォルトは `true` ) |
 | binding | 不活性属性 | 指定したリテラル・式で置換されるメタ変数を作成 |
 
-詳細はmdbookの[属性]()を見てください！
+使用例:
+
+```rust
+use hooq::hooq;
+
+mod sub {
+    pub trait Trait {}
+}
+
+fn failable<T>(val: T) -> Result<T, String> {
+    Ok(val)
+}
+
+#[hooq(flavor = "hook", trait_use(sub::Trait))] // Attribute macro root.
+#[hooq::method(.inspect_err(|_| { let _ = "error!"; }))] // All following attributes are inert.
+#[hooq::hook_targets("?", "return", "tail_expr")]
+#[hooq::tail_expr_idents("Err")]
+#[hooq::ignore_tail_expr_idents("Ok")]
+#[hooq::result_types("Result")]
+#[hooq::hook_in_macros(true)]
+#[hooq::binding(xxx = "xxx_value")]
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    failable(())?;
+
+    #[hooq::skip_all]
+    if failable(false)? {
+        failable(())?;
+    }
+
+    #[hooq::skip]
+    if failable(false)? {
+        // Next line is not skipped.
+        failable(())?;
+    }
+
+    #[hooq::method(.inspect_err(|_| { let _ = $xxx; }))]
+    failable(())?;
+
+    Ok(())
+}
+```
 
 ## メタ変数 クイックリファレンス
+
+`#[hooq::method(...)]` などによる挿入するメソッドの設定では、 `$line` を始めとしたメタ変数を通してデバッグ・ロギングに便利な情報を利用することができます。
+
+詳細はmdbookの[メタ変数]()を見てください！
 
 | 名前 | リテラル種別 | 説明 |
 |:----|:-----------|:----|
@@ -120,9 +168,49 @@ mdbook: ...
 | `$expr` | 式 | 置換用に用いる、置換対象の式 ( `$source` との違いに注意 ) |
 | `$so_far` or `$sofar` | 式 | 主に挿入用に用いる、これまでに設定されているフック |
 
-詳細はmdbookの[メタ変数]()を見てください！
+使用例:
+
+```rust
+use hooq::hooq;
+
+fn failable<T>(val: T) -> Result<T, String> {
+    Ok(val)
+}
+
+#[hooq]
+#[hooq::xxx = "user defined binding."]
+#[hooq::method(.inspect_err(|_| {
+    // Fundamental information provided by hooq.
+    let _line = $line;
+    let _column = $column;
+    let _path = $path;
+    let _file = $file;
+    let _source = stringify!($source);
+    let _count = $count;
+    let _fn_name = $fn_name;
+    let _fn_sig = $fn_sig;
+
+    // Meta vars defined by user.
+    let _xxx = $xxx;
+    let _bindings = $bindings;
+
+    // All information summarized up to this point.
+    let _hooq_meta = $hooq_meta;
+}))]
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    failable(())?;
+
+    Ok(())
+}
+```
 
 ## 組み込みフレーバー クイックリファレンス
+
+毎回属性を付与して設定を行うのは大変です。hooqには予め設定を済ませておく機能である「フレーバー」があります。
+
+フレーバーはユーザーが自分で定義できる他、hooq側で予め用意しているものがいくつかあります！
+
+詳細はmdbookの[フレーバー]()を見てください！以下は予め用意しているフレーバー(組み込みフレーバー)になります。
 
 | フレーバー名 | feature | 内容 |
 |:----------|:--------|:----|
@@ -134,4 +222,44 @@ mdbook: ...
 | eyre | eyre | (WIP) |
 | tracing | tracing | (WIP) |
 
-詳細はmdbookの[フレーバー]()を見てください！
+使用例:
+
+(以下は更新漏れにより古い可能性があります。mdbookの [フレーバー > anyhow]() の方を参照してください。)
+
+```rust,should_panic
+use hooq::hooq;
+
+#[hooq(anyhow)]
+fn func1() -> anyhow::Result<i32> {
+    Err(anyhow::anyhow!("Error in func1"))
+}
+
+#[hooq(anyhow)]
+fn func2() -> anyhow::Result<i32> {
+    func1()
+}
+
+#[hooq(anyhow)]
+fn main() -> anyhow::Result<()> {
+    func2()?;
+
+    Ok(())
+}
+```
+
+出力例:
+
+```plaintext
+Error: [mdbook-source-code/flavor-anyhow/src/main.rs:15:12]
+  15>    func2()?
+    |
+
+Caused by:
+    0: [mdbook-source-code/flavor-anyhow/src/main.rs:10:5]
+         10>    func1()
+           |
+    1: [mdbook-source-code/flavor-anyhow/src/main.rs:5:5]
+          5>    Err(anyhow::anyhow!("Error in func1"))
+           |
+    2: Error in func1
+```

@@ -30,6 +30,7 @@ syn = { version = "2.0.111", features = ["full", "extra-traits", "fold"] }
 toml = "0.9.8"
 
 [dev-dependencies]
+anyhow = "1.0.100"
 futures = "0.3.31"
 hooq = { path = "../hooq" }
 insta = "1.44.1"

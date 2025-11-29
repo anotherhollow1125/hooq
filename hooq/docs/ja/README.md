@@ -10,7 +10,7 @@
 [![docs](https://img.shields.io/docsrs/hooq/0.2.0)](https://docs.rs/hooq/0.2.0/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
-🪝 hooq という名前は 'HOOk' と 'Question' 演算子 ( `?` ) が由来です 🪝
+?🪝 hooq という名前は 'HOOk' と 'Question' 演算子 ( `?` ) が由来です 🪝?
 
 Enhance your questions by hooq!?
 
@@ -49,9 +49,104 @@ fn main() {
 
 `#[hooq::method(...)]` の指定をわざわざしなくても、予め用意した設定を楽に適用するフレーバーといった仕組みもあります！
 
+## ?🪝 なぜhooq? 🪝?
+
+`?` 演算子の前にメソッドを挿入できると、デバッグやロギングのためのボイラープレートを削減でき、結果的に可読性を失わずにロギング情報を増やすことができます！
+
+[anyhow](https://docs.rs/anyhow/latest/anyhow/) クレートの [`Context::with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドは最たる例でしょう！hooqクレートにはこのメソッドを楽に挿入するための機能 (anyhowフレーバー) もあります。
+
+```rust,should_panic
+use hooq::hooq;
+
+#[hooq(anyhow)]
+fn func1() -> anyhow::Result<i32> {
+    Err(anyhow::anyhow!("Error in func1"))
+}
+
+#[hooq(anyhow)]
+fn func2() -> anyhow::Result<i32> {
+    func1()
+}
+
+#[hooq(anyhow)]
+fn main() -> anyhow::Result<()> {
+    func2()?;
+
+    Ok(())
+}
+```
+
+`.with_context(|| {...})` がフックされ、以下のように出力されます！
+
+```plaintext
+Error: [mdbook-source-code/flavor-anyhow/src/main.rs:15:12]
+  15>    func2()?
+    |
+
+Caused by:
+    0: [mdbook-source-code/flavor-anyhow/src/main.rs:10:5]
+         10>    func1()
+           |
+    1: [mdbook-source-code/flavor-anyhow/src/main.rs:5:5]
+          5>    Err(anyhow::anyhow!("Error in func1"))
+           |
+    2: Error in func1
+```
+
+その他の具体例についてはREADMEに掲載すると長くなるため、mdbookの方にまとめました: [なぜhooqを使うか?]()
+
+すべての関数に `#[hooq]` (や `#[hooq(anyhow)]` ) マクロを付与すると、エラーのスタックトレースに近いものを得ることができます。
+
+スタックトレース(に近いもの)を得る他の手段との比較表を以下に示します。
+
+|| [`Backtrace`](https://doc.rust-lang.org/std/backtrace/struct.Backtrace.html) | [`#[tracing::instrument]`](https://docs.rs/tracing/latest/tracing/attr.instrument.html) | `hooq` |
+|:-|:-:|:-:|:-:|
+| 学習コスト・自由度 | ⚠️ | ⚠️ | 🌟 |
+| 型定義の容易さ | ⚠️ | ✅ | ✅ |
+| マクロレス | ✅ | ❌ | ❌ |
+| 情報量制御 | ❌ | ✅ | 🌟 |
+
+凡例:
+- 🌟: とても良い
+- ✅: 良い
+- ⚠️: あまり良くない
+- ❌: 良くない
+
+比較表解説:
+- 学習コスト・自由度
+    - ⚠️ `Backtrace` は `RUST_LIB_BACKTRACE=1` 環境変数の定義が必要な上使い方が煩雑です。
+    - ⚠️ `tracing` はスタックトレースの取得を目的とした場合は過剰です。とはいえ、慣れていれば程よい選択肢と言えます。
+    - 🌟 `hooq` は関数の頭にマクロを付けるだけです！
+- 型定義の容易さ:
+    - ⚠️ `Backtrace` はバックトレースを利用しない場合でも予めエラー型のフィールドに含める必要があります。エラー型の表現がシンプルではなくなるでしょう。
+    - ✅ `tracing` には特に制約がないです。
+    - ✅ `hooq` も、任意のエラーハンドリングクレートと相性が良いです！
+- マクロレス:
+    - ✅ `Backtrace` はマクロを利用しなくて良いのが利点です！
+    - ❌ `tracing` でスタックトレース相当の情報を得るには、`#[tracing::instrument]` がほぼ必須です。
+    - ❌ `hooq` はマクロクレートなので、マクロを使いたくない場合には利用できません。
+- 情報量制御:
+    - ❌ `Backtrace` が出力する通常のバックトレースは情報量が多すぎます😵
+      - 非同期の場合全く役に立ちませんし、多くの場合では過剰でしょう。
+    - ✅ `tracing` は非同期の場合でも関数をたどることができます。一方、「何行目の `?` 演算子か？」といった詳細な情報を得るにはコストがかかります。
+    - 🌟 `hooq` は (`#[tracing::instrument]` と同様に) `#[hooq]`を付けた関数についてのみトレースされるのでほしい箇所だけ的確に得られます。その上、 `?` 演算子や `return` の位置まで取得でき、より細かい情報を得られます！
+        - 属性マクロなので、test時や特定のfeatureが有効な時だけ `#[cfg_attr(..., hooq(...))]` で条件付き付与、といったことが可能です！
+        - 💡 `tracing` と併用が可能なので、tracingの情報取得粒度を増やす使い方もできます！詳しくは [mdbook > flavor > tracing]() を見てください
+
+## ドキュメント
+
+詳細な使い方は以下を参照ください！(冒頭にも載せてありますが再掲)
+
+- チュートリアル: (mdBook を準備中です)
+- リファレンス: (mdBook を準備中です)
+- docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
+
 ## インストール
 
-以下に示すように `cargo add` で加えるか、
+> [!NOTE]
+> [MSRV](https://doc.rust-lang.org/cargo/reference/rust-version.html) は `$line` メタ変数による行数取得の関係で [1.88](https://blog.rust-lang.org/2025/06/26/Rust-1.88.0/#:~:text=proc_macro%3A%3ASpan%3A%3Aline) です！
+
+導入については、以下に示すように `cargo add` で加えるか、
 
 ```bash
 cargo add hooq
@@ -80,10 +175,6 @@ hooq = "0.2.0"
 ```
 
 `#[hooq::method(...)]` 不活性属性でフックするメソッドを切り替えられる他、マクロ呼び出し部を `#[hooq(log)]` や `#[hooq(anyhow)]` としてフレーバーを指定した場合などは、そのフレーバーにちなんだメソッドになります！
-
-## ドキュメント
-
-mdbook: ...
 
 ## 属性 クイックリファレンス
 
@@ -222,9 +313,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 | eyre | eyre | (WIP) |
 | tracing | tracing | (WIP) |
 
-使用例:
-
-(以下は更新漏れにより古い可能性があります。mdbookの [フレーバー > anyhow]() の方を参照してください。)
+使用例(再掲):
 
 ```rust,should_panic
 use hooq::hooq;
@@ -247,7 +336,7 @@ fn main() -> anyhow::Result<()> {
 }
 ```
 
-出力例:
+出力例(再掲):
 
 ```plaintext
 Error: [mdbook-source-code/flavor-anyhow/src/main.rs:15:12]
@@ -263,3 +352,24 @@ Caused by:
            |
     2: Error in func1
 ```
+
+## ライセンス
+
+ライセンスは以下2つのいずれかになります。
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](https://github.com/anotherhollow1125/hooq/blob/main/LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT license ([LICENSE-MIT](https://github.com/anotherhollow1125/hooq/blob/main/LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+
+## 貢献方法
+
+改善点等あればぜひイシューやPRを投げてほしいです！
+
+貢献方法については [別ページ](https://github.com/anotherhollow1125/hooq/blob/main/docs/ja/CONTRIBUTING.md) にまとめました。以下についての説明があります。
+
+- スナップショットテストについて
+- CIについて
+- [`sync.rs`](https://github.com/anotherhollow1125/hooq/blob/main/.github/scripts/sync.rs) コマンドについて
+- 言語(英語/日本語)について
+- 生成AI利用のスタンスについて
+
+[CONTRIBUTING](https://github.com/anotherhollow1125/hooq/blob/main/docs/ja/CONTRIBUTING.md)

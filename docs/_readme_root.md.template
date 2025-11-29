@@ -10,7 +10,7 @@
 [![docs](https://img.shields.io/docsrs/hooq/{{version}})](https://docs.rs/hooq/{{version}}/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
-🪝 The name hooq comes from combining 'HOOk' and the 'Question mark operator ( ? )'. 🪝
+?🪝 The name hooq comes from combining 'HOOk' and the 'Question mark operator ( ? )'. 🪝?
 
 Enhance your questions by hooq!?
 
@@ -52,6 +52,98 @@ fn main() {
 
 You don't have to explicitly specify `#[hooq::method(...)]`—there's also a mechanism called "flavors" for easily applying pre-configured settings!
 
+## Why hooq?
+
+Being able to insert a method before the `?` operator lets you reduce boilerplate for debugging and logging. As a result, you can increase logging information without sacrificing readability.
+
+The [`Context::with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) method from the [anyhow](https://docs.rs/anyhow/latest/anyhow/) crate is a prime example. The hooq crate provides a flavor (anyhow) to make inserting this method easy.
+
+```rust,should_panic
+use hooq::hooq;
+
+#[hooq(anyhow)]
+fn func1() -> anyhow::Result<i32> {
+    Err(anyhow::anyhow!("Error in func1"))
+}
+
+#[hooq(anyhow)]
+fn func2() -> anyhow::Result<i32> {
+    func1()
+}
+
+#[hooq(anyhow)]
+fn main() -> anyhow::Result<()> {
+    func2()?;
+
+    Ok(())
+}
+```
+
+`.with_context(|| {...})` gets hooked, and the output looks like this:
+
+```plaintext
+Error: [mdbook-source-code/flavor-anyhow/src/main.rs:15:12]
+  15>    func2()?
+    |
+
+Caused by:
+    0: [mdbook-source-code/flavor-anyhow/src/main.rs:10:5]
+         10>    func1()
+           |
+    1: [mdbook-source-code/flavor-anyhow/src/main.rs:5:5]
+          5>    Err(anyhow::anyhow!("Error in func1"))
+           |
+    2: Error in func1
+```
+
+Applying `#[hooq]` (or `#[hooq(anyhow)]`) to all functions yields information close to an error stack trace.
+
+Below is a comparison table with other ways to obtain stack-trace-like information.
+
+|| [`Backtrace`](https://doc.rust-lang.org/std/backtrace/struct.Backtrace.html) | [`#[tracing::instrument]`](https://docs.rs/tracing/latest/tracing/attr.instrument.html) | hooq |
+|:-|:-:|:-:|:-:|
+| Learning cost & flexibility | ⚠️ | ⚠️ | 🌟 |
+| Ease of type definitions | ⚠️ | ✅ | ✅ |
+| Macro-less | ✅ | ❌ | ❌ |
+| Information control | ❌ | ✅ | 🌟 |
+
+Legend:
+- 🌟: Excellent
+- ✅: Good
+- ⚠️: Not so good
+- ❌: Poor
+
+Explanations:
+- Learning cost & flexibility
+    - ⚠️ `Backtrace` requires setting the `RUST_LIB_BACKTRACE=1` environment variable and can be cumbersome to use.
+    - ⚠️ `tracing` is overkill if the only goal is to obtain stack-trace-like info. If you are familiar with it, it can be a suitable choice.
+    - 🌟 `hooq` only needs a macro attached to the function heads!
+- Ease of type definitions
+    - ⚠️ With `Backtrace`, you need to include the backtrace in your error type fields even when not using it, which complicates error types.
+    - ✅ `tracing` has no such constraints.
+    - ✅ `hooq` works well with any error handling crate!
+- Macro-less
+    - ✅ `Backtrace` does not require macros, which is a plus!
+    - ❌ To get stack-trace-equivalent info with `tracing`, `#[tracing::instrument]` is almost mandatory.
+    - ❌ `hooq` is a macro crate, so if you prefer not to use macros, it’s not for you.
+- Information control
+    - ❌ The normal backtrace output from `Backtrace` is too verbose. It’s almost useless for async and often excessive otherwise.
+    - ✅ `tracing` can follow functions in async contexts; however, obtaining details like “which line’s `?` operator” requires extra cost.
+    - 🌟 `hooq` traces only functions annotated with `#[hooq]` (similar to `#[tracing::instrument]`), so you get precise info only where you want it. It can capture exact positions of `?` and `return`, providing finer details.
+        - Being an attribute macro, you can conditionally attach it, e.g., only for tests or with specific features via `#[cfg_attr(..., hooq(...))]`.
+        - 💡 `hooq` can be used alongside `tracing` to increase granularity of information. See [mdbook > flavor > tracing]() for details.
+
+## Documentations
+
+For detailed usage instructions, please refer to the following! (Also included at the beginning, but repeated here)
+
+- Tutorial: (mdBook coming soon.)
+- Reference: (mdBook coming soon.)
+- docs.rs: <https://docs.rs/hooq/{{version}}/hooq/>
+
+> [!NOTE]
+> 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
+
 ## Install
 
 Add it with `cargo add` as shown below,
@@ -66,6 +158,9 @@ or add it to your `Cargo.toml`.
 [dependencies]
 hooq = "{{version}}"
 ```
+
+> [!NOTE]
+> [MSRV](https://doc.rust-lang.org/cargo/reference/rust-version.html) is [1.88](https://blog.rust-lang.org/2025/06/26/Rust-1.88.0/#:~:text=proc_macro%3A%3ASpan%3A%3Aline) due to `$line` meta variable line retrieval via `proc_macro::Span::line`.
 
 ## Method inserted by default
 
@@ -83,10 +178,6 @@ If you don't specify anything for `#[hooq]`, the following method is inserted by
 ```
 
 You can switch the method to hook with the inert attribute `#[hooq::method(...)]`. Also, when you specify a flavor at the macro call site such as `#[hooq(log)]` or `#[hooq(anyhow)]`, the inserted method will change according to that flavor!
-
-## Documentations
-
-mdbook: ...
 
 ## Attributes Quick Reference
 
@@ -266,3 +357,24 @@ Caused by:
            |
     2: Error in func1
 ```
+
+## License
+
+This project is dual-licensed:
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](https://github.com/anotherhollow1125/hooq/blob/main/LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT license ([LICENSE-MIT](https://github.com/anotherhollow1125/hooq/blob/main/LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+
+## Contributing
+
+Issues and PRs are welcome!
+
+Contribution guidelines are summarized on a separate page with the following topics:
+
+- Snapshot testing
+- CI
+- [`sync.rs`](https://github.com/anotherhollow1125/hooq/blob/main/.github/scripts/sync.rs) command
+- Languages (English/Japanese)
+- Stance on using generative AI
+
+[CONTRIBUTING](https://github.com/anotherhollow1125/hooq/blob/main/docs/CONTRIBUTING.md)

@@ -309,6 +309,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "flavor-eyre"
+version = "0.3.0"
+dependencies = [
+ "eyre",
+ "hooq",
+ "insta",
+]
+
+[[package]]
 name = "flavor-hook"
 version = "0.3.0"
 dependencies = [

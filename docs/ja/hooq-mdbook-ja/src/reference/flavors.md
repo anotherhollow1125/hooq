@@ -11,7 +11,7 @@
 | [hook](#hook) | - | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) を引数に取る `hook` メソッドを挿入するフレーバー。ユーザー定義のトレイト経由での利用を想定。上書き可 |
 | [log](#log) | log | [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
 | [anyhow](#anyhow) | anyhow | [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを挿入するフレーバー。上書き可 |
-| [eyre](#eyre) | eyre | (WIP) |
+| [eyre](#eyre) | eyre | [`wrap_err_with`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを挿入するフレーバー。上書き可 |
 | [tracing](#tracing) | tracing | (WIP) |
 
 一応feature名を記載しましたが、フレーバーに関係するfeatureはdefault featureに含まれているので明示的にCargo.tomlの `features` に含める必要はありません。
@@ -179,7 +179,29 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 
 ## eyre
 
-(WIP！準備中です)
+> `eyre` feature が必要ですが、defaultに含まれています。
+
+[eyreクレート](https://docs.rs/eyre/latest/eyre/) と共に使うことを想定したフレーバーです。anyhowとはuseしているトレイト、呼び出しているメソッドが異なるだけでほぼ同じです。
+
+次の設定になっています。
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:7:28}}
+```
+
+[`.wrap_err_with(...)`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを利用するために、 `eyre::WrapErr` トレイトをuseしています。
+
+使用例:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-eyre/src/main.rs}}
+```
+
+実行結果:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-eyre/tests/snapshots/test__flavor-eyre.snap:8:22}}
+```
 
 ## tracing
 

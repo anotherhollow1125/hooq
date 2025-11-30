@@ -1,0 +1,22 @@
+---
+source: mdbook-source-code/flavor-eyre/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+
+STDERR:
+Error: [mdbook-source-code/flavor-eyre/src/main.rs:15:12]
+  15>    func2()?
+    |
+
+Caused by:
+   0: [mdbook-source-code/flavor-eyre/src/main.rs:10:5]
+        10>    func1()
+          |
+   1: [mdbook-source-code/flavor-eyre/src/main.rs:5:5]
+         5>    Err(eyre::eyre!("Error in func1"))
+          |
+   2: Error in func1
+
+Location:
+    mdbook-source-code/flavor-eyre/src/main.rs:5:9

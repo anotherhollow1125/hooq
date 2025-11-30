@@ -10,16 +10,16 @@ license.workspace = true
 keywords.workspace = true
 categories.workspace = true
 
-[dependencies]
-color-eyre = "0.6.5"
-tracing = "0.1.43"
-tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
-tracing-error = "0.2.1"
-hooq = { path = "../../hooq" } # Please rewrite `hooq = "*"`
-
 [features]
 default = ["capture-spantrace"]
 capture-spantrace = []
+
+[dependencies]
+color-eyre = "0.6.5"
+hooq = { path = "../../hooq" } # Please rewrite `hooq = "*"`
+tracing = "0.1.43"
+tracing-error = "0.2.1"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
 [dev-dependencies]
 insta = "1.44.0"

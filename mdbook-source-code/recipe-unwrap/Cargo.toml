@@ -10,11 +10,11 @@ license.workspace = true
 keywords.workspace = true
 categories.workspace = true
 
+[features]
+unwrap = []
+
 [dependencies]
 hooq = { path = "../../hooq", features = ["consume-question"] }
 
 [dev-dependencies]
 test-helpers = { path = "../../test-helpers" }
-
-[features]
-unwrap = []

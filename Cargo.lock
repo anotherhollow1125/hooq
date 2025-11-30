@@ -481,6 +481,7 @@ dependencies = [
 name = "hooq"
 version = "0.3.0"
 dependencies = [
+ "anyhow",
  "hooq-helpers",
  "hooq-macros",
  "toml",
@@ -522,6 +523,7 @@ dependencies = [
 name = "hooq-helpers"
 version = "0.3.0"
 dependencies = [
+ "anyhow",
  "hooq",
  "toml",
 ]
@@ -541,6 +543,7 @@ dependencies = [
 name = "hooq-macros"
 version = "0.3.0"
 dependencies = [
+ "anyhow",
  "futures",
  "hooq",
  "insta",

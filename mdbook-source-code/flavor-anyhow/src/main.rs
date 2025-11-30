@@ -7,7 +7,11 @@ fn func1() -> anyhow::Result<i32> {
 
 #[hooq(anyhow)]
 fn func2() -> anyhow::Result<i32> {
-    func1()
+    let res = func1()?;
+
+    println!("{res}");
+
+    Ok(res)
 }
 
 #[hooq(anyhow)]

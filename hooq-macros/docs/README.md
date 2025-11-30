@@ -319,11 +319,11 @@ See mdbook's [Flavors]() for more details! Below are the pre-configured flavors 
 |:----------|:--------|:----|
 | default | - | The flavor used when nothing is specified. Can be overridden with hooq.toml |
 | empty | - | A flavor for when you don't want to hook anything. Cannot be overridden |
-| hook | - | A flavor that inserts a `hook` method taking [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) as an argument. Intended for use via user-defined traits. Can be overridden |
-| log | log | A flavor that inserts an `inspect_err` method calling [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html). Can be overridden |
-| anyhow | anyhow | A flavor that inserts the [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) method. Can be overridden |
-| eyre | eyre | (WIP) |
-| tracing | tracing | (WIP) |
+| hook | - | Inserts a `hook` method taking [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) as an argument. Intended for use via user-defined traits. Can be overridden |
+| anyhow | anyhow | Inserts the [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) method. Can be overridden |
+| eyre | eyre | Inserts the [`wrap_err_with`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) method. Can be overridden |
+| log | log | Inserts an `inspect_err` method calling [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html). Can be overridden |
+| tracing | tracing | Inserts an `inspect_err` method calling [`::tracing::error!`](https://docs.rs/tracing/latest/tracing/macro.error.html). Can be overridden |
 
 Usage example:
 

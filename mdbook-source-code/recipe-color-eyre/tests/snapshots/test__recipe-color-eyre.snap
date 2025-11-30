@@ -1,0 +1,54 @@
+---
+source: mdbook-source-code/recipe-color-eyre/tests/test.rs
+expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
+---
+STDOUT:
+ INFO read_config:read_file{path="fake_file"}: Reading file
+
+STDERR:
+Error: 
+   0: [mdbook-source-code/recipe-color-eyre/src/main.rs:14:5]
+        14>    read_config()
+          |
+   1: [mdbook-source-code/recipe-color-eyre/src/main.rs:45:5]
+        45>    read_file("fake_file")
+        46|        .wrap_err("Unab..nfig")
+        47|        .suggestion("try ..time")
+          |
+   2: Unable to read config
+   3: [mdbook-source-code/recipe-color-eyre/src/main.rs:39:5]
+        39>    std::fs::read_to_string(path).map(drop)
+          |
+   4: No such file or directory (os error 2)
+
+Location:
+   mdbook-source-code/recipe-color-eyre/src/main.rs:39
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ SPANTRACE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   0: recipe_color_eyre::read_file with path="fake_file"
+      at mdbook-source-code/recipe-color-eyre/src/main.rs:36
+   1: recipe_color_eyre::read_config
+      at mdbook-source-code/recipe-color-eyre/src/main.rs:43
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ BACKTRACE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                                ⋮ 4 frames hidden ⋮                               
+   5: <E as eyre::context::ext::StdError>::ext_report::h0e9fcf40b567f05e
+      at /home/USER/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/eyre-0.6.12/src/context.rs:26
+                                 ⋮ 1 frame hidden ⋮                               
+   7: recipe_color_eyre::read_file::h74782b4bb409e5a9
+      at /home/USER/workspace/hooq/mdbook-source-code/recipe-color-eyre/src/main.rs:39
+   8: recipe_color_eyre::read_config::h8139da57eb93337e
+      at /home/USER/workspace/hooq/mdbook-source-code/recipe-color-eyre/src/main.rs:45
+   9: recipe_color_eyre::main::h9c27f45de169a3be
+      at /home/USER/workspace/hooq/mdbook-source-code/recipe-color-eyre/src/main.rs:14
+  10: core::ops::function::FnOnce::call_once::h724113526cc98cab
+      at /home/USER/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ops/function.rs:250
+  11: std::sys::backtrace::__rust_begin_short_backtrace::h9e20a34286867e4d
+      at /home/USER/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:158
+                                ⋮ 14 frames hidden ⋮                              
+
+Suggestion: try using a file that exists next time
+
+Run with COLORBT_SHOW_HIDDEN=1 environment variable to disable frame filtering.
+Run with RUST_BACKTRACE=full to include source snippets.

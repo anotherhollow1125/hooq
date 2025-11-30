@@ -17,4 +17,9 @@
     - [フレーバー](./reference/flavors.md)
     - [features](./reference/features.md)
 
-- [レシピ・アイデア集]()
+- [レシピ・アイデア集](./recipe/index.md)
+    - [パーフェクトcolor-eyre](./recipe/color_eyre.md)
+    - [mod以下の関数に一括適用](./recipe/batch_apply.md)
+    - [Option型関数での利用](./recipe/option.md)
+    - [テストの時だけ `.unwrap()` にする](./recipe/unwrap.md)
+    - [`match` の再発明](./recipe/match.md)

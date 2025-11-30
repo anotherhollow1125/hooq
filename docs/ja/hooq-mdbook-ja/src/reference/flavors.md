@@ -11,7 +11,7 @@
 | [hook](#hook) | - | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) を引数に取る `hook` メソッドを挿入するフレーバー。ユーザー定義のトレイト経由での利用を想定。上書き可 |
 | [log](#log) | log | [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
 | [anyhow](#anyhow) | anyhow | [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを挿入するフレーバー。上書き可 |
-| [eyre](#eyre--color-eyre) | eyre | (WIP) |
+| [eyre](#eyre) | eyre | (WIP) |
 | [tracing](#tracing) | tracing | (WIP) |
 
 一応feature名を記載しましたが、フレーバーに関係するfeatureはdefault featureに含まれているので明示的にCargo.tomlの `features` に含める必要はありません。
@@ -177,7 +177,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 {{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:13}}
 ```
 
-## eyre / color-eyre
+## eyre
 
 (WIP！準備中です)
 

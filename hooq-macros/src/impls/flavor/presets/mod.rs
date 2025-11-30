@@ -6,9 +6,13 @@ use crate::impls::flavor::Flavor;
 mod anyhow;
 mod default;
 mod empty;
+#[cfg(feature = "eyre")]
+mod eyre;
 mod hook;
 #[cfg(feature = "log")]
 mod log;
+#[cfg(feature = "tracing")]
+mod tracing;
 
 // NOTE:
 // default や empty までファイル分けする必要性は薄いが、
@@ -22,6 +26,10 @@ pub fn preset_flavors() -> HashMap<String, Flavor> {
         ("log", log::log_flavor()),
         #[cfg(feature = "anyhow")]
         ("anyhow", anyhow::anyhow_flavor()),
+        #[cfg(feature = "eyre")]
+        ("eyre", eyre::eyre_flavor()),
+        #[cfg(feature = "tracing")]
+        ("tracing", tracing::tracing_flavor()),
     ]
     .into_iter()
     .map(|(s, f)| (s.to_string(), f))

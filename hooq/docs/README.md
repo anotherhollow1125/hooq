@@ -100,40 +100,47 @@ Applying `#[hooq]` (or `#[hooq(anyhow)]`) to all functions yields information cl
 
 Below is a comparison table with other ways to obtain stack-trace-like information.
 
-|| [`Backtrace`](https://doc.rust-lang.org/std/backtrace/struct.Backtrace.html) | [`#[tracing::instrument]`](https://docs.rs/tracing/latest/tracing/attr.instrument.html) | hooq |
+|| [`Backtrace`](https://doc.rust-lang.org/std/backtrace/struct.Backtrace.html) | [`tracing`](https://docs.rs/tracing/latest/tracing) | `hooq` |
 |:-|:-:|:-:|:-:|
-| Learning cost & flexibility | ⚠️ | ⚠️ | 🌟 |
+| Learning cost & flexibility | ⚠️ | ⚠️ | 🌈 |
 | Ease of type definitions | ⚠️ | ✅ | ✅ |
-| Macro-less | ✅ | ❌ | ❌ |
-| Information control | ❌ | ✅ | 🌟 |
+| Macro-less | 🌈 | ❌ | ❌ |
+| Information control | ⚠️ | ✅ | 🌈 |
+| Platform support | ⚠️ | ✅ | 🌈 |
 
 Legend:
-- 🌟: Excellent
+- 🌈: Excellent
 - ✅: Good
 - ⚠️: Not so good
 - ❌: Poor
 
 Explanations:
 - Learning cost & flexibility
-    - ⚠️ `Backtrace` requires setting the `RUST_LIB_BACKTRACE=1` environment variable and can be cumbersome to use.
-    - ⚠️ `tracing` is overkill if the only goal is to obtain stack-trace-like info. If you are familiar with it, it can be a suitable choice.
-    - 🌟 `hooq` only needs a macro attached to the function heads!
+    - ⚠️ `Backtrace` requires defining the environment variable `RUST_LIB_BACKTRACE=1`, and because it depends on OS threads you need knowledge outside pure Rust control flow.
+    - ⚠️ `tracing` can be overkill if your only goal is a stack-trace-like overview. If you are already comfortable with it, it is a reasonable option.
+    - 🌈 `hooq` only needs attaching an attribute macro to function heads.
 - Ease of type definitions
-    - ⚠️ With `Backtrace`, you need to include the backtrace in your error type fields even when not using it, which complicates error types.
-    - ✅ `tracing` has no such constraints.
-    - ✅ `hooq` works well with any error handling crate!
+    - ⚠️ When combining `Backtrace` with crates like `thiserror`, you must include the backtrace field up front. The more granular your error types, the harder retrospective addition becomes, or the less simple the error representation stays.
+    - ✅ `tracing` imposes no particular constraints here.
+    - ✅ `hooq` works smoothly with any error handling crate.
 - Macro-less
-    - ✅ `Backtrace` does not require macros, which is a plus!
-    - ❌ To get stack-trace-equivalent info with `tracing`, `#[tracing::instrument]` is almost mandatory.
-    - ❌ `hooq` is a macro crate, so if you prefer not to use macros, it’s not for you.
+    - 🌈 `Backtrace` does not rely on macros, which feels lightweight.
+    - ❌ To conveniently obtain stack-trace-equivalent info with `tracing`, using `#[tracing::instrument(err)]` (or similar) is almost mandatory.
+    - ❌ `hooq` is an attribute macro crate; if you prefer to avoid macros entirely, it is not suitable.
 - Information control
-    - ❌ The normal backtrace output from `Backtrace` is too verbose. It’s almost useless for async and often excessive otherwise.
-    - ✅ `tracing` can follow functions in async contexts; however, obtaining details like “which line’s `?` operator” requires extra cost.
-    - 🌟 `hooq` traces only functions annotated with `#[hooq]` (similar to `#[tracing::instrument]`), so you get precise info only where you want it. It can capture exact positions of `?` and `return`, providing finer details.
-        - Being an attribute macro, you can conditionally attach it, e.g., only for tests or with specific features via `#[cfg_attr(..., hooq(...))]`.
-        - 💡 `hooq` can be used alongside `tracing` to increase granularity of information. See [mdbook > flavor > tracing]() for details.
+    - ⚠️ The raw output of `Backtrace` is often too verbose 😵. In async contexts raw frames can be nearly useless and frequently excessive.
+        - Crates like [`color-eyre`](https://docs.rs/color-eyre/latest/color_eyre/) can improve formatting and make it more practical.
+    - ✅ `tracing` can follow functions even across async boundaries; however, to know details such as “which line’s `?` operator?” you must add manual logging.
+    - 🌈 `hooq` (similar to `#[tracing::instrument]`) traces only functions annotated with `#[hooq]`, giving you precise, opt‑in coverage. It can capture exact positions of `?`, `return`, and tail expressions for finer granularity.
+        - Being an attribute macro you can conditionally attach it only in tests or behind features (`#[cfg_attr(..., hooq(...))]`).
+        - 💡 Can be combined with `tracing` to increase information granularity. See the flavor docs for [`tracing`]() in the mdBook.
+- Platform support
+    - ⚠️ `Backtrace` may be unavailable or partial on some platforms (see official docs: https://doc.rust-lang.org/std/backtrace/index.html#platform-support).
+    - ✅ Ordinary `tracing` logging use cases typically face few platform restrictions.
+    - 🌈 `hooq` merely inserts a method before `?` (and optionally `return` / tail expressions), so it does not depend on platform-specific features. Creative usage per platform is possible.
+        - 💡 For example `#[hooq::method(.unwrap()!)]` can make `?` behave akin to a forced unwrap alias.
 
-## Documentations
+## Documentation
 
 For detailed usage instructions, please refer to the following! (Also included at the beginning, but repeated here)
 

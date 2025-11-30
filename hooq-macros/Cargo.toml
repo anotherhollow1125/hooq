@@ -16,10 +16,12 @@ readme = "docs/README.md"
 proc-macro = true
 
 [features]
-default = ["anyhow", "log"]
+default = ["anyhow", "log", "tracing", "eyre"]
 log = []
 anyhow = []
 consume-question = []
+tracing = []
+eyre = []
 
 [dependencies]
 proc-macro-crate = "3.4.0"

@@ -33,9 +33,11 @@ workspace = true
 [features]
 anyhow = ["hooq-macros/anyhow"]
 consume-question = ["hooq-macros/consume-question"]
-default = ["anyhow", "log"]
-full = ["anyhow", "log", "consume-question"]
+default = ["anyhow", "log", "tracing", "eyre"]
+full = ["anyhow", "log", "tracing", "eyre", "consume-question"]
 log = ["hooq-macros/log"]
+tracing = ["hooq-macros/tracing"]
+eyre = ["hooq-macros/eyre"]
 [dependencies.hooq-helpers]
 path = "../hooq-helpers"
 version = "0.3.0"

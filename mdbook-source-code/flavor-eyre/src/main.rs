@@ -7,7 +7,11 @@ fn func1() -> eyre::Result<i32> {
 
 #[hooq(eyre)]
 fn func2() -> eyre::Result<i32> {
-    func1()
+    let res = func1()?;
+
+    println!("{res}");
+
+    Ok(res)
 }
 
 #[hooq(eyre)]

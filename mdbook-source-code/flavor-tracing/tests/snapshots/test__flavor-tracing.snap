@@ -1,0 +1,11 @@
+---
+source: mdbook-source-code/flavor-tracing/tests/test.rs
+expression: "format!(\"{}\\n{}\", stdout, stderr)"
+---
+func3 start
+func2 start
+ERROR func3:func2:func1: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=7 col=5 error=Error in func1 expr="Err(\"Error in func1\".into())"
+ERROR func3:func2: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=15 col=22 error=Error in func1 expr="func1()?"
+ERROR func3: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=27 col=22 error=Error in func1 expr="func2()?"
+
+Error: "Error in func1"

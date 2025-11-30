@@ -345,6 +345,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "flavor-tracing"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "insta",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "futures"
 version = "0.3.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -9,10 +9,10 @@
 | [default](#default) | - | 何も指定しない場合に設定されるフレーバー。hooq.tomlで上書き可 |
 | [empty](#empty) | - | 全く何もフックしない場合に用いるフレーバー。上書きは不可 |
 | [hook](#hook) | - | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) を引数に取る `hook` メソッドを挿入するフレーバー。ユーザー定義のトレイト経由での利用を想定。上書き可 |
-| [log](#log) | log | [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
 | [anyhow](#anyhow) | anyhow | [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを挿入するフレーバー。上書き可 |
 | [eyre](#eyre) | eyre | [`wrap_err_with`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを挿入するフレーバー。上書き可 |
-| [tracing](#tracing) | tracing | (WIP) |
+| [log](#log) | log | [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
+| [tracing](#tracing) | tracing | [`::tracing::error!`](https://docs.rs/tracing/latest/tracing/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
 
 一応feature名を記載しましたが、フレーバーに関係するfeatureはdefault featureに含まれているので明示的にCargo.tomlの `features` に含める必要はありません。
 
@@ -126,30 +126,6 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 {{#rustdoc_include ../../../../../mdbook-source-code/flavor-hook/src/main.expanded.rs:37:53}}
 ```
 
-## log
-
-> `log` feature が必要ですが、defaultに含まれています。
-
-[logクレート](https://docs.rs/log/latest/log/) と共に使うことを想定したフレーバーです。
-
-次の設定になっています。
-
-```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:7:27}}
-```
-
-使用例:
-
-```rust
-{{#rustdoc_include ../../../../../mdbook-source-code/flavor-log/src/main.rs}}
-```
-
-実行結果:
-
-```bash
-{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:11}}
-```
-
 ## anyhow
 
 > `anyhow` feature が必要ですが、defaultに含まれています。
@@ -203,6 +179,52 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 {{#include ../../../../../mdbook-source-code/flavor-eyre/tests/snapshots/test__flavor-eyre.snap:8:22}}
 ```
 
+## log
+
+> `log` feature が必要ですが、defaultに含まれています。
+
+[logクレート](https://docs.rs/log/latest/log/) と共に使うことを想定したフレーバーです。
+
+次の設定になっています。
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:7:27}}
+```
+
+使用例:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-log/src/main.rs}}
+```
+
+実行結果:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:11}}
+```
+
 ## tracing
 
-(WIP！準備中です)
+> `tracing` feature が必要ですが、defaultに含まれています。
+
+[tracingクレート](https://docs.rs/tracing/latest/tracing/) と共に使うことを想定したフレーバーです。
+
+次の設定になっています。
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:7:33}}
+```
+
+`#[tracing::instrument]` と併用する場合、 `#[hooq(tracing)]` が先に適用される必要があるため、 `#[tracing::instrument]` より上に `#[hooq(tracing)]` を書くことを推奨します。
+
+使用例:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-tracing/src/main.rs}}
+```
+
+実行結果:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-tracing/tests/snapshots/test__flavor-tracing.snap:5:11}}
+```

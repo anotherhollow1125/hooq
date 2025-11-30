@@ -1,0 +1,13 @@
+[package]
+name = "hooq-tracing"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+publish = false
+
+[dependencies]
+tracing = "0.1.43"
+tracing-subscriber = "0.3.22"
+hooq = { path = "../../../../../hooq", features = ["tracing"] }
+macrotest = "1.2.0"
+test-helpers = { path = "../../../../../test-helpers" }

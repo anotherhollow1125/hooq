@@ -1100,6 +1100,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "recipe-match"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "recipe-option"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
+name = "recipe-unwrap"
+version = "0.3.0"
+dependencies = [
+ "hooq",
+ "test-helpers",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.5.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"

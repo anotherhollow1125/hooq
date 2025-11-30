@@ -10,6 +10,6 @@
 |:------|:----|
 | [パーフェクトcolor-eyre](./color_eyre.md) | [`color-eyre`](https://docs.rs/color-eyre/latest/color_eyre/) は `BACKTRACE` や `SPANTRACE` を取る機能があります。これらを取りつつ、さらにhooqでも情報を取得することで最強のエラートレーシングを実現してみます。 |
 | [mod以下の関数に一括適用](./batch_apply.md) | 実はhooqマクロは関数以外にもアイテムであれば付与できます。そのコード例です。 |
-| [Option型関数での利用](./option.md) | `tail_expr_idents` や `result_types` の設定項目を変更することで、 `Option` 型を返す関数を対象としたhooq設定にします。 |
-| [テストの時だけ `.unwrap()` にする](./unwrap.md) | `#[cfg_attr(...)]` を使うことでコンパイル条件によって挙動を変える方法を示します。 |
-| [`match` の再発明](./match.md) | `?` 演算子を `match` 式に置き換える脱糖をhooqでやってみます。 |
+| [Option型を返す関数での利用](./option.md) | `tail_expr_idents` や `result_types` の設定項目を変更することで、 `Option` 型を返す関数を対象としたhooq設定にします。 |
+| [特定のfeatureが有効時に `.unwrap()` にする](./unwrap.md) | `#[cfg_attr(...)]` を使うことでコンパイル条件によって挙動を変える方法を示します。 |
+| [`match` 脱糖の再発明](./match.md) | `?` 演算子を `match` 式に置き換える脱糖をhooqでやってみます。 |

@@ -21,14 +21,14 @@
 [^time]: スナップショットテストの関係で時刻を出力しない `.without_time()` も付与しています。
 
 ```rust
-{{#include ../../../../../mdbook-source-code/recipe-color-eyre/src/main.rs}}
+{{#rustdoc_include ../../../../../mdbook-source-code/recipe-color-eyre/src/main.rs}}
 ```
 
 BACKTRACEも見たいので、これを環境変数 `RUST_LIB_BACKTRACE=1` を設定した状態で実行してみます。
 
 [公式例](https://docs.rs/color-eyre/latest/color_eyre/#:~:text=%F0%9F%A6%80%20v1.44.0%0A%E2%9D%AF-,RUST_LIB_BACKTRACE%3D1%20cargo%20run%20%2D%2Dexample%20usage,-Finished%20dev%20%5Bunoptimized)では `.wrap_err()` による付与部分で理由しか書かれていなかった部分も、hooqのおかげでスタックトレースもどきに化けています！
 
-```bash
+```rust
 {{#include ../../../../../mdbook-source-code/recipe-color-eyre/tests/snapshots/test__recipe-color-eyre.snap:9:54}}
 ```
 

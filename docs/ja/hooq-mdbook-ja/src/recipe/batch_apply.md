@@ -16,8 +16,8 @@
 
 展開結果は次のようになります。かなり自然に、しかしマクロにしては[^macro]貪欲にフックを仕掛けられていると思います。
 
-```bash
-{{#include ../../../../../mdbook-source-code/recipe-batch-apply/src/main.expanded.rs:7:38}}
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/recipe-batch-apply/src/main.expanded.rs:7:38}}
 ```
 
 [^macro]: 手続きマクロにはあまり高度なリフレクション機能がないので、型推論で `Result` 型かどうか判別したりはできません。

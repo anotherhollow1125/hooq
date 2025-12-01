@@ -12,6 +12,8 @@ use syn::{Item, parse_macro_input};
 mod impls;
 
 /// hooq macro attribute. Methods are hooked to ? etc. in the function of the item with this macro.
+///
+/// For more information, see [hooq Reference](https://anotherhollow1125.github.io/hooq/latest/en/).
 #[proc_macro_attribute]
 pub fn hooq(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item = parse_macro_input!(item as Item);

@@ -60,7 +60,7 @@ cargo add toml
 
 [^mista]: でもこれで行くとサーバーサイドエンジニアなどには `5` の方が不吉そうですね。
 
-```rust,ignore
+```rust
 {{#rustdoc_include ../../../../../mdbook-source-code/tutorial-4-compile-error/src/_main.txt:3:23}}
 ```
 

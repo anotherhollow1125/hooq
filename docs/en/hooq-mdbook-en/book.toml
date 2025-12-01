@@ -1,0 +1,12 @@
+[book]
+title = "hooq Reference"
+authors = ["namnium"]
+language = "en"
+src = "src"
+
+[output.html]
+site-url = "/hooq/latest/en/"
+sidebar-header-nav = true
+
+[output.html.playground]
+runnable = false

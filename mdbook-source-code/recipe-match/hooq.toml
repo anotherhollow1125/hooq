@@ -1,0 +1,7 @@
+[my_match]
+method = """
+match $expr {
+    Ok(val) => val,
+    Err(err) => return Err(From::from(err)),
+}!
+"""

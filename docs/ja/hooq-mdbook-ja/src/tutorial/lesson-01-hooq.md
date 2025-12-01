@@ -8,7 +8,7 @@
 
 `#[hooq]` 属性マクロを関数に付与すると、次のhooqマクロデフォルトのメソッド [`inspect_err`](https://doc.rust-lang.org/std/result/enum.Result.html#method.inspect_err) が各 `?` の手前、 `return` の返り値や関数末尾の後ろ(ただし関数シグネチャの返り値型が `Result` などフック対象の型の場合)に挿入(フック)されるようになります。
 
-```rust,ignore
+```rust
 .inspect_err(|e| {
     let path = $path;
     let line = $line;

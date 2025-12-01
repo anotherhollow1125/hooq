@@ -340,9 +340,9 @@ hooqマクロを付与した関数の返り値がフック対象であるかを�
 {{#rustdoc_include ../../../../../mdbook-source-code/attribute-binding/src/main.expanded.rs:10:34}}
 ```
 
-[バインディング](./meta_vars.md#bindings) については当該ページの方も参照してください。
+[バインディング](./meta_vars.md#ユーザー定義のメタ変数バインディング) については当該ページの方も参照してください。
 
-- [bindings](./meta_vars.md#bindings)
+- [ユーザー定義のメタ変数(バインディング)](./meta_vars.md#ユーザー定義のメタ変数バインディング)
 
 ## flavor を利用した設定の部分適用
 

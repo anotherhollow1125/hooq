@@ -75,8 +75,6 @@ hooq.tomlの例:
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:52:71}}
 ```
 
-この設定はhooq.tomlで上書きが可能です。その場合、 `#[hooq]` とした際の設定値が上書きした設定値になります。
-
 使用例:
 
 ```rust
@@ -88,6 +86,8 @@ hooq.tomlの例:
 ```bash
 {{#include ../../../../../mdbook-source-code/flavor-default/tests/snapshots/test__flavor-default.snap:8:11}}
 ```
+
+この設定はhooq.tomlで上書きが可能です。その場合、 `#[hooq]` とした際の設定値が上書きした設定値になります。
 
 ## empty
 
@@ -110,7 +110,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 ```
 
 
-ユーザー側でトレイトを定義し、そこでロギングをする場合に便利なフレーバーです。hooq.tomlを使いたくない際に利用できます。
+ユーザー側でトレイトを定義し、そこでロギングをする場合に便利なフレーバーです。hooq.tomlを使いたくない際に便利です。
 
 使用例:
 
@@ -118,7 +118,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 {{#rustdoc_include ../../../../../mdbook-source-code/flavor-hook/src/main.rs}}
 ```
 
-第2引数部分が `meta_fn` というクロージャにしているのは、遅延評価のためです。ここをクロージャにしない場合すべての場所で `HooqMeta` が生成されてしまうため処理が重くなってしまいます。
+第2引数部分を `meta_fn` というクロージャにしているのは、遅延評価のためです。ここをクロージャにしない場合すべての場所で `HooqMeta` が生成されてしまうため処理が重くなってしまいます。
 
 展開結果:
 
@@ -150,7 +150,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 実行結果:
 
 ```bash
-{{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:13}}
+{{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:19}}
 ```
 
 ## eyre

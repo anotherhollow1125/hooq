@@ -84,7 +84,7 @@ fn update_flavor_inner(
             .map(|path| syn::parse_str::<Path>(&path))
             .collect::<syn::Result<Vec<_>>>()
             .map_err(|e| format!("failed to parse trait_uses: {e}"))?;
-        flavor.trait_uses.extend(trait_uses);
+        flavor.trait_uses = trait_uses;
 
         if let Some(method) = method {
             let method_stream = syn::parse_str::<TokenStream>(&method)

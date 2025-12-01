@@ -111,7 +111,7 @@ fn build_books(version: &str, is_latest: bool) -> anyhow::Result<()> {
 fn main() -> anyhow::Result<()> {
     assert_dir()?;
 
-    std::fs::remove_dir_all("books")?;
+    std::fs::remove_dir_all("books").ok();
     std::fs::create_dir("books")?;
 
     build_index()?;

@@ -1,3 +1,4 @@
 target/
 *.memo.*
 examples/examples/playground.rs
+docs/books/*

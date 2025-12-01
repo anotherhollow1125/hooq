@@ -5,7 +5,7 @@ language = "en"
 src = "src"
 
 [output.html]
-site-url = "/en/"
+site-url = "/hooq/latest/en/"
 sidebar-header-nav = true
 
 [output.html.playground]

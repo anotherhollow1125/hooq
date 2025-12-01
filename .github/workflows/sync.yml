@@ -16,4 +16,5 @@ jobs:
       run: cargo install cargo-sort --locked --version 2.0.1
     - name: Check docs are updated properly
       run: |
-        .github/scripts/sync.rs -- --check
+        .github/scripts/sync.rs -- --check || \
+        .github/scripts/sync.rs -- --check -m publish

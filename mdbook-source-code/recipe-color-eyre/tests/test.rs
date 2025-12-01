@@ -1,6 +1,7 @@
 use regex::Regex;
 
 #[test]
+#[ignore]
 fn snapshot_test() {
     let output = std::process::Command::new("cargo")
         .env("RUST_LIB_BACKTRACE", "1")

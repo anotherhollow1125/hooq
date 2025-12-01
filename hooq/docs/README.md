@@ -1,5 +1,5 @@
 <div align="center">
-<a href="https://docs.rs/hooq/0.2.0/hooq/" target="_blank">
+<a href="https://docs.rs/hooq/latest/hooq/" target="_blank">
 <img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_eye_catch3.png" />
 </a>
 <h1>hooq</h1>
@@ -7,7 +7,7 @@
 <h3>A simple macro that inserts (hooks) a method before question operator (`?`).</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
-[![docs](https://img.shields.io/docsrs/hooq/0.2.0)](https://docs.rs/hooq/0.2.0/hooq/)
+[![docs](https://img.shields.io/docsrs/hooq/0.3.0)](https://docs.rs/hooq/0.3.0/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
 ?🪝 The name hooq comes from combining 'HOOk' and the 'Question mark operator ( ? )'. 🪝?
@@ -21,7 +21,7 @@ Keywords: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `q
 Documentations:
 - tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
 - reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
-- docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
+- docs.rs: <https://docs.rs/hooq/latest/hooq/>
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
@@ -148,7 +148,7 @@ For detailed usage instructions, please refer to the following! (Also included a
 
 - tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
 - reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
-- docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
+- docs.rs: <https://docs.rs/hooq/latest/hooq/>
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
@@ -165,7 +165,7 @@ or add it to your `Cargo.toml`.
 
 ```toml
 [dependencies]
-hooq = "0.2.0"
+hooq = "0.3.0"
 ```
 
 > [!NOTE]

@@ -1,5 +1,5 @@
 <div align="center">
-<a href="https://docs.rs/hooq/0.2.0/hooq/" target="_blank">
+<a href="https://docs.rs/hooq/latest/hooq/" target="_blank">
 <img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_eye_catch3.png" />
 </a>
 <h1>hooq</h1>
@@ -7,7 +7,7 @@
 <h3>はてな演算子 (`?`) の前にメソッドを挿入(フック)するシンプルなマクロ</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
-[![docs](https://img.shields.io/docsrs/hooq/0.2.0)](https://docs.rs/hooq/0.2.0/hooq/)
+[![docs](https://img.shields.io/docsrs/hooq/0.3.0)](https://docs.rs/hooq/0.3.0/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
 ?🪝 hooq という名前は 'HOOk' と 'Question' 演算子 ( `?` ) が由来です 🪝?
@@ -21,7 +21,7 @@ Enhance your questions by hooq!?
 ドキュメント:
 - チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
 - リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
-- docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
+- docs.rs: <https://docs.rs/hooq/latest/hooq/>
 
 <hr />
 
@@ -146,7 +146,7 @@ Caused by:
 
 - チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
 - リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
-- docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
+- docs.rs: <https://docs.rs/hooq/latest/hooq/>
 
 ## インストール
 
@@ -163,7 +163,7 @@ cargo add hooq
 
 ```toml
 [dependencies]
-hooq = "0.2.0"
+hooq = "0.3.0"
 ```
 
 ## デフォルトで挿入されるメソッド

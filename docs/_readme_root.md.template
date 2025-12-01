@@ -19,8 +19,8 @@ Enhance your questions by hooq!?
 Keywords: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 Documentations:
-- tutorial: (mdBook coming soon.)
-- reference: (mdBook coming soon.)
+- tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
+- reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/{{version}}/hooq/>
 
 > [!NOTE]
@@ -96,6 +96,8 @@ Caused by:
     2: Error in func1
 ```
 
+Other concrete examples would make the README too long, so they have been compiled in the mdBook: [Why use hooq?](https://anotherhollow1125.github.io/hooq/latest/en/#why-use-hooq)
+
 Applying `#[hooq]` (or `#[hooq(anyhow)]`) to all functions yields information close to an error stack trace.
 
 Below is a comparison table with other ways to obtain stack-trace-like information.
@@ -133,7 +135,7 @@ Explanations:
     - ✅ `tracing` can follow functions even across async boundaries; however, to know details such as “which line’s `?` operator?” you must add manual logging.
     - 🌈 `hooq` (similar to `#[tracing::instrument]`) traces only functions annotated with `#[hooq]`, giving you precise, opt‑in coverage. It can capture exact positions of `?`, `return`, and tail expressions for finer granularity.
         - Being an attribute macro you can conditionally attach it only in tests or behind features (`#[cfg_attr(..., hooq(...))]`).
-        - 💡 Can be combined with `tracing` to increase information granularity. See the flavor docs for [`tracing`]() in the mdBook.
+        - 💡 Can be combined with `tracing` to increase information granularity. See the flavor docs for [`tracing`](https://anotherhollow1125.github.io/hooq/latest/en/reference/flavors.html#tracing) in the mdBook.
 - Platform support
     - ⚠️ `Backtrace` may be unavailable or partial on some platforms (see official docs: https://doc.rust-lang.org/std/backtrace/index.html#platform-support).
     - ✅ Ordinary `tracing` logging use cases typically face few platform restrictions.
@@ -144,8 +146,8 @@ Explanations:
 
 For detailed usage instructions, please refer to the following! (Also included at the beginning, but repeated here)
 
-- Tutorial: (mdBook coming soon.)
-- Reference: (mdBook coming soon.)
+- tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
+- reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/{{version}}/hooq/>
 
 > [!NOTE]
@@ -190,7 +192,7 @@ You can switch the method to hook with the inert attribute `#[hooq::method(...)]
 
 The hooq macro can modify its behavior using inert attributes such as `#[hooq::method(...)]`.
 
-See mdbook's [Attributes]() for more details!
+See mdbook's [Attributes](https://anotherhollow1125.github.io/hooq/latest/en/reference/attributes.html) for more details!
 
 | Name | Type | Description |
 |:----|:----|:----|
@@ -251,7 +253,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 With method settings for insertion such as `#[hooq::method(...)]`, you can use information convenient for debugging and logging through meta variables such as `$line`.
 
-See mdbook's [Meta Variables]() for more details!
+See mdbook's [Meta Variables](https://anotherhollow1125.github.io/hooq/latest/en/reference/meta_vars.html) for more details!
 
 | Name | Literal Type | Description |
 |:----|:-----------|:----|
@@ -311,7 +313,7 @@ Configuring settings with attributes every time is tedious. hooq has a feature c
 
 Flavors can be user-defined, and hooq also provides several built-in ones!
 
-See mdbook's [Flavors]() for more details! Below are the pre-configured flavors (built-in flavors).
+See mdbook's [Flavors](https://anotherhollow1125.github.io/hooq/latest/en/reference/flavors.html) for more details! Below are the pre-configured flavors (built-in flavors).
 
 | Flavor Name | Feature | Description |
 |:----------|:--------|:----|
@@ -324,8 +326,6 @@ See mdbook's [Flavors]() for more details! Below are the pre-configured flavors 
 | tracing | tracing | Inserts an `inspect_err` method calling [`::tracing::error!`](https://docs.rs/tracing/latest/tracing/macro.error.html). Can be overridden |
 
 Usage example:
-
-(The following may be outdated due to update lag. Please refer to mdbook's [Flavors > anyhow]().)
 
 ```rust,should_panic
 use hooq::hooq;

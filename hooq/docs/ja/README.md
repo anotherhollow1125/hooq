@@ -19,8 +19,8 @@ Enhance your questions by hooq!?
 キーワード: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 ドキュメント:
-- チュートリアル: (mdBook を準備中です)
-- リファレンス: (mdBook を準備中です)
+- チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
+- リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
 
 <hr />
@@ -93,7 +93,7 @@ Caused by:
     2: Error in func1
 ```
 
-その他の具体例についてはREADMEに掲載すると長くなるため、mdbookの方にまとめました: [なぜhooqを使うか?]()
+その他の具体例についてはREADMEに掲載すると長くなるため、mdbookの方にまとめました: [なぜhooqを使うか?](https://anotherhollow1125.github.io/hooq/latest/ja/#%E3%81%AA%E3%81%9Chooq%E3%82%92%E4%BD%BF%E3%81%86%E3%81%8B)
 
 すべての関数に `#[hooq]` (や `#[hooq(anyhow)]` ) マクロを付与すると、エラーのスタックトレースに近いものを得ることができます。
 
@@ -133,7 +133,7 @@ Caused by:
     - ✅ `tracing` は非同期の場合でも関数をたどることができます。一方、「何行目の `?` 演算子か？」といった詳細な情報を得るには手動でロギングを入れるしかありません。
     - 🌈 `hooq` は (`#[tracing::instrument]` と同様に) `#[hooq]`を付けた関数についてのみトレースされるのでほしい箇所だけ的確に得られます。その上、 `?` 演算子や `return` の位置まで取得でき、より細かい情報を得られます！
         - 属性マクロなので、test時や特定のfeatureが有効な時だけ `#[cfg_attr(..., hooq(...))]` で条件付き付与、といったことが可能です！
-        - 💡 `tracing` と併用が可能なので、tracingの情報取得粒度を増やす使い方もできます！詳しくはフレーバーの [tracing]() を見てください
+        - 💡 `tracing` と併用が可能なので、tracingの情報取得粒度を増やす使い方もできます！詳しくはフレーバーの [tracing](https://anotherhollow1125.github.io/hooq/latest/ja/reference/flavors.html#tracing) を見てください
 - プラットフォームサポート:
     - ⚠️ `Backtrace` はプラットフォームによっては利用不可であることが[公式ドキュメント](https://doc.rust-lang.org/std/backtrace/index.html#platform-support)に記述されています。
     - ✅ 通常のログ収集用途であればプラットフォームによる制約はないでしょう。
@@ -144,8 +144,8 @@ Caused by:
 
 詳細な使い方は以下を参照ください！(冒頭にも載せてありますが再掲)
 
-- チュートリアル: (mdBook を準備中です)
-- リファレンス: (mdBook を準備中です)
+- チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
+- リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/0.2.0/hooq/>
 
 ## インストール
@@ -187,7 +187,7 @@ hooq = "0.2.0"
 
 hooqマクロは `#[hooq::method(...)]` などをはじめとした不活性属性を用いて挙動を変更することが可能です。
 
-詳細はmdbookの[属性]()を見てください！
+詳細はmdbookの[属性](https://anotherhollow1125.github.io/hooq/latest/ja/reference/attributes.html)を見てください！
 
 | 名前 | 種別 | 説明 |
 |:----|:----|:----|
@@ -248,7 +248,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 `#[hooq::method(...)]` などによる挿入するメソッドの設定では、 `$line` を始めとしたメタ変数を通してデバッグ・ロギングに便利な情報を利用することができます。
 
-詳細はmdbookの[メタ変数]()を見てください！
+詳細はmdbookの[メタ変数](https://anotherhollow1125.github.io/hooq/latest/ja/reference/meta_vars.html)を見てください！
 
 | 名前 | リテラル種別 | 説明 |
 |:----|:-----------|:----|
@@ -308,7 +308,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 フレーバーはユーザーが自分で定義できる他、hooq側で予め用意しているものがいくつかあります！
 
-詳細はmdbookの[フレーバー]()を見てください！以下は予め用意しているフレーバー(組み込みフレーバー)になります。
+詳細はmdbookの[フレーバー](https://anotherhollow1125.github.io/hooq/latest/ja/reference/flavors.html)を見てください！以下は予め用意しているフレーバー(組み込みフレーバー)になります。
 
 | フレーバー名 | feature | 内容 |
 |:----------|:--------|:----|

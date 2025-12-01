@@ -1,0 +1,212 @@
+# Flavors
+
+Flavors are presets that bundle hooq settings. Built‑in flavors:
+
+| Name | feature | Contents |
+|:-----|:--------|:---------|
+| [default](#default) | - | Default when nothing is specified; overridable via `hooq.toml`. |
+| [empty](#empty) | - | Disables hooking; inert attributes still processed. Not overridable. |
+| [hook](#hook) | - | Inserts a `hook` method taking [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html); designed for user traits. Overridable. |
+| [anyhow](#anyhow) | anyhow | Inserts `.with_context(...)`. Overridable. |
+| [eyre](#eyre) | eyre | Inserts `.wrap_err_with(...)`. Overridable. |
+| [log](#log) | log | Inserts `inspect_err` that calls `::log::error!`. Overridable. |
+| [tracing](#tracing) | tracing | Inserts `inspect_err` that calls `::tracing::error!`. Overridable.
+
+Flavor features are part of the default feature set, so you usually do not need to enable them explicitly.
+
+Users can define flavors in a `hooq.toml` at crate root.
+
+## User‑Defined Flavors
+
+`hooq.toml` uses table names as flavor names with fields:
+
+| Field | Type | Description |
+|:------|:-----|:------------|
+| trait_uses | array of strings | Trait paths to import. |
+| method | string | Method/expression to insert/replace. |
+| hook_targets | array of strings | Any of `"?"`, `"return"`, `"tail_expr"`. |
+| tail_expr_idents | array of strings | Idents like `"Err"`. |
+| ignore_tail_expr_idents | array of strings | Idents like `"Ok"`. |
+| result_types | array of strings | Return type idents like `"Result"`. |
+| hook_in_macros | bool | `true` or `false`. |
+| bindings | inline table | Arbitrary bindings; note string literals must be quoted with `\"`.
+
+All built‑in (except `empty`) can be overridden by defining the same table name. Sub‑tables other than `bindings` are sub‑flavors and inherit from their parent.
+
+See [Attributes](./attributes.md) for how to apply flavors.
+
+Example `hooq.toml`:
+
+```toml
+{{#include ../../../../../mdbook-source-code/my-flavor/hooq.toml}}
+```
+
+Usage:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/my-flavor/src/main.rs}}
+```
+
+Expansion:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/my-flavor/src/main.expanded.rs:13:25}}
+```
+
+## default
+
+Default configuration when using `#[hooq]`.
+
+It is configured as follows. (To keep the documentation consistent, this is excerpted directly from the source code; the same applies below.)
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:32:50}}
+```
+
+Default method (Please ignore Japanese comments):
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:52:71}}
+```
+
+Usage:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-default/src/main.rs}}
+```
+
+Result:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-default/tests/snapshots/test__flavor-default.snap:8:11}}
+```
+
+You can override via `hooq.toml`.
+
+## empty
+
+Disables hooking; intended for conditional builds like `#[cfg_attr(feature = "...", hooq(empty))]`.
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/empty.rs:10:32}}
+```
+
+Not overridable.
+
+## hook
+
+(Please ignore Japanese comments)
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/hook.rs:7:22}}
+```
+
+Designed for user traits to implement a `hook` method. It is useful when you do not want to use `hooq.toml`.
+
+Usage:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-hook/src/main.rs}}
+```
+
+The second argument is a closure (`meta_fn`) for lazy evaluation to avoid constructing `HooqMeta` everywhere.
+
+Expansion:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-hook/src/main.expanded.rs:37:53}}
+```
+
+## anyhow
+
+> Requires `anyhow` feature (included in default).
+
+This flavor is intended to be used with the [anyhow crate](https://docs.rs/anyhow/latest/anyhow/).
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/anyhow.rs:7:28}}
+```
+
+Imports `anyhow::Context` for [`.with_context(...)`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context).
+
+Usage:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-anyhow/src/main.rs}}
+```
+
+Result:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:19}}
+```
+
+## eyre
+
+> Requires `eyre` feature (included in default).
+
+This flavor is intended to be used with the [eyre crate](https://docs.rs/eyre/latest/eyre/).
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:7:28}}
+```
+
+Imports `eyre::WrapErr` for [`.wrap_err_with(...)`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with).
+
+Usage:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-eyre/src/main.rs}}
+```
+
+Result:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-eyre/tests/snapshots/test__flavor-eyre.snap:8:22}}
+```
+
+## log
+
+> Requires `log` feature (included in default).
+
+This flavor is intended to be used with the [log crate](https://docs.rs/log/latest/log/).
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:7:27}}
+```
+
+Usage:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-log/src/main.rs}}
+```
+
+Result:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:11}}
+```
+
+## tracing
+
+> Requires `tracing` feature (included in default).
+
+This flavor is intended to be used with the [tracing crate](https://docs.rs/tracing/latest/tracing/).
+
+```rust
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:7:33}}
+```
+
+Place `#[hooq(tracing)]` above `#[tracing::instrument]` to ensure order.
+
+Usage:
+
+```rust
+{{#rustdoc_include ../../../../../mdbook-source-code/flavor-tracing/src/main.rs}}
+```
+
+Result:
+
+```bash
+{{#include ../../../../../mdbook-source-code/flavor-tracing/tests/snapshots/test__flavor-tracing.snap:5:11}}
+```

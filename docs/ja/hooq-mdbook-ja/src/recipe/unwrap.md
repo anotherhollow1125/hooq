@@ -12,7 +12,7 @@ hooq = { version = "*", features = ["consume-question"] }
 
 # ..
 
-{{#include ../../../../../mdbook-source-code/recipe-unwrap/Cargo.toml:19:20}}
+{{#include ../../../../../mdbook-source-code/recipe-unwrap/Cargo.toml:13:14}}
 ```
 
 hooq.tomlに予めフレーバーを用意しておきます。末尾式や `return` に同様の置換を行われると困るため、 `hook_targets` の方で `?` でのみ置き換わるように指定しておきます。

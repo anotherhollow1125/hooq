@@ -1,11 +1,11 @@
 [book]
+title = "hooq Reference"
 authors = ["namnium"]
-language = "ja"
+language = "en"
 src = "src"
-title = "hooq Reference 日本語版"
 
 [output.html]
-site-url = "/ja/"
+site-url = "/en/"
 sidebar-header-nav = true
 
 [output.html.playground]

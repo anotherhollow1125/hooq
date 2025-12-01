@@ -9,7 +9,7 @@ repository = { workspace = true }
 license = { workspace = true }
 keywords = { workspace = true }
 categories = { workspace = true }
-exclude = ["*.expanded.rs"]
+exclude = ["*.expanded.rs", "*.snap"]
 readme = "docs/README.md"
 
 [lib]

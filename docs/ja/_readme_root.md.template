@@ -1,5 +1,5 @@
 <div align="center">
-<a href="https://docs.rs/hooq/{{version}}/hooq/" target="_blank">
+<a href="https://docs.rs/hooq/latest/hooq/" target="_blank">
 <img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_eye_catch3.png" />
 </a>
 <h1>hooq</h1>
@@ -21,7 +21,7 @@ Enhance your questions by hooq!?
 ドキュメント:
 - チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
 - リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
-- docs.rs: <https://docs.rs/hooq/{{version}}/hooq/>
+- docs.rs: <https://docs.rs/hooq/latest/hooq/>
 
 <hr />
 
@@ -146,7 +146,7 @@ Caused by:
 
 - チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
 - リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
-- docs.rs: <https://docs.rs/hooq/{{version}}/hooq/>
+- docs.rs: <https://docs.rs/hooq/latest/hooq/>
 
 ## インストール
 

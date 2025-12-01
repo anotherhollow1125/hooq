@@ -1,5 +1,5 @@
 <div align="center">
-<a href="https://docs.rs/hooq/{{version}}/hooq/" target="_blank">
+<a href="https://docs.rs/hooq/latest/hooq/" target="_blank">
 <img src="https://raw.githubusercontent.com/anotherhollow1125/hooq/refs/heads/main/assets/hooq_eye_catch3.png" />
 </a>
 <h1>hooq</h1>
@@ -21,7 +21,7 @@ Keywords: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `q
 Documentations:
 - tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
 - reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
-- docs.rs: <https://docs.rs/hooq/{{version}}/hooq/>
+- docs.rs: <https://docs.rs/hooq/latest/hooq/>
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
@@ -148,7 +148,7 @@ For detailed usage instructions, please refer to the following! (Also included a
 
 - tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
 - reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
-- docs.rs: <https://docs.rs/hooq/{{version}}/hooq/>
+- docs.rs: <https://docs.rs/hooq/latest/hooq/>
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)

@@ -25,7 +25,7 @@ Write `main.rs`. `use hooq::hooq;` and annotate `#[hooq(eyre)]` above `#[instrum
 Run with `RUST_LIB_BACKTRACE=1` to also see the BACKTRACE:
 
 ```rust
-{{#include ../../../../../mdbook-source-code/recipe-color-eyre/tests/snapshots/test__recipe-color-eyre.snap:9:54}}
+{{#include ../../../../../mdbook-source-code/recipe-color-eyre/tests/snapshots/test__recipe-color-eyre.snap:9:}}
 ```
 
 This is likely the most detailed output.

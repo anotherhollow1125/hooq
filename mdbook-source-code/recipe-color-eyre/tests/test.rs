@@ -4,7 +4,7 @@ use regex::Regex;
 #[ignore]
 fn snapshot_test() {
     let output = std::process::Command::new("cargo")
-        .env("RUST_LIB_BACKTRACE", "1")
+        .env("RUST_LIB_BACKTRACE", "full")
         .args(["run", "-q"])
         .output()
         .expect("Failed to execute command");

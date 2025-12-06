@@ -35,20 +35,49 @@ Location:
                                 ⋮ 4 frames hidden ⋮                               
    5: <E as eyre::context::ext::StdError>::ext_report::h0e9fcf40b567f05e
       at /home/USER/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/eyre-0.6.12/src/context.rs:26
+        24 │             D: Display + Send + Sync + 'static,
+        25 │         {
+        26 >             Report::from_msg(msg, self)
+        27 │         }
+        28 │     }
                                  ⋮ 1 frame hidden ⋮                               
    7: recipe_color_eyre::read_file::h74782b4bb409e5a9
       at /home/USER/workspace/hooq/mdbook-source-code/recipe-color-eyre/src/main.rs:39
+        37 │ fn read_file(path: &str) -> Result<(), Report> {
+        38 │     info!("Reading file");
+        39 >     std::fs::read_to_string(path).map(drop)
+        40 │ }
+        41 │ 
    8: recipe_color_eyre::read_config::h8139da57eb93337e
       at /home/USER/workspace/hooq/mdbook-source-code/recipe-color-eyre/src/main.rs:45
+        43 │ #[instrument]
+        44 │ fn read_config() -> Result<(), Report> {
+        45 >     read_file("fake_file")
+        46 │         .wrap_err("Unable to read config")
+        47 │         .suggestion("try using a file that exists next time")
    9: recipe_color_eyre::main::h9c27f45de169a3be
       at /home/USER/workspace/hooq/mdbook-source-code/recipe-color-eyre/src/main.rs:14
+        12 │     color_eyre::install()?;
+        13 │ 
+        14 >     read_config()
+        15 │ }
+        16 │ 
   10: core::ops::function::FnOnce::call_once::h724113526cc98cab
       at /home/USER/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ops/function.rs:250
+       248 │     /// Performs the call operation.
+       249 │     #[unstable(feature = "fn_traits", issue = "29625")]
+       250 >     extern "rust-call" fn call_once(self, args: Args) -> Self::Output;
+       251 │ }
+       252 │ 
   11: std::sys::backtrace::__rust_begin_short_backtrace::h9e20a34286867e4d
       at /home/USER/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:158
+       156 │     F: FnOnce() -> T,
+       157 │ {
+       158 >     let result = f();
+       159 │ 
+       160 │     // prevent this frame from being tail-call optimised away
                                 ⋮ 14 frames hidden ⋮                              
 
 Suggestion: try using a file that exists next time
 
 Run with COLORBT_SHOW_HIDDEN=1 environment variable to disable frame filtering.
-Run with RUST_BACKTRACE=full to include source snippets.

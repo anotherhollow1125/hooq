@@ -43,12 +43,12 @@ log = ["hooq-macros/log"]
 tracing = ["hooq-macros/tracing"]
 [dependencies.hooq-helpers]
 path = "../hooq-helpers"
-version = "0.3.0"
+version = "0.3.1"
 
 [dependencies.hooq-macros]
 default-features = false
 path = "../hooq-macros"
-version = "0.3.0"
+version = "0.3.1"
 
 [dev-dependencies]
 anyhow = "1.0.100"

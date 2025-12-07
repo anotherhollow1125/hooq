@@ -9,7 +9,7 @@ This is sub-crate for [hooq](https://github.com/anotherhollow1125/hooq/tree/main
 <h3>はてな演算子 (`?`) の前にメソッドを挿入(フック)するシンプルなマクロ</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
-[![docs](https://img.shields.io/docsrs/hooq/0.3.0)](https://docs.rs/hooq/0.3.0/hooq/)
+[![docs](https://img.shields.io/docsrs/hooq/0.3.1)](https://docs.rs/hooq/0.3.1/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
 ?🪝 hooq という名前は 'HOOk' と 'Question' 演算子 ( `?` ) が由来です 🪝?
@@ -173,7 +173,7 @@ cargo add hooq
 
 ```toml
 [dependencies]
-hooq = "0.3.0"
+hooq = "0.3.1"
 ```
 
 ## デフォルトで挿入されるメソッド

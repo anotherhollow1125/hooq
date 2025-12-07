@@ -28,6 +28,8 @@ pub fn preset_flavors() -> HashMap<String, Flavor> {
         ("anyhow", anyhow::anyhow_flavor()),
         #[cfg(feature = "eyre")]
         ("eyre", eyre::eyre_flavor()),
+        #[cfg(feature = "eyre")]
+        ("color_eyre", eyre::color_eyre_flavor()),
         #[cfg(feature = "tracing")]
         ("tracing", tracing::tracing_flavor()),
     ]

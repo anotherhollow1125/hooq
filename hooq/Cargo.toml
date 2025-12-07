@@ -30,6 +30,9 @@ workspace = true
 [package.version]
 workspace = true
 
+[package.documentation]
+workspace = true
+
 [features]
 anyhow = ["hooq-macros/anyhow"]
 consume-question = ["hooq-macros/consume-question"]

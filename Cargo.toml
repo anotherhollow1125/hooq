@@ -23,3 +23,4 @@ repository = "https://github.com/anotherhollow1125/hooq"
 license = "MIT OR Apache-2.0"
 keywords = ["error", "proc-macro", "anyhow", "eyre", "log"]
 categories = ["development-tools", "development-tools::debugging", "rust-patterns"]
+documentation = "https://anotherhollow1125.github.io/hooq/"

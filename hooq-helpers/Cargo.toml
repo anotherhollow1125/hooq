@@ -10,6 +10,7 @@ license = { workspace = true }
 keywords = { workspace = true }
 categories = { workspace = true }
 readme = "docs/README.md"
+documentation = { workspace = true }
 
 [dependencies]
 

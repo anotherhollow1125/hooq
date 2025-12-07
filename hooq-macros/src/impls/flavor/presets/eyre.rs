@@ -12,6 +12,14 @@ pub fn eyre_flavor() -> Flavor {
     }
 }
 
+pub fn color_eyre_flavor() -> Flavor {
+    Flavor {
+        trait_uses: vec![parse_quote! { ::color_eyre::eyre::WrapErr }],
+        method: eyre_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
+        ..Default::default()
+    }
+}
+
 fn eyre_method() -> TokenStream {
     let excerpted_helpers_path = crate::impls::utils::get_source_excerpt_helpers_name_space();
 

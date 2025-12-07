@@ -10,13 +10,7 @@
 {{#include ../../../../../mdbook-source-code/recipe-color-eyre/Cargo.toml:13:22}}
 ```
 
-次に、 `::eyre::WrapErr` ではなく `color_eyre::eyre::WrapErr` をuseしたいので、その上書きを行うhooq.tomlをCargo.tomlと同じ階層に置きます。そのほかの設定は組み込みの [eyreフレーバー](../reference/flavors.md#eyre) から引き継がれます！
-
-```toml
-{{#include ../../../../../mdbook-source-code/recipe-color-eyre/hooq.toml}}
-```
-
-そしてmain.rsを書きます。 `use hooq::hooq;` し、 `#[instrument]` の上に `#[hooq(eyre)]` を付けます[^time]。
+main.rsを書きます。 `use hooq::hooq;` し、 `#[instrument]` の上に `#[hooq(color_eyre)]` を付けます[^time]。
 
 [^time]: スナップショットテストの関係で時刻を出力しない `.without_time()` も付与しています。
 

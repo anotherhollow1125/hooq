@@ -561,6 +561,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "hooq-color-eyre"
+version = "0.3.0"
+dependencies = [
+ "color-eyre",
+ "hooq",
+ "macrotest",
+ "test-helpers",
+]
+
+[[package]]
 name = "hooq-examples"
 version = "0.3.0"
 dependencies = [

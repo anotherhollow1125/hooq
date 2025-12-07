@@ -1,0 +1,12 @@
+[package]
+name = "hooq-color-eyre"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+publish = false
+
+[dependencies]
+color-eyre = "0.6.5"
+hooq = { path = "../../../../../hooq", features = ["eyre"] }
+macrotest = "1.2.0"
+test-helpers = { path = "../../../../../test-helpers" }

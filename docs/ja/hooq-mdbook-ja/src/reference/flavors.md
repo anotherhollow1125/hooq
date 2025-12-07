@@ -10,7 +10,7 @@
 | [empty](#empty) | - | 全く何もフックしない場合に用いるフレーバー。上書きは不可 |
 | [hook](#hook) | - | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) を引数に取る `hook` メソッドを挿入するフレーバー。ユーザー定義のトレイト経由での利用を想定。上書き可 |
 | [anyhow](#anyhow) | anyhow | [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを挿入するフレーバー。上書き可 |
-| [eyre](#eyre) | eyre | [`wrap_err_with`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを挿入するフレーバー。上書き可 |
+| [eyre](#eyre--color_eyre) / [color_eyre](#eyre--color_eyre) | eyre | [`wrap_err_with`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを挿入するフレーバー。上書き可 |
 | [log](#log) | log | [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
 | [tracing](#tracing) | tracing | [`::tracing::error!`](https://docs.rs/tracing/latest/tracing/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
 
@@ -153,7 +153,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 {{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:19}}
 ```
 
-## eyre
+## eyre / color_eyre
 
 > `eyre` feature が必要ですが、defaultに含まれています。
 
@@ -178,6 +178,8 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 ```bash
 {{#include ../../../../../mdbook-source-code/flavor-eyre/tests/snapshots/test__flavor-eyre.snap:8:22}}
 ```
+
+`use ::eyre::WrapErr as _;` の代わりに `use ::color_eyre::eyre::WrapErr as _;` を挿入する `color_eyre` フレーバーも同時に提供しています。
 
 ## log
 

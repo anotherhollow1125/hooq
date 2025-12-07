@@ -1,2 +1,0 @@
-[eyre]
-trait_uses = ["color_eyre::eyre::WrapErr"]

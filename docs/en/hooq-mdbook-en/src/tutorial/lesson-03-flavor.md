@@ -12,7 +12,7 @@ Run to produce an error: the extra `.with_context(...)` calls accumulate, giving
 {{#include ../../../../../mdbook-source-code/tutorial-4-with-anyhow/tests/snapshots/test__tutorial-4-with-anyhow.snap:8:18}}
 ```
 
-Because this is a frequent pattern hooq provides a preset—the [**anyhow flavor**](../reference/flavors.md#anyhow). Presets are called "flavors" in hooq. There are also flavors for [log](../reference/flavors.md#log), [eyre](../reference/flavors.md#eyre), and [tracing](../reference/flavors.md#tracing).
+Because this is a frequent pattern hooq provides a preset—the [**anyhow flavor**](../reference/flavors.md#anyhow). Presets are called "flavors" in hooq. There are also flavors for [log](../reference/flavors.md#log), [eyre](../reference/flavors.md#eyre--color_eyre), and [tracing](../reference/flavors.md#tracing).
 
 Change `#[hooq]` to `#[hooq(anyhow)]` to enable the flavor:
 

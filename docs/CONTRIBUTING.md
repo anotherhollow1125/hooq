@@ -86,8 +86,10 @@ I mainly use generative AI for the following tasks:
 - Advice from GitHub Copilot Chat / ChatGPT
 	- I consult generative AI to help move the project forward overall.
 - Japanese → English translation and documentation generation via GitHub Copilot Chat
-- Using [DeepWiki](https://deepwiki.com/) (planned)
-	- I plan to create documentation based on existing documents.
+- Using [DeepWiki](https://deepwiki.com/)
+	- I created documentation based on existing documents.
+	- <https://deepwiki.com/anotherhollow1125/hooq>
+	- Please note that this may contain some hallucinations, so please verify the content when referencing it.
 
 On the other hand, I prioritize manual work for the following tasks:
 
@@ -95,4 +97,4 @@ On the other hand, I prioritize manual work for the following tasks:
 	- I try to keep Copilot’s completions limited in scope and code while understanding the entire codebase.
 - Writing the original Japanese documentation
 	- I focus on expressing ideas in my own words, including code examples.
-	- As mentioned, once content is more complete, I plan to use tools like DeepWiki for documentation.
+	- As mentioned, I also provide documentation generated with AI tools like DeepWiki as a reference.

@@ -19,9 +19,13 @@ Enhance your questions by hooq!?
 キーワード: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 ドキュメント:
-- チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
-- リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
+- mdBooks: <https://anotherhollow1125.github.io/hooq/>
+    - 最新トップページ: <https://anotherhollow1125.github.io/hooq/latest/ja/index.html>
+    - 最新チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
+    - 最新リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/latest/hooq/>
+- deepwiki: <https://deepwiki.com/anotherhollow1125/hooq>
+    - ⚠️ ハルシネーションにお気をつけください。
 
 <hr />
 
@@ -144,9 +148,13 @@ Caused by:
 
 詳細な使い方は以下を参照ください！(冒頭にも載せてありますが再掲)
 
-- チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
-- リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
+- mdBooks: <https://anotherhollow1125.github.io/hooq/>
+    - 最新トップページ: <https://anotherhollow1125.github.io/hooq/latest/ja/index.html>
+    - 最新チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
+    - 最新リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/latest/hooq/>
+- deepwiki: <https://deepwiki.com/anotherhollow1125/hooq>
+    - ⚠️ ハルシネーションにお気をつけください。
 
 ## インストール
 

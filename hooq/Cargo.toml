@@ -12,6 +12,9 @@ workspace = true
 [package.description]
 workspace = true
 
+[package.documentation]
+workspace = true
+
 [package.edition]
 workspace = true
 
@@ -28,9 +31,6 @@ workspace = true
 workspace = true
 
 [package.version]
-workspace = true
-
-[package.documentation]
 workspace = true
 
 [features]

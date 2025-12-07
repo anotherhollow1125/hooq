@@ -19,9 +19,13 @@ Enhance your questions by hooq!?
 Keywords: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 Documentations:
-- tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
-- reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
+- mdBooks: <https://anotherhollow1125.github.io/hooq/>
+    - latest intro: <https://anotherhollow1125.github.io/hooq/latest/en/index.html>
+    - latest tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
+    - latest reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/latest/hooq/>
+- deepwiki: <https://deepwiki.com/anotherhollow1125/hooq>
+    - ⚠️ Please be careful of generative AI hallucination.
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
@@ -146,9 +150,13 @@ Explanations:
 
 For detailed usage instructions, please refer to the following! (Also included at the beginning, but repeated here)
 
-- tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
-- reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
+- mdBooks: <https://anotherhollow1125.github.io/hooq/>
+    - latest intro: <https://anotherhollow1125.github.io/hooq/latest/en/index.html>
+    - latest tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
+    - latest reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/latest/hooq/>
+- deepwiki: <https://deepwiki.com/anotherhollow1125/hooq>
+    - ⚠️ Please be careful of generative AI hallucination.
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)

@@ -10,13 +10,7 @@ Create a new project and set the following in Cargo.toml (replace `hooq` with th
 {{#include ../../../../../mdbook-source-code/recipe-color-eyre/Cargo.toml:13:22}}
 ```
 
-We want `color_eyre::eyre::WrapErr` instead of `::eyre::WrapErr`, so place `hooq.toml` next to Cargo.toml to override the import. Other settings inherit from the built‑in [eyre flavor](../reference/flavors.md#eyre).
-
-```toml
-{{#include ../../../../../mdbook-source-code/recipe-color-eyre/hooq.toml}}
-```
-
-Write `main.rs`. `use hooq::hooq;` and annotate `#[hooq(eyre)]` above `#[instrument]` (we also add `.without_time()` to stabilize snapshots).
+Write `main.rs`. `use hooq::hooq;` and annotate `#[hooq(color_eyre)]` above `#[instrument]` (we also add `.without_time()` to stabilize snapshots).
 
 ```rust
 {{#rustdoc_include ../../../../../mdbook-source-code/recipe-color-eyre/src/main.rs}}

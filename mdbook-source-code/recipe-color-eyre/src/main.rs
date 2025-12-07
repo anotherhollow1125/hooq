@@ -3,7 +3,7 @@ use color_eyre::eyre::{Report, WrapErr};
 use hooq::hooq;
 use tracing::{info, instrument};
 
-#[hooq(eyre)]
+#[hooq(color_eyre)]
 #[instrument]
 fn main() -> Result<(), Report> {
     #[cfg(feature = "capture-spantrace")]
@@ -32,14 +32,14 @@ fn install_tracing() {
         .init();
 }
 
-#[hooq(eyre)]
+#[hooq(color_eyre)]
 #[instrument]
 fn read_file(path: &str) -> Result<(), Report> {
     info!("Reading file");
     std::fs::read_to_string(path).map(drop)
 }
 
-#[hooq(eyre)]
+#[hooq(color_eyre)]
 #[instrument]
 fn read_config() -> Result<(), Report> {
     read_file("fake_file")

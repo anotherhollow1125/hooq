@@ -16,7 +16,7 @@
 
 anyhowクレートはとても良く使われるクレートであり、そして `.with_context(...)` はここまでで示した通りとても便利なメソッドです。
 
-そこで、このフックは頻出であろうと考えhooqではanyhowに対し特別なプリセット... [**anyhow フレーバー**](../reference/flavors.md#anyhow) を設けています。hooqではプリセットのことをわかりやすさのためフレーバー(flavor)と呼称しています。anyhowにとどまらず[log](../reference/flavors.md#log), [eyre](../reference/flavors.md#eyre)や[tracing](../reference/flavors.md#tracing)といったクレートに対してもフレーバーを用意しています。
+そこで、このフックは頻出であろうと考えhooqではanyhowに対し特別なプリセット... [**anyhow フレーバー**](../reference/flavors.md#anyhow) を設けています。hooqではプリセットのことをわかりやすさのためフレーバー(flavor)と呼称しています。anyhowにとどまらず[log](../reference/flavors.md#log), [eyre](../reference/flavors.md#eyre--color_eyre)や[tracing](../reference/flavors.md#tracing)といったクレートに対してもフレーバーを用意しています。
 
 今まで `#[hooq]` と記載していた属性マクロ呼び出しを `#[hooq(フレーバー名)]` とすることでフレーバーを指定できます。
 

@@ -8,7 +8,7 @@ Flavors are presets that bundle hooq settings. Built‑in flavors:
 | [empty](#empty) | - | Disables hooking; inert attributes still processed. Not overridable. |
 | [hook](#hook) | - | Inserts a `hook` method taking [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html); designed for user traits. Overridable. |
 | [anyhow](#anyhow) | anyhow | Inserts `.with_context(...)`. Overridable. |
-| [eyre](#eyre) | eyre | Inserts `.wrap_err_with(...)`. Overridable. |
+| [eyre](#eyre--color_eyre) / [color_eyre](#eyre--color_eyre) | eyre | Inserts `.wrap_err_with(...)`. Overridable. |
 | [log](#log) | log | Inserts `inspect_err` that calls `::log::error!`. Overridable. |
 | [tracing](#tracing) | tracing | Inserts `inspect_err` that calls `::tracing::error!`. Overridable.
 
@@ -141,7 +141,7 @@ Result:
 {{#include ../../../../../mdbook-source-code/flavor-anyhow/tests/snapshots/test__flavor-anyhow.snap:8:19}}
 ```
 
-## eyre
+## eyre / color_eyre
 
 > Requires `eyre` feature (included in default).
 
@@ -164,6 +164,8 @@ Result:
 ```bash
 {{#include ../../../../../mdbook-source-code/flavor-eyre/tests/snapshots/test__flavor-eyre.snap:8:22}}
 ```
+
+A `color_eyre` flavor is also provided that inserts `use ::color_eyre::eyre::WrapErr as _;` instead of `use ::eyre::WrapErr as _;`.
 
 ## log
 

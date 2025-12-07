@@ -11,6 +11,7 @@ keywords = { workspace = true }
 categories = { workspace = true }
 exclude = ["*.expanded.rs", "*.snap"]
 readme = "docs/README.md"
+documentation = { workspace = true }
 
 [lib]
 proc-macro = true

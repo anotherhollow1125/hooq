@@ -28,7 +28,7 @@ dependencies = [
 
 [[package]]
 name = "all_attr"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "macrotest",
@@ -93,7 +93,7 @@ checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 
 [[package]]
 name = "attribute-binding"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -101,7 +101,7 @@ dependencies = [
 
 [[package]]
 name = "attribute-flavor-1"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -109,7 +109,7 @@ dependencies = [
 
 [[package]]
 name = "attribute-method"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -117,7 +117,7 @@ dependencies = [
 
 [[package]]
 name = "attribute-part-flavor"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -243,7 +243,7 @@ dependencies = [
 
 [[package]]
 name = "consume-question"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "macrotest",
@@ -252,7 +252,7 @@ dependencies = [
 
 [[package]]
 name = "consume_question"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -260,7 +260,7 @@ dependencies = [
 
 [[package]]
 name = "custom"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -268,7 +268,7 @@ dependencies = [
 
 [[package]]
 name = "default"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -317,7 +317,7 @@ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 
 [[package]]
 name = "eye_catch"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -341,7 +341,7 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
 name = "file-load"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "macrotest",
@@ -350,7 +350,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-anyhow"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "anyhow",
  "hooq",
@@ -359,7 +359,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-default"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -367,7 +367,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-eyre"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "eyre",
  "hooq",
@@ -376,7 +376,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-hook"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -384,7 +384,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-in-sub-mod"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "macrotest",
@@ -393,7 +393,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-log"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "env_logger",
  "hooq",
@@ -403,7 +403,7 @@ dependencies = [
 
 [[package]]
 name = "flavor-tracing"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -526,7 +526,7 @@ checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
 name = "hook_in_macros"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -534,7 +534,7 @@ dependencies = [
 
 [[package]]
 name = "hook_targets"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -542,7 +542,7 @@ dependencies = [
 
 [[package]]
 name = "hooq"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "anyhow",
  "hooq-helpers",
@@ -552,7 +552,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-anyhow"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "anyhow",
  "hooq",
@@ -562,7 +562,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-color-eyre"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "color-eyre",
  "hooq",
@@ -572,7 +572,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-examples"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "anyhow",
  "clap",
@@ -584,7 +584,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-eyre"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "eyre",
  "hooq",
@@ -594,7 +594,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-helpers"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "anyhow",
  "hooq",
@@ -603,7 +603,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-log"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "env_logger",
  "hooq",
@@ -614,7 +614,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-macros"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "anyhow",
  "futures",
@@ -635,7 +635,7 @@ dependencies = [
 
 [[package]]
 name = "hooq-tracing"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "macrotest",
@@ -646,7 +646,7 @@ dependencies = [
 
 [[package]]
 name = "ignore_tail_expr_idents"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -654,7 +654,7 @@ dependencies = [
 
 [[package]]
 name = "ignore_tail_expr_idents-warning"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -668,7 +668,7 @@ checksum = "964de6e86d545b246d84badc0fef527924ace5134f30641c203ef52ba83f58d5"
 
 [[package]]
 name = "index"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -677,7 +677,7 @@ dependencies = [
 
 [[package]]
 name = "index_without_hooq"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -695,7 +695,7 @@ dependencies = [
 
 [[package]]
 name = "inert-flavor"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -809,7 +809,7 @@ checksum = "f52b00d39961fc5b2736ea853c9cc86238e165017a493d1d5c8eac6bdc4cc273"
 
 [[package]]
 name = "meta-vars-all"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -817,7 +817,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-binding"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -825,7 +825,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-bindings"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -833,7 +833,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-column"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -841,7 +841,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-count"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -849,7 +849,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-file"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -857,7 +857,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-fn_name"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -865,7 +865,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-fn_sig"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -873,7 +873,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-hooq_meta"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -881,7 +881,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-line"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -889,7 +889,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-path"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -897,7 +897,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-source"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -905,7 +905,7 @@ dependencies = [
 
 [[package]]
 name = "meta-vars-source-summary"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -913,7 +913,7 @@ dependencies = [
 
 [[package]]
 name = "method_insert_mode"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -921,7 +921,7 @@ dependencies = [
 
 [[package]]
 name = "method_replace"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "macrotest",
@@ -930,7 +930,7 @@ dependencies = [
 
 [[package]]
 name = "method_replace_mode"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -958,7 +958,7 @@ dependencies = [
 
 [[package]]
 name = "my-flavor"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1089,7 +1089,7 @@ dependencies = [
 
 [[package]]
 name = "recipe-batch-apply"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1097,7 +1097,7 @@ dependencies = [
 
 [[package]]
 name = "recipe-color-eyre"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "color-eyre",
  "hooq",
@@ -1111,7 +1111,7 @@ dependencies = [
 
 [[package]]
 name = "recipe-match"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1119,7 +1119,7 @@ dependencies = [
 
 [[package]]
 name = "recipe-option"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1127,7 +1127,7 @@ dependencies = [
 
 [[package]]
 name = "recipe-unwrap"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1173,7 +1173,7 @@ checksum = "7a2d987857b319362043e95f5353c0535c1f58eec5336fdfcf626430af7def58"
 
 [[package]]
 name = "result_types"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1275,7 +1275,7 @@ checksum = "bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa"
 
 [[package]]
 name = "skip"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1283,7 +1283,7 @@ dependencies = [
 
 [[package]]
 name = "skip_all"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1339,7 +1339,7 @@ dependencies = [
 
 [[package]]
 name = "tail_expr_idents"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1347,7 +1347,7 @@ dependencies = [
 
 [[package]]
 name = "test-helpers"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "glob",
 ]
@@ -1513,7 +1513,7 @@ dependencies = [
 
 [[package]]
 name = "trait_use"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "test-helpers",
@@ -1521,7 +1521,7 @@ dependencies = [
 
 [[package]]
 name = "tutorial-1"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -1530,7 +1530,7 @@ dependencies = [
 
 [[package]]
 name = "tutorial-2"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -1539,7 +1539,7 @@ dependencies = [
 
 [[package]]
 name = "tutorial-3"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -1548,7 +1548,7 @@ dependencies = [
 
 [[package]]
 name = "tutorial-4"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -1557,7 +1557,7 @@ dependencies = [
 
 [[package]]
 name = "tutorial-4-compile-error"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -1566,7 +1566,7 @@ dependencies = [
 
 [[package]]
 name = "tutorial-4-with-anyhow"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "anyhow",
  "hooq",
@@ -1576,7 +1576,7 @@ dependencies = [
 
 [[package]]
 name = "tutorial-4-with-anyhow-2"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "anyhow",
  "hooq",
@@ -1586,7 +1586,7 @@ dependencies = [
 
 [[package]]
 name = "tutorial-flavor"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hooq",
  "insta",
@@ -1607,7 +1607,7 @@ checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
 
 [[package]]
 name = "util_macros"
-version = "0.3.0"
+version = "0.3.1"
 
 [[package]]
 name = "valuable"

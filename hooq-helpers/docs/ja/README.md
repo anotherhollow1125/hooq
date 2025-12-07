@@ -9,7 +9,7 @@ This is sub-crate for [hooq](https://github.com/anotherhollow1125/hooq/tree/main
 <h3>はてな演算子 (`?`) の前にメソッドを挿入(フック)するシンプルなマクロ</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
-[![docs](https://img.shields.io/docsrs/hooq/0.3.0)](https://docs.rs/hooq/0.3.0/hooq/)
+[![docs](https://img.shields.io/docsrs/hooq/0.3.1)](https://docs.rs/hooq/0.3.1/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
 ?🪝 hooq という名前は 'HOOk' と 'Question' 演算子 ( `?` ) が由来です 🪝?
@@ -21,9 +21,13 @@ Enhance your questions by hooq!?
 キーワード: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 ドキュメント:
-- チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
-- リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
+- mdBooks: <https://anotherhollow1125.github.io/hooq/>
+    - 最新トップページ: <https://anotherhollow1125.github.io/hooq/latest/ja/index.html>
+    - 最新チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
+    - 最新リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/latest/hooq/>
+- deepwiki: <https://deepwiki.com/anotherhollow1125/hooq>
+    - ⚠️ ハルシネーションにお気をつけください。
 
 <hr />
 
@@ -146,9 +150,13 @@ Caused by:
 
 詳細な使い方は以下を参照ください！(冒頭にも載せてありますが再掲)
 
-- チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
-- リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
+- mdBooks: <https://anotherhollow1125.github.io/hooq/>
+    - 最新トップページ: <https://anotherhollow1125.github.io/hooq/latest/ja/index.html>
+    - 最新チュートリアル: <https://anotherhollow1125.github.io/hooq/latest/ja/tutorial/index.html>
+    - 最新リファレンス: <https://anotherhollow1125.github.io/hooq/latest/ja/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/latest/hooq/>
+- deepwiki: <https://deepwiki.com/anotherhollow1125/hooq>
+    - ⚠️ ハルシネーションにお気をつけください。
 
 ## インストール
 
@@ -165,7 +173,7 @@ cargo add hooq
 
 ```toml
 [dependencies]
-hooq = "0.3.0"
+hooq = "0.3.1"
 ```
 
 ## デフォルトで挿入されるメソッド

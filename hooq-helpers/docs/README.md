@@ -9,7 +9,7 @@ This is sub-crate for [hooq](https://github.com/anotherhollow1125/hooq/tree/main
 <h3>A simple macro that inserts (hooks) a method before question operator (`?`).</h3>
 
 [![crate](https://img.shields.io/crates/v/hooq)](https://crates.io/crates/hooq)
-[![docs](https://img.shields.io/docsrs/hooq/0.3.0)](https://docs.rs/hooq/0.3.0/hooq/)
+[![docs](https://img.shields.io/docsrs/hooq/0.3.1)](https://docs.rs/hooq/0.3.1/hooq/)
 [![Rust](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml/badge.svg)](https://github.com/anotherhollow1125/hooq/actions/workflows/rust.yml)
 
 ?🪝 The name hooq comes from combining 'HOOk' and the 'Question mark operator ( ? )'. 🪝?
@@ -21,9 +21,13 @@ Enhance your questions by hooq!?
 Keywords: `Result`, `Option`, `hook`, `Result hook`, `Option hook`, `? hook`, `question hook`, `error`, `logging`
 
 Documentations:
-- tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
-- reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
+- mdBooks: <https://anotherhollow1125.github.io/hooq/>
+    - latest intro: <https://anotherhollow1125.github.io/hooq/latest/en/index.html>
+    - latest tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
+    - latest reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/latest/hooq/>
+- deepwiki: <https://deepwiki.com/anotherhollow1125/hooq>
+    - ⚠️ Please be careful of generative AI hallucination.
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
@@ -148,9 +152,13 @@ Explanations:
 
 For detailed usage instructions, please refer to the following! (Also included at the beginning, but repeated here)
 
-- tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
-- reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
+- mdBooks: <https://anotherhollow1125.github.io/hooq/>
+    - latest intro: <https://anotherhollow1125.github.io/hooq/latest/en/index.html>
+    - latest tutorial: <https://anotherhollow1125.github.io/hooq/latest/en/tutorial/index.html>
+    - latest reference: <https://anotherhollow1125.github.io/hooq/latest/en/reference/index.html>
 - docs.rs: <https://docs.rs/hooq/latest/hooq/>
+- deepwiki: <https://deepwiki.com/anotherhollow1125/hooq>
+    - ⚠️ Please be careful of generative AI hallucination.
 
 > [!NOTE]
 > 日本語版ドキュメントはこちら: [docs/ja/README.md](https://github.com/anotherhollow1125/hooq/tree/main/docs/ja)
@@ -167,7 +175,7 @@ or add it to your `Cargo.toml`.
 
 ```toml
 [dependencies]
-hooq = "0.3.0"
+hooq = "0.3.1"
 ```
 
 > [!NOTE]

@@ -10,8 +10,8 @@ serde = { version = "1.0.228", features = ["derive"] }
 
 use hooq::hooq;
 
-const LATEST: &str = "v0.3.0";
-const VERSIONS: &[&str] = &["v0.3.0"];
+const LATEST: &str = "v0.3.1";
+const VERSIONS: &[&str] = &["v0.3.1", "v0.3.0"];
 
 #[hooq(anyhow)]
 fn assert_dir() -> anyhow::Result<()> {

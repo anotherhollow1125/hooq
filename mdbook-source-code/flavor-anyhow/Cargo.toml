@@ -15,4 +15,4 @@ anyhow = "1.0.100"
 hooq = { path = "../../hooq" }
 
 [dev-dependencies]
-insta = "1.44.0"
+insta = "1.44.3"

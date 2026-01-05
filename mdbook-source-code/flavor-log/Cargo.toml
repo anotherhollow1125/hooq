@@ -16,4 +16,4 @@ hooq = { path = "../../hooq" }
 log = "0.4.29"
 
 [dev-dependencies]
-insta = "1.45.1"
+insta = "1.46.0"

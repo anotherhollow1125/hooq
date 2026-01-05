@@ -15,4 +15,4 @@ hooq = { path = "../../hooq" }
 toml = "0.9.10"
 
 [dev-dependencies]
-insta = "1.45.1"
+insta = "1.46.0"

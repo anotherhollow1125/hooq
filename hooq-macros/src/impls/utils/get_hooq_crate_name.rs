@@ -7,9 +7,9 @@ pub fn get_hooq_crate_name() -> &'static str {
     static RES: OnceLock<String> = OnceLock::new();
 
     RES.get_or_init(|| {
-        let founc_crate = crate_name("hooq").or_else(|_| crate_name("hooq-macros"));
+        let found_crate = crate_name("hooq").or_else(|_| crate_name("hooq-macros"));
 
-        match founc_crate {
+        match found_crate {
             Ok(FoundCrate::Itself) => "hooq".to_string(), // ファサードのREADMEにてこうするしかなかったため
             Ok(FoundCrate::Name(name)) => name.replace("-", "_").to_string(),
             Err(_) => "hooq".to_string(),

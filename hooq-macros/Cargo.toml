@@ -26,20 +26,20 @@ eyre = []
 
 [dependencies]
 proc-macro-crate = "3.4.0"
-proc-macro2 = { version = "1.0.104", features = ["span-locations"] }
-quote = "1.0.42"
+proc-macro2 = { version = "1.0.105", features = ["span-locations"] }
+quote = "1.0.43"
 serde = { version = "1.0.228", features = ["derive"] }
-syn = { version = "2.0.113", features = ["full", "extra-traits", "fold"] }
-toml = "0.9.10"
+syn = { version = "2.0.114", features = ["full", "extra-traits", "fold"] }
+toml = "0.9.11"
 
 [dev-dependencies]
 anyhow = "1.0.100"
 futures = "0.3.31"
 hooq = { path = "../hooq" }
-insta = "1.46.0"
+insta = "1.46.1"
 macrotest = "1.2.0"
-serde_json = "1.0.148"
+serde_json = "1.0.149"
 test-helpers = { path = "../test-helpers" }
 tokio = { version = "1.49.0", features = ["full"] }
-toml = "0.9.10"
+toml = "0.9.11"
 util_macros = { path = "tests/util_macros" }

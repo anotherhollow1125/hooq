@@ -14,5 +14,5 @@ categories.workspace = true
 hooq = { path = "../../hooq" }
 
 [dev-dependencies]
-insta = "1.46.0"
+insta = "1.46.1"
 regex = "1.12.2"

@@ -15,4 +15,4 @@ eyre = "0.6.12"
 hooq = { path = "../../hooq", features = ["eyre"] }
 
 [dev-dependencies]
-insta = "1.46.0"
+insta = "1.46.1"

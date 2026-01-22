@@ -162,7 +162,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 次の設定になっています。
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:7:28}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:7:42}}
 ```
 
 [`.wrap_err_with(...)`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを利用するために、 `eyre::WrapErr` トレイトをuseしています。

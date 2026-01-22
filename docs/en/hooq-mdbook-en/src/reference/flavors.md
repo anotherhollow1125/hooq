@@ -148,7 +148,7 @@ Result:
 This flavor is intended to be used with the [eyre crate](https://docs.rs/eyre/latest/eyre/).
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:7:28}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:7:42}}
 ```
 
 Imports `eyre::WrapErr` for [`.wrap_err_with(...)`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with).

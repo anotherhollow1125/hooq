@@ -4,36 +4,36 @@ extern crate std;
 #[prelude_import]
 use std::prelude::rust_2024::*;
 use hooq::hooq;
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 type MyResult = Result<(), String>;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())
+    fallible(())
         .inspect_err(|_| {
             let _x = "from root";
             let _y = "from root";
         })?;
-    let _ = || -> MyResult { failable(()) };
-    failable(())
+    let _ = || -> MyResult { fallible(()) };
+    fallible(())
         .inspect_err(|_| {
             let _ = "from my_flavor";
             let _x = "from root";
             let _y = "from root";
         })?;
     let _ = || -> MyResult {
-        failable(())
+        fallible(())
             .inspect_err(|_| {
                 let _x = "from root";
                 let _y = "from root";
             })
     };
-    failable(())
+    fallible(())
         .inspect_err(|_| {
             let _x = "xxx from my_flavor";
             let _y = "yyy from my_flavor";
         })?;
-    failable(())
+    fallible(())
         .inspect_err(|_| {
             let _ = "from my_flavor";
             let _x = "xxx from my_flavor";

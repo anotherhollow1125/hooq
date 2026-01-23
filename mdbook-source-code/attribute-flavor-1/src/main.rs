@@ -8,13 +8,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[hooq(my_flavor::sub_flavor)]
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
 #[hooq(flavor = "my_flavor.sub_flavor")]
 fn func() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }

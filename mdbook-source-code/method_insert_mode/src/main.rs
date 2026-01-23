@@ -1,6 +1,6 @@
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -9,17 +9,17 @@ fn failable<T>(val: T) -> Result<T, String> {
     let _ = "inserted mode";
 }))]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     #[hooq::method(.inspect_err(|_| {
         let _ = "before chainned";
     }).$so_far)]
-    failable(())?;
+    fallible(())?;
 
     #[hooq::method(.$so_far.inspect_err(|_| {
         let _ = "after chainned";
     }))]
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }

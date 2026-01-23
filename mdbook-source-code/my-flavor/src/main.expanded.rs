@@ -4,7 +4,7 @@ extern crate std;
 #[prelude_import]
 use std::prelude::rust_2024::*;
 use hooq::hooq;
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 mod sub {
@@ -13,11 +13,11 @@ mod sub {
 #[allow(unused)]
 use sub::MyTrait as _;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())
+    fallible(())
         .inspect_err(|_| {
             let _ = "my_flavor";
         })?;
-    failable(())
+    fallible(())
         .inspect_err(|_| {
             let _ = "my_flavor_sub";
         })?;

@@ -1,6 +1,6 @@
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -13,17 +13,17 @@ fn main() -> Result<(), String> {
             Err(res)
         };
 
-        failable(())
+        fallible(())
     };
 
-    #[hooq::tail_expr_idents("Err", "failable")]
+    #[hooq::tail_expr_idents("Err", "fallible")]
     let _: Result<(), String> = {
         let _: Result<(), String> = {
             let res = "error".to_string();
             Err(res)
         };
 
-        failable(()) // This will be hooked because of tail_expr_idents.
+        fallible(()) // This will be hooked because of tail_expr_idents.
     };
 
     Ok(())

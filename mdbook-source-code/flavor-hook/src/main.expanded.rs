@@ -31,20 +31,20 @@ mod my_error {
         }
     }
 }
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 #[allow(unused)]
 use my_error::MyHook as _;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())
+    fallible(())
         .hook(|| {
             ::hooq::HooqMeta {
                 line: 33usize,
                 column: 17usize,
                 path: "mdbook-source-code/flavor-hook/src/main.rs",
                 file: "main.rs",
-                source_str: "failable(()) ?",
+                source_str: "fallible(()) ?",
                 count: "1st ?",
                 bindings: ::std::collections::HashMap::from([]),
             }

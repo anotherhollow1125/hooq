@@ -5,16 +5,16 @@ extern crate std;
 use std::prelude::rust_2024::*;
 use hooq::hooq;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())
+    fallible(())
         .inspect_err(|_| {
             let _ = "specified @ root";
         })?;
-    failable(())
+    fallible(())
         .inspect_err(|_| {
             let _ = "specified @ inner";
         })?;
     Ok(())
 }
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }

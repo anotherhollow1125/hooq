@@ -12,14 +12,14 @@ mod sub {
     }
 }
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
 #[hooq(trait_use(sub::Inserted))]
 #[hooq::method(.inserted())]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }

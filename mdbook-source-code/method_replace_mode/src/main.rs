@@ -1,6 +1,6 @@
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -18,7 +18,7 @@ where
 #[hooq]
 #[hooq::method(wrapper($expr))]
 fn main() -> Result<(), String> {
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }

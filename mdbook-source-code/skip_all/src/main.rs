@@ -3,7 +3,7 @@ use hooq::hooq;
 #[hooq]
 #[hooq::method(.inspect_err(|_| {}))]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     #[hooq::skip_all]
     let f = || -> Option<()> {
@@ -12,12 +12,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some(())
     };
 
-    let _ = failable(f())?;
+    let _ = fallible(f())?;
 
     Ok(())
 }
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 

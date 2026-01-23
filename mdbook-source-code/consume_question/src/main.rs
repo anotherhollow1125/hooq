@@ -1,6 +1,6 @@
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, &'static str> {
+fn fallible<T>(val: T) -> Result<T, &'static str> {
     Ok(val)
 }
 
@@ -8,5 +8,5 @@ fn failable<T>(val: T) -> Result<T, &'static str> {
 #[hooq::hook_targets("?")]
 #[hooq::method(.unwrap()!)]
 fn main() {
-    failable(())?;
+    fallible(())?;
 }

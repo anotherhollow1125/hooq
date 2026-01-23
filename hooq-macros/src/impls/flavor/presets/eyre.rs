@@ -6,7 +6,10 @@ use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
 
 pub fn eyre_flavor() -> Flavor {
     Flavor {
-        trait_uses: vec![parse_quote! { ::eyre::WrapErr }],
+        trait_uses: vec![
+            parse_quote! { ::eyre::ContextCompat },
+            parse_quote! { ::eyre::WrapErr },
+        ],
         method: eyre_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
         ..Default::default()
     }
@@ -14,7 +17,10 @@ pub fn eyre_flavor() -> Flavor {
 
 pub fn color_eyre_flavor() -> Flavor {
     Flavor {
-        trait_uses: vec![parse_quote! { ::color_eyre::eyre::WrapErr }],
+        trait_uses: vec![
+            parse_quote! { ::color_eyre::eyre::ContextCompat },
+            parse_quote! { ::color_eyre::eyre::WrapErr },
+        ],
         method: eyre_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
         ..Default::default()
     }

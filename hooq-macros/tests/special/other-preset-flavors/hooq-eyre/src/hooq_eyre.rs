@@ -2,6 +2,8 @@ use hooq::hooq;
 
 #[hooq(eyre)]
 pub fn a() -> eyre::Result<()> {
+    let _n = { Some(10) }?;
+
     Err(eyre::eyre!("error!"))
 }
 

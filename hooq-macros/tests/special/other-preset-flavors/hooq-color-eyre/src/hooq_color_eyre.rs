@@ -3,6 +3,8 @@ use hooq::hooq;
 
 #[hooq(color_eyre)]
 pub fn a() -> Result<()> {
+    let _n = { Some(10) }?;
+
     Err(eyre!("error!"))
 }
 

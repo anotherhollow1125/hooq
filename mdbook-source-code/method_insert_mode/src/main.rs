@@ -12,12 +12,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     fallible(())?;
 
     #[hooq::method(.inspect_err(|_| {
-        let _ = "before chainned";
+        let _ = "before chained";
     }).$so_far)]
     fallible(())?;
 
     #[hooq::method(.$so_far.inspect_err(|_| {
-        let _ = "after chainned";
+        let _ = "after chained";
     }))]
     fallible(())?;
 

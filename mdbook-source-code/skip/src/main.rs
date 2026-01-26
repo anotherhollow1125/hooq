@@ -3,7 +3,7 @@ use hooq::hooq;
 #[hooq]
 #[hooq::method(.inspect_err(|_| {}))]
 fn func1() -> Result<(), String> {
-    match failable(failable(()))? {
+    match fallible(fallible(()))? {
         Ok(()) => Ok(()),
         Err(s) => Err(s),
     }
@@ -13,13 +13,13 @@ fn func1() -> Result<(), String> {
 #[hooq::method(.inspect_err(|_| {}))]
 fn func2() -> Result<(), String> {
     #[hooq::skip]
-    match failable(failable(()))? {
+    match fallible(fallible(()))? {
         Ok(()) => Ok(()),
         Err(s) => Err(s),
     } // Not hooked here.
 }
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 

@@ -1,6 +1,6 @@
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -19,7 +19,7 @@ enum CauseKind {
     let _bindings = $bindings;
 }))]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }

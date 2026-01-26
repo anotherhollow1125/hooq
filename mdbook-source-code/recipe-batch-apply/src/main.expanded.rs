@@ -8,20 +8,20 @@ mod hoge {
     pub fn bar() -> i32 {
         42
     }
-    pub fn failable<T>(val: T) -> Result<T, ()> {
+    pub fn fallible<T>(val: T) -> Result<T, ()> {
         Ok(val)
     }
-    pub fn _failable_2<T>(val: T) -> Result<T, ()> {
-        if failable(false).unwrap() {
-            return failable(val).inspect_err(|_| {});
+    pub fn _fallible_2<T>(val: T) -> Result<T, ()> {
+        if fallible(false).unwrap() {
+            return fallible(val).inspect_err(|_| {});
         }
         Ok(val).inspect_err(|_| {})
     }
     pub fn fuga() -> Result<(), ()> {
-        failable(()).inspect_err(|_| {})?;
+        fallible(()).inspect_err(|_| {})?;
         let _ = || {
-            failable(()).inspect_err(|_| {})?;
-            if failable(false).inspect_err(|_| {})? {
+            fallible(()).inspect_err(|_| {})?;
+            if fallible(false).inspect_err(|_| {})? {
                 return Err(()).inspect_err(|_| {});
             }
             Ok(())
@@ -31,13 +31,13 @@ mod hoge {
             let _ = bar();
             Result::<(), ()>::Err(()).inspect_err(|_| {})
         };
-        let _ = || -> Result<(), ()> { failable(()).inspect_err(|_| {}) };
-        let _ = || { failable(()) };
+        let _ = || -> Result<(), ()> { fallible(()).inspect_err(|_| {}) };
+        let _ = || { fallible(()) };
         Ok(())
     }
 }
 fn main() {
     let _ = hoge::bar();
-    let _ = hoge::failable(123);
+    let _ = hoge::fallible(123);
     let _ = hoge::fuga();
 }

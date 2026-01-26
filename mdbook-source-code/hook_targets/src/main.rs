@@ -1,6 +1,6 @@
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -8,13 +8,13 @@ fn failable<T>(val: T) -> Result<T, String> {
 #[hooq::method(.inspect_err(|_| {}))]
 #[hooq::hook_targets("?")]
 fn target_question() -> Result<(), String> {
-    failable(())?;
+    fallible(())?;
 
-    if failable(false)? {
+    if fallible(false)? {
         return Err("error".into());
     }
 
-    if failable(true)? {
+    if fallible(true)? {
         Ok(())
     } else {
         Err("error".into())
@@ -25,13 +25,13 @@ fn target_question() -> Result<(), String> {
 #[hooq::method(.inspect_err(|_| {}))]
 #[hooq::hook_targets("return")]
 fn target_return() -> Result<(), String> {
-    failable(())?;
+    fallible(())?;
 
-    if failable(false)? {
+    if fallible(false)? {
         return Err("error".into());
     }
 
-    if failable(true)? {
+    if fallible(true)? {
         Ok(())
     } else {
         Err("error".into())
@@ -42,13 +42,13 @@ fn target_return() -> Result<(), String> {
 #[hooq::method(.inspect_err(|_| {}))]
 #[hooq::hook_targets("tail_expr")]
 fn target_tail_expr() -> Result<(), String> {
-    failable(())?;
+    fallible(())?;
 
-    if failable(false)? {
+    if fallible(false)? {
         return Err("error".into());
     }
 
-    if failable(true)? {
+    if fallible(true)? {
         Ok(())
     } else {
         Err("error".into())

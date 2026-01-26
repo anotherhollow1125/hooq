@@ -4,7 +4,7 @@ extern crate std;
 #[prelude_import]
 use std::prelude::rust_2024::*;
 use hooq::hooq;
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 fn wrapper<T, E>(r: Result<T, E>) -> Result<T, E>
@@ -19,6 +19,6 @@ where
     r
 }
 fn main() -> Result<(), String> {
-    wrapper(failable(()))?;
+    wrapper(fallible(()))?;
     Ok(())
 }

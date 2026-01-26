@@ -224,7 +224,7 @@ mod sub {
     pub trait Trait {}
 }
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -237,21 +237,21 @@ fn failable<T>(val: T) -> Result<T, String> {
 #[hooq::hook_in_macros(true)]
 #[hooq::binding(xxx = "xxx_value")]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     #[hooq::skip_all]
-    if failable(false)? {
-        failable(())?;
+    if fallible(false)? {
+        fallible(())?;
     }
 
     #[hooq::skip]
-    if failable(false)? {
+    if fallible(false)? {
         // Next line is not skipped.
-        failable(())?;
+        fallible(())?;
     }
 
     #[hooq::method(.inspect_err(|_| { let _ = $xxx; }))]
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }
@@ -284,7 +284,7 @@ Usage example:
 ```rust
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -309,7 +309,7 @@ fn failable<T>(val: T) -> Result<T, String> {
     let _hooq_meta = $hooq_meta;
 }))]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }

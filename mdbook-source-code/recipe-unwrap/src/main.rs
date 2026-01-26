@@ -1,6 +1,6 @@
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -11,7 +11,7 @@ fn process(flag: bool) -> Result<(), String> {
         return Err("An error occurred".into());
     }
 
-    let _ = failable(42)?;
+    let _ = fallible(42)?;
 
     Ok(())
 }

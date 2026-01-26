@@ -24,13 +24,13 @@ mod my_error {
     }
 }
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
 #[hooq(hook, trait_uses(my_error::MyHook))]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }

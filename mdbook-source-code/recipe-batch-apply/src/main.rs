@@ -8,7 +8,7 @@ mod hoge {
         42
     }
 
-    pub fn failable<T>(val: T) -> Result<T, ()> {
+    pub fn fallible<T>(val: T) -> Result<T, ()> {
         // The return type of this function is Result
         // but "Ok" is specified as ignore_tail_expr_idents by default
         // so NOT hook target
@@ -16,11 +16,11 @@ mod hoge {
     }
 
     #[hooq::tail_expr_idents("Ok", "Err")]
-    pub fn _failable_2<T>(val: T) -> Result<T, ()> {
-        if failable(false).unwrap() {
+    pub fn _fallible_2<T>(val: T) -> Result<T, ()> {
+        if fallible(false).unwrap() {
             // ↑ above is NOT hook target
             // ↓ below: hook target because the return type of this function is Result
-            return failable(val);
+            return fallible(val);
         }
 
         // hook target because "Ok" is now specified as tail_expr_idents
@@ -29,14 +29,14 @@ mod hoge {
 
     pub fn fuga() -> Result<(), ()> {
         // hook target because of `?`
-        failable(())?;
+        fallible(())?;
 
         let _ = || {
             // hook target because of `?`
-            failable(())?;
+            fallible(())?;
 
             // hook target because of `?`
-            if failable(false)? {
+            if fallible(false)? {
                 // hook target because "Err" is specified as tail_expr_idents by default
                 return Err(());
             }
@@ -60,12 +60,12 @@ mod hoge {
 
         let _ = || -> Result<(), ()> {
             // hook target because hooq can know this closure returns Result
-            failable(())
+            fallible(())
         };
 
         let _ = || {
             // NOT hook target because hooq cannot know this closure returns Result
-            failable(())
+            fallible(())
         };
 
         // NOT hook target because "Ok" is specified as ignore_tail_expr_idents by default
@@ -75,6 +75,6 @@ mod hoge {
 
 fn main() {
     let _ = hoge::bar();
-    let _ = hoge::failable(123);
+    let _ = hoge::fallible(123);
     let _ = hoge::fuga();
 }

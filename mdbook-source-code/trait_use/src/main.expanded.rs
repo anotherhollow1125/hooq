@@ -14,12 +14,12 @@ mod sub {
         }
     }
 }
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 #[allow(unused)]
 use sub::Inserted as _;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(()).inserted()?;
+    fallible(()).inserted()?;
     Ok(())
 }

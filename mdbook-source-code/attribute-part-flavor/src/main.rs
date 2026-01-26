@@ -1,6 +1,6 @@
 use hooq::hooq;
 
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
 }
 
@@ -14,26 +14,26 @@ type MyResult = Result<(), String>;
 #[hooq::xxx = "from root"]
 #[hooq::yyy = "from root"]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())?;
+    fallible(())?;
 
     // Not hooked.
-    let _ = || -> MyResult { failable(()) };
+    let _ = || -> MyResult { fallible(()) };
 
     #[hooq::method = "my_flavor"]
     // Method will be changed.
-    failable(())?;
+    fallible(())?;
 
     #[hooq::result_types = "my_flavor"]
     // Hooked now.
-    let _ = || -> MyResult { failable(()) };
+    let _ = || -> MyResult { fallible(()) };
 
     #[hooq::bindings = "my_flavor"]
     // Bindings will be changed.
-    failable(())?;
+    fallible(())?;
 
     #[hooq::flavor = "my_flavor"]
     // All will be changed.
-    failable(())?;
+    fallible(())?;
 
     Ok(())
 }

@@ -11,14 +11,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         })?;
     Ok(())
 }
-fn failable<T>(val: T) -> Result<T, String> {
+fn fallible<T>(val: T) -> Result<T, String> {
     Ok(val)
         .inspect(|_| {
             let _ = "my_flavor.sub_flavor";
         })
 }
 fn func() -> Result<(), Box<dyn std::error::Error>> {
-    failable(())
+    fallible(())
         .inspect(|_| {
             let _ = "my_flavor.sub_flavor";
         })?;

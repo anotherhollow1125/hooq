@@ -1,5 +1,4 @@
 #![allow(unused_braces)]
-#![allow(clippy::declare_interior_mutable_const)]
 #![allow(clippy::let_unit_value)]
 use std::sync::LazyLock;
 use hooq_macros::hooq;
@@ -158,8 +157,8 @@ fn skip_item() -> Result<(), ()> {
                 })
         }
     }
-    const _C: LazyLock<u32> = LazyLock::new(|| {
-        (|| -> Result<u32, ()> {
+    const _C: usize = {
+        let _ = || -> Result<u32, ()> {
             let res = enresult(42_u32)
                 .inspect(|_| {
                     {
@@ -174,9 +173,9 @@ fn skip_item() -> Result<(), ()> {
                         ::std::io::_print(format_args!("tag: {0}\n", "const"));
                     };
                 })
-        })()
-            .unwrap_or(0)
-    });
+        };
+        10
+    };
     static _SS: LazyLock<u32> = LazyLock::new(|| {
         (|| -> Result<u32, ()> {
             let res = enresult(42_u32)

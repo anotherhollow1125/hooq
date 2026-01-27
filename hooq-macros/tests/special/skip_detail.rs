@@ -1,5 +1,4 @@
 #![allow(unused_braces)]
-#![allow(clippy::declare_interior_mutable_const)]
 #![allow(clippy::let_unit_value)]
 
 use std::sync::LazyLock;
@@ -134,15 +133,16 @@ fn skip_item() -> Result<(), ()> {
 
     #[hooq::tag = "const"]
     #[hooq::skip] // nop
-    const _C: LazyLock<u32> = LazyLock::new(|| {
-        (|| -> Result<u32, ()> {
+    const _C: usize = {
+        let _ = || -> Result<u32, ()> {
             #[hooq::tag = "sub scope in const"]
             let res = enresult(42_u32)?;
 
             Ok(res)
-        })()
-        .unwrap_or(0)
-    });
+        };
+
+        10
+    };
 
     #[hooq::tag = "static"]
     #[hooq::skip] // nop

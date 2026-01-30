@@ -157,7 +157,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
     let mut is_skipped_all = false;
 
     let mut keeps = Vec::with_capacity(attrs.len());
-    for attr in attrs.iter_mut() {
+    for attr in attrs.iter() {
         match &attr.meta {
             // flavor
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_flavor => {

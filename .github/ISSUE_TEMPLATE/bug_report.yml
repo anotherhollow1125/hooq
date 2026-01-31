@@ -73,7 +73,6 @@ body:
       description: "Versions and platform info / バージョン・環境情報"
       placeholder: |
         - hooq: x.y.z
-        
         Following items are optional (以下は任意):
         - rustc: 1.xx (stable/nightly)
         - OS: (Windows/macOS/Linux)

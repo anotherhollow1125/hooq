@@ -36,7 +36,6 @@ body:
       label: "🖥 Environment / 環境"
       placeholder: |
         - hooq: x.y.z
-
         Following items are optional (以下は任意):
         - rustc: 1.xx
         - OS/Target:

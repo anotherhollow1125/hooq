@@ -1,0 +1,42 @@
+name: "❓ Question"
+description: "Usage question / 使い方の質問"
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For usage questions, please include your goal and a minimal snippet.
+        目的と最小コードがあると回答しやすいです。
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: "🎯 Goal / やりたいこと"
+      placeholder: "What you want to achieve / 何を達成したいか"
+    validations:
+      required: true
+
+  - type: textarea
+    id: snippet
+    attributes:
+      label: "🧩 Code / コード"
+      render: rust
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: "🧪 What you tried / 試したこと"
+      placeholder: "Commands, configs, attempts / 実行したコマンドや設定、試行"
+      render: shell
+
+  - type: textarea
+    id: env
+    attributes:
+      label: "🖥 Environment / 環境"
+      placeholder: |
+        - hooq: x.y.z
+
+        Following items are optional (以下は任意):
+        - rustc: 1.xx
+        - OS/Target:

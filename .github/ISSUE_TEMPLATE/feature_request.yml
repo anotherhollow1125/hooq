@@ -1,0 +1,70 @@
+name: "✨ Feature request"
+description: "Suggest an idea or enhancement / 機能提案"
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion! Clear motivation and examples help a lot.
+        提案ありがとうございます。動機と具体例があると検討しやすいです。
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: "🎯 Motivation / 動機"
+      description: "Why is this needed? / なぜ必要ですか？"
+      placeholder: |
+        I want to ... because ...
+        〜したい。なぜなら…
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "🧩 Proposal / 提案内容"
+      description: "What should be added/changed? / 何を追加・変更したいですか？"
+      placeholder: |
+        - Add ...
+        - Change ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: "🧪 Example / 例（コード・UX）"
+      description: "How would it look in code? / 使い方の例"
+      render: rust
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "🔀 Alternatives / 代替案"
+      description: "Other ways to solve it / 他の解決方法"
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: "⚠ Compatibility & Impact / 互換性・影響"
+      description: |
+        Any breaking changes? perf considerations? feature-gating?
+        破壊的変更、性能、featureでの切り分け等の観点があれば。
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "✅ Checklist / チェックリスト"
+      options:
+        - label: "I searched existing issues and discussions. / 既存Issue/Discussionを検索しました"
+          required: true
+        - label: "This can be implemented behind a feature flag if needed. / 必要ならfeatureで切り替え可能です"
+          required: false
+        - label: "I’m willing to contribute a PR. / PRで貢献できます"
+          required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: "📝 Additional Context / 追加情報"

@@ -6,9 +6,10 @@ pub fn a() -> Result<(), &'static str> {
             let line = 5usize;
             let col = 5usize;
             let expr = "   5>    Err(\"error!\")\n    |";
+            let level = ::log::Level::Error;
             {
                 {
-                    let lvl = ::log::Level::Error;
+                    let lvl = level;
                     if lvl <= ::log::STATIC_MAX_LEVEL && lvl <= ::log::max_level() {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
@@ -31,9 +32,10 @@ pub fn b() -> Result<(), &'static str> {
             let line = 10usize;
             let col = 8usize;
             let expr = "  10>    a()?\n    |";
+            let level = ::log::Level::Error;
             {
                 {
-                    let lvl = ::log::Level::Error;
+                    let lvl = level;
                     if lvl <= ::log::STATIC_MAX_LEVEL && lvl <= ::log::max_level() {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
@@ -54,9 +56,10 @@ pub fn b() -> Result<(), &'static str> {
             let line = 12usize;
             let col = 5usize;
             let expr = "  12>    Err(\"err\")\n    |";
+            let level = ::log::Level::Error;
             {
                 {
-                    let lvl = ::log::Level::Error;
+                    let lvl = level;
                     if lvl <= ::log::STATIC_MAX_LEVEL && lvl <= ::log::max_level() {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
@@ -79,9 +82,10 @@ pub fn c() -> Result<(), &'static str> {
             let line = 17usize;
             let col = 8usize;
             let expr = "  17>    b()?\n    |";
+            let level = ::log::Level::Error;
             {
                 {
-                    let lvl = ::log::Level::Error;
+                    let lvl = level;
                     if lvl <= ::log::STATIC_MAX_LEVEL && lvl <= ::log::max_level() {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },
@@ -102,9 +106,10 @@ pub fn c() -> Result<(), &'static str> {
             let line = 19usize;
             let col = 5usize;
             let expr = "  19>    Err(\"err\")\n    |";
+            let level = ::log::Level::Error;
             {
                 {
-                    let lvl = ::log::Level::Error;
+                    let lvl = level;
                     if lvl <= ::log::STATIC_MAX_LEVEL && lvl <= ::log::max_level() {
                         ::log::__private_api::log(
                             { ::log::__private_api::GlobalLogger },

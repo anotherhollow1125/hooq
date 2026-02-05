@@ -11,8 +11,8 @@
 | [hook](#hook) | - | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) を引数に取る `hook` メソッドを挿入するフレーバー。ユーザー定義のトレイト経由での利用を想定。上書き可 |
 | [anyhow](#anyhow) | anyhow | [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを挿入するフレーバー。上書き可 |
 | [eyre](#eyre--color_eyre) / [color_eyre](#eyre--color_eyre) | eyre | [`wrap_err_with`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを挿入するフレーバー。上書き可 |
-| [log](#log) | log | [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
-| [tracing](#tracing) | tracing | [`::tracing::error!`](https://docs.rs/tracing/latest/tracing/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
+| [log](#log) | log | [`::log::log!`](https://docs.rs/log/latest/log/macro.log.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
+| [tracing](#tracing) | tracing | [`::tracing::event!`](https://docs.rs/tracing/latest/tracing/macro.event.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
 
 一応feature名を記載しましたが、フレーバーに関係するfeatureはdefault featureに含まれているので明示的にCargo.tomlの `features` に含める必要はありません。
 
@@ -190,8 +190,12 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 次の設定になっています。
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:7:27}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:10:59}}
 ```
+
+デフォルトでは [`log::Level::Error`](https://docs.rs/log/latest/log/enum.Level.html#variant.Error) レベルでログが出力されます。
+
+`#[hooq(log::warn)]` のようにサブフレーバーを利用するか、 `$level` メタ変数に [`log::Level`](https://docs.rs/log/latest/log/enum.Level.html) 列挙型のバリアントを代入することでログレベルを変更できます。
 
 使用例:
 
@@ -202,7 +206,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 実行結果:
 
 ```bash
-{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:11}}
+{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:18}}
 ```
 
 ## tracing
@@ -214,8 +218,12 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 次の設定になっています。
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:7:33}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:10:65}}
 ```
+
+デフォルトでは [`tracing::Level::ERROR`](https://docs.rs/tracing/latest/tracing/struct.Level.html#associatedconstant.ERROR) レベルでログが出力されます。
+
+`#[hooq(tracing::warn)]` のようにサブフレーバーを利用するか、 `$level` メタ変数に [`tracing::Level`](https://docs.rs/tracing/latest/tracing/struct.Level.html) 型の値を代入することでログレベルを変更できます。
 
 `#[tracing::instrument]` と併用する場合、 `#[hooq(tracing)]` が先に適用される必要があるため、 `#[tracing::instrument]` より上に `#[hooq(tracing)]` を書くことを推奨します。
 
@@ -228,5 +236,5 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 実行結果:
 
 ```bash
-{{#include ../../../../../mdbook-source-code/flavor-tracing/tests/snapshots/test__flavor-tracing.snap:5:11}}
+{{#include ../../../../../mdbook-source-code/flavor-tracing/tests/snapshots/test__flavor-tracing.snap:5:12}}
 ```

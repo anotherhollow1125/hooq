@@ -5,7 +5,14 @@ expression: "format!(\"STDOUT:\\n{}\\nSTDERR:\\n{}\", stdout, stderr)"
 STDOUT:
 
 STDERR:
-[ERROR flavor_log] (mdbook-source-code/flavor-log/src/main.rs:10:5) Hello, world!
-      10>    Err("Hell..rld!".into())
+Calling c(true):
+[ERROR flavor_log] (mdbook-source-code/flavor-log/src/main.rs:5:5) An error occurred in function a
+       5>    Err("An e..on a".to_string())
         |
-Error: "Hello, world!"
+[ERROR flavor_log] (mdbook-source-code/flavor-log/src/main.rs:19:12) An error occurred in function a
+      19>    b()?
+        |
+Calling c(false):
+[ERROR flavor_log] (mdbook-source-code/flavor-log/src/main.rs:5:5) An error occurred in function a
+       5>    Err("An e..on a".to_string())
+        |

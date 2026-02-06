@@ -2,10 +2,11 @@
 source: mdbook-source-code/flavor-tracing/tests/test.rs
 expression: "format!(\"{}\\n{}\", stdout, stderr)"
 ---
-func3 start
-func2 start
-ERROR func3:func2:func1: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=7 col=5 error=Error in func1 expr="Err(\"Error in func1\".into())"
-ERROR func3:func2: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=15 col=22 error=Error in func1 expr="func1()?"
-ERROR func3: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=27 col=22 error=Error in func1 expr="func2()?"
-
-Error: "Error in func1"
+Calling c(true):
+ERROR c{flag=true}:b:a: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=7 col=5 error=An error occurred in function a expr="Err(\"An error occurred in function a\".to_string())"
+ WARN c{flag=true}:b: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=13 col=8 error=An error occurred in function a expr="a()?"
+ERROR c{flag=true}: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=23 col=12 error=An error occurred in function a expr="b()?"
+Calling c(false):
+ERROR c{flag=false}:b:a: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=7 col=5 error=An error occurred in function a expr="Err(\"An error occurred in function a\".to_string())"
+ WARN c{flag=false}:b: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=13 col=8 error=An error occurred in function a expr="a()?"
+ INFO c{flag=false}: flavor_tracing: path="mdbook-source-code/flavor-tracing/src/main.rs" line=25 col=12 error=An error occurred in function a expr="b()?"

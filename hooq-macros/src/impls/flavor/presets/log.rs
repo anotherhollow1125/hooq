@@ -1,12 +1,43 @@
+use std::rc::Rc;
+
 use proc_macro2::TokenStream;
 use syn::parse_quote;
 
 use crate::impls::flavor::Flavor;
+use crate::impls::method::Method;
 use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
 
+macro_rules! level_binding {
+    ($level:expr) => {
+        [("level".to_string(), Rc::new(parse_quote!($level)))].into()
+    };
+}
+
 pub fn log_flavor() -> Flavor {
+    let method: Method = log_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE);
+
     Flavor {
-        method: log_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
+        method: method.clone(),
+        bindings: level_binding!(::log::Level::Error),
+        sub_flavors: [
+            ("error", level_binding!(::log::Level::Error)),
+            ("warn", level_binding!(::log::Level::Warn)),
+            ("info", level_binding!(::log::Level::Info)),
+            ("debug", level_binding!(::log::Level::Debug)),
+            ("trace", level_binding!(::log::Level::Trace)),
+        ]
+        .into_iter()
+        .map(|(s, bindings)| {
+            (
+                s.to_string(),
+                Flavor {
+                    method: method.clone(),
+                    bindings,
+                    ..Default::default()
+                },
+            )
+        })
+        .collect(),
         ..Default::default()
     }
 }
@@ -20,8 +51,9 @@ fn log_method() -> TokenStream {
             let line = $line;
             let col = $col;
             let expr = #excerpted_helpers_path ::excerpted_pretty_stringify!($source);
+            let level = $level;
 
-            ::log::error!("({path}:{line}:{col}) {e}\n{expr}");
+            ::log::log!(level, "({path}:{line}:{col}) {e}\n{expr}");
         })
     }
 }

@@ -327,8 +327,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 | hook | - | [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) を引数に取る `hook` メソッドを挿入するフレーバー。ユーザー定義のトレイト経由での利用を想定。上書き可 |
 | anyhow | anyhow | [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを挿入するフレーバー。上書き可 |
 | eyre / color_eyre | eyre | [`wrap_err_with`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを挿入するフレーバー。上書き可 |
-| log | log | [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
-| tracing | tracing | [`::tracing::error!`](https://docs.rs/tracing/latest/tracing/macro.error.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
+| log | log | [`::log::log!`](https://docs.rs/log/latest/log/macro.log.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
+| tracing | tracing | [`::tracing::event!`](https://docs.rs/tracing/latest/tracing/macro.event.html) を呼び出す `inspect_err` メソッドを挿入するフレーバー。上書き可 |
 
 使用例(再掲):
 

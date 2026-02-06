@@ -1,43 +1,45 @@
 use hooq::hooq;
 use tracing::instrument;
 
-#[hooq(tracing)]
+#[hooq(tracing)] // default event level is Error
 #[instrument]
-fn func1() -> Result<i32, String> {
-    Err("Error in func1".into())
+fn a() -> Result<(), String> {
+    Err("An error occurred in function a".to_string())
 }
 
-#[hooq(tracing)]
+#[hooq(tracing::warn)]
 #[instrument]
-fn func2() -> Result<i32, String> {
-    println!("func2 start");
-
-    let res = func1()?;
-
-    println!("func2 end: {res}");
-
-    Ok(res)
-}
-
-#[hooq(tracing)]
-#[instrument]
-fn func3() -> Result<i32, String> {
-    println!("func3 start");
-
-    let res = func2()?;
-
-    println!("func3 end: {res}");
-
-    Ok(res)
-}
-
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let format = tracing_subscriber::fmt::format()
-        .with_ansi(false)
-        .without_time();
-    tracing_subscriber::fmt().event_format(format).init();
-
-    func3()?;
+fn b() -> Result<(), String> {
+    a()?;
 
     Ok(())
+}
+
+#[hooq(tracing::info)]
+#[instrument]
+fn c(flag: bool) -> Result<(), String> {
+    if flag {
+        #[hooq::level = tracing::Level::ERROR]
+        b()?;
+    } else {
+        b()?;
+    }
+
+    Ok(())
+}
+
+fn main() {
+    let format = tracing_subscriber::fmt::format().without_time();
+    tracing_subscriber::fmt()
+        .with_ansi(false)
+        .event_format(format)
+        .init();
+
+    println!("Calling c(true):");
+
+    let _ = c(true);
+
+    println!("Calling c(false):");
+
+    let _ = c(false);
 }

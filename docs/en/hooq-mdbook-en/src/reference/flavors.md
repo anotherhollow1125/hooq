@@ -9,8 +9,8 @@ Flavors are presets that bundle hooq settings. Built‑in flavors:
 | [hook](#hook) | - | Inserts a `hook` method taking [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html); designed for user traits. Overridable. |
 | [anyhow](#anyhow) | anyhow | Inserts `.with_context(...)`. Overridable. |
 | [eyre](#eyre--color_eyre) / [color_eyre](#eyre--color_eyre) | eyre | Inserts `.wrap_err_with(...)`. Overridable. |
-| [log](#log) | log | Inserts `inspect_err` that calls `::log::error!`. Overridable. |
-| [tracing](#tracing) | tracing | Inserts `inspect_err` that calls `::tracing::error!`. Overridable.
+| [log](#log) | log | Inserts `inspect_err` that calls [`::log::log!`](https://docs.rs/log/latest/log/macro.log.html). Overridable. |
+| [tracing](#tracing) | tracing | Inserts `inspect_err` that calls [`::tracing::event!`](https://docs.rs/tracing/latest/tracing/macro.event.html). Overridable. |
 
 Flavor features are part of the default feature set, so you usually do not need to enable them explicitly.
 
@@ -29,7 +29,7 @@ Users can define flavors in a `hooq.toml` at crate root.
 | ignore_tail_expr_idents | array of strings | Idents like `"Ok"`. |
 | result_types | array of strings | Return type idents like `"Result"`. |
 | hook_in_macros | bool | `true` or `false`. |
-| bindings | inline table | Arbitrary bindings; note string literals must be quoted with `\"`.
+| bindings | inline table | Arbitrary bindings; note string literals must be quoted with `\"`. |
 
 All built‑in (except `empty`) can be overridden by defining the same table name. Sub‑tables other than `bindings` are sub‑flavors and inherit from their parent.
 
@@ -174,8 +174,12 @@ A `color_eyre` flavor is also provided that inserts `use ::color_eyre::eyre::Wra
 This flavor is intended to be used with the [log crate](https://docs.rs/log/latest/log/).
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:7:27}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:10:59}}
 ```
+
+By default, logs are emitted at [`log::Level::Error`](https://docs.rs/log/latest/log/enum.Level.html#variant.Error).
+
+You can change the log level either by using a sub-flavor like `#[hooq(log::warn)]`, or by binding a [`log::Level`](https://docs.rs/log/latest/log/enum.Level.html) variant to the `$level` meta variable.
 
 Usage:
 
@@ -186,7 +190,7 @@ Usage:
 Result:
 
 ```bash
-{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:11}}
+{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:27}}
 ```
 
 ## tracing
@@ -196,8 +200,12 @@ Result:
 This flavor is intended to be used with the [tracing crate](https://docs.rs/tracing/latest/tracing/).
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:7:33}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:10:65}}
 ```
+
+By default, logs are emitted at [`tracing::Level::ERROR`](https://docs.rs/tracing/latest/tracing/struct.Level.html#associatedconstant.ERROR).
+
+You can change the level either by using a sub-flavor like `#[hooq(tracing::warn)]`, or by binding a [`tracing::Level`](https://docs.rs/tracing/latest/tracing/struct.Level.html) value to the `$level` meta variable.
 
 Place `#[hooq(tracing)]` above `#[tracing::instrument]` to ensure order.
 
@@ -210,5 +218,5 @@ Usage:
 Result:
 
 ```bash
-{{#include ../../../../../mdbook-source-code/flavor-tracing/tests/snapshots/test__flavor-tracing.snap:5:11}}
+{{#include ../../../../../mdbook-source-code/flavor-tracing/tests/snapshots/test__flavor-tracing.snap:5:12}}
 ```

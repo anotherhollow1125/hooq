@@ -330,8 +330,8 @@ See mdbook's [Flavors](https://anotherhollow1125.github.io/hooq/latest/en/refere
 | hook | - | Inserts a `hook` method taking [`hooq::HooqMeta`](https://docs.rs/hooq/latest/hooq/struct.HooqMeta.html) as an argument. Intended for use via user-defined traits. Can be overridden |
 | anyhow | anyhow | Inserts the [`with_context`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) method. Can be overridden |
 | eyre / color_eyre | eyre | Inserts the [`wrap_err_with`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) method. Can be overridden |
-| log | log | Inserts an `inspect_err` method calling [`::log::error!`](https://docs.rs/log/latest/log/macro.error.html). Can be overridden |
-| tracing | tracing | Inserts an `inspect_err` method calling [`::tracing::error!`](https://docs.rs/tracing/latest/tracing/macro.error.html). Can be overridden |
+| log | log | Inserts `inspect_err` that calls [`::log::log!`](https://docs.rs/log/latest/log/macro.log.html). Can be overridden |
+| tracing | tracing | Inserts `inspect_err` that calls [`::tracing::event!`](https://docs.rs/tracing/latest/tracing/macro.event.html). Can be overridden |
 
 Usage example:
 

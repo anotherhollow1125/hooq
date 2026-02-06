@@ -190,7 +190,7 @@ Usage:
 Result:
 
 ```bash
-{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:18}}
+{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:27}}
 ```
 
 ## tracing

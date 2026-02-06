@@ -9,10 +9,19 @@ Calling c(true):
 [ERROR flavor_log] (mdbook-source-code/flavor-log/src/main.rs:5:5) An error occurred in function a
        5>    Err("An e..on a".to_string())
         |
+[WARN  flavor_log] (mdbook-source-code/flavor-log/src/main.rs:10:8) An error occurred in function a
+      10>    a()?
+        |
 [ERROR flavor_log] (mdbook-source-code/flavor-log/src/main.rs:19:12) An error occurred in function a
       19>    b()?
         |
 Calling c(false):
 [ERROR flavor_log] (mdbook-source-code/flavor-log/src/main.rs:5:5) An error occurred in function a
        5>    Err("An e..on a".to_string())
+        |
+[WARN  flavor_log] (mdbook-source-code/flavor-log/src/main.rs:10:8) An error occurred in function a
+      10>    a()?
+        |
+[INFO  flavor_log] (mdbook-source-code/flavor-log/src/main.rs:21:12) An error occurred in function a
+      21>    b()?
         |

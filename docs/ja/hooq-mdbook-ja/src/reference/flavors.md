@@ -206,7 +206,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 実行結果:
 
 ```bash
-{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:18}}
+{{#include ../../../../../mdbook-source-code/flavor-log/tests/snapshots/test__flavor-log.snap:8:27}}
 ```
 
 ## tracing

@@ -27,7 +27,7 @@ fn c(flag: bool) -> Result<(), String> {
 fn main() {
     env_logger::Builder::new()
         .format_timestamp(None)
-        .filter_level(log::LevelFilter::Error)
+        .filter_level(log::LevelFilter::Info)
         .init();
 
     eprintln!("Calling c(true):");

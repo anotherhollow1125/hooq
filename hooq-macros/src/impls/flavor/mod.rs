@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::rc::Rc;
@@ -17,7 +18,51 @@ mod presets;
 mod toml_load;
 
 #[derive(Debug, Clone)]
-pub struct Flavor {
+pub enum FlavorSettingField<T> {
+    Base(T),
+    Inherit(Rc<RefCell<FlavorSettingField<T>>>),
+}
+
+impl<T> FlavorSettingField<T> {
+    pub fn new(value: T) -> Rc<RefCell<Self>> {
+        Rc::new(RefCell::new(FlavorSettingField::Base(value)))
+    }
+
+    pub fn set(this: &Rc<RefCell<Self>>, value: T) {
+        *this.borrow_mut() = FlavorSettingField::Base(value);
+    }
+}
+
+impl<T: Clone> FlavorSettingField<T> {
+    pub fn clone_inner(&self) -> T {
+        match self {
+            FlavorSettingField::Base(value) => value.clone(),
+            FlavorSettingField::Inherit(parent) => parent.borrow().clone_inner(),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct FlavorNode {
+    pub settings: FlavorSettings,
+    pub sub_flavors: HashMap<String, FlavorNode>,
+}
+
+#[derive(Debug)]
+pub struct FlavorSettings {
+    pub trait_uses: Rc<RefCell<FlavorSettingField<Vec<Path>>>>,
+    pub method: Rc<RefCell<FlavorSettingField<Method>>>,
+    pub hook_targets: Rc<RefCell<FlavorSettingField<HookTargetSwitch>>>,
+    pub tail_expr_idents: Rc<RefCell<FlavorSettingField<Vec<String>>>>,
+    pub ignore_tail_expr_idents: Rc<RefCell<FlavorSettingField<Vec<String>>>>,
+    pub result_types: Rc<RefCell<FlavorSettingField<Vec<String>>>>,
+    pub hook_in_macros: Rc<RefCell<FlavorSettingField<bool>>>,
+    #[allow(clippy::type_complexity)]
+    pub bindings: Rc<RefCell<FlavorSettingField<HashMap<String, Rc<Expr>>>>>,
+}
+
+#[derive(Debug, Clone)]
+pub struct FlavorInstance {
     pub trait_uses: Vec<Path>,
     pub method: Method,
     pub hook_targets: HookTargetSwitch,
@@ -26,25 +71,38 @@ pub struct Flavor {
     pub result_types: Vec<String>,
     pub hook_in_macros: bool,
     pub bindings: HashMap<String, Rc<Expr>>,
-    pub sub_flavors: HashMap<String, Flavor>,
 }
 
-impl Default for Flavor {
+impl From<&FlavorSettings> for FlavorInstance {
+    fn from(value: &FlavorSettings) -> Self {
+        Self {
+            trait_uses: value.trait_uses.borrow().clone_inner(),
+            method: value.method.borrow().clone_inner(),
+            hook_targets: value.hook_targets.borrow().clone_inner(),
+            tail_expr_idents: value.tail_expr_idents.borrow().clone_inner(),
+            ignore_tail_expr_idents: value.ignore_tail_expr_idents.borrow().clone_inner(),
+            result_types: value.result_types.borrow().clone_inner(),
+            hook_in_macros: value.hook_in_macros.borrow().clone_inner(),
+            bindings: value.bindings.borrow().clone_inner(),
+        }
+    }
+}
+
+impl Default for FlavorSettings {
     fn default() -> Self {
         Self {
-            trait_uses: Vec::new(),
-            method: default_method(),
-            hook_targets: HookTargetSwitch {
+            trait_uses: FlavorSettingField::new(Vec::new()),
+            method: FlavorSettingField::new(default_method()),
+            hook_targets: FlavorSettingField::new(HookTargetSwitch {
                 question: true,
                 return_: true,
                 tail_expr: true,
-            },
-            tail_expr_idents: vec!["Err".to_string()],
-            ignore_tail_expr_idents: vec!["Ok".to_string()],
-            result_types: vec!["Result".to_string()],
-            hook_in_macros: true,
-            bindings: HashMap::new(),
-            sub_flavors: HashMap::new(),
+            }),
+            tail_expr_idents: FlavorSettingField::new(vec!["Err".to_string()]),
+            ignore_tail_expr_idents: FlavorSettingField::new(vec!["Ok".to_string()]),
+            result_types: FlavorSettingField::new(vec!["Result".to_string()]),
+            hook_in_macros: FlavorSettingField::new(true),
+            bindings: FlavorSettingField::new(HashMap::new()),
         }
     }
 }
@@ -70,9 +128,40 @@ fn default_method() -> Method {
     Method::try_from(res).expect(UNEXPECTED_ERROR_MESSAGE)
 }
 
+impl FlavorSettings {
+    pub fn prepare_inheritance(&self) -> FlavorSettings {
+        FlavorSettings {
+            trait_uses: Rc::new(RefCell::new(FlavorSettingField::Inherit(Rc::clone(
+                &self.trait_uses,
+            )))),
+            method: Rc::new(RefCell::new(FlavorSettingField::Inherit(Rc::clone(
+                &self.method,
+            )))),
+            hook_targets: Rc::new(RefCell::new(FlavorSettingField::Inherit(Rc::clone(
+                &self.hook_targets,
+            )))),
+            tail_expr_idents: Rc::new(RefCell::new(FlavorSettingField::Inherit(Rc::clone(
+                &self.tail_expr_idents,
+            )))),
+            ignore_tail_expr_idents: Rc::new(RefCell::new(FlavorSettingField::Inherit(Rc::clone(
+                &self.ignore_tail_expr_idents,
+            )))),
+            result_types: Rc::new(RefCell::new(FlavorSettingField::Inherit(Rc::clone(
+                &self.result_types,
+            )))),
+            hook_in_macros: Rc::new(RefCell::new(FlavorSettingField::Inherit(Rc::clone(
+                &self.hook_in_macros,
+            )))),
+            bindings: Rc::new(RefCell::new(FlavorSettingField::Inherit(Rc::clone(
+                &self.bindings,
+            )))),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct FlavorStore {
-    flavors: HashMap<String, Flavor>,
+    flavors: HashMap<String, FlavorNode>,
 }
 
 // NOTE:
@@ -156,34 +245,36 @@ impl FlavorStore {
         Ok(flavors)
     }
 
-    fn get_flavor_inner(&self, path: &FlavorPath) -> Option<Flavor> {
+    fn get_flavor_inner(&self, path: &FlavorPath) -> Option<&FlavorNode> {
         let mut path = path.iter();
-        let mut current: &Flavor = self.flavors.get(path.next()?)?;
+        let mut current: &FlavorNode = self.flavors.get(path.next()?)?;
 
         for name in path {
             current = current.sub_flavors.get(name)?;
         }
 
-        Some(current.clone())
+        Some(current)
     }
 
-    pub fn get_flavor(&self, path: &FlavorPath) -> Result<Flavor, String> {
-        self.get_flavor_inner(path).ok_or_else(|| {
-            format!(
-                "flavor `{}` is not found. available flavors:
+    pub fn get_flavor(&self, path: &FlavorPath) -> Result<FlavorInstance, String> {
+        self.get_flavor_inner(path)
+            .map(|node| (&node.settings).into())
+            .ok_or_else(|| {
+                format!(
+                    "flavor `{}` is not found. available flavors:
 {}",
-                path.join("::"),
-                self.all_flavor_names()
-                    .into_iter()
-                    .map(|name| format!("  - {name}"))
-                    .collect::<Vec<_>>()
-                    .join("\n")
-            )
-        })
+                    path.join("::"),
+                    self.all_flavor_names()
+                        .into_iter()
+                        .map(|name| format!("  - {name}"))
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                )
+            })
     }
 
     pub fn all_flavor_names(&self) -> Vec<String> {
-        fn collect_names(flavor: &Flavor, prefix: &str, names: &mut Vec<String>) {
+        fn collect_names(flavor: &FlavorNode, prefix: &str, names: &mut Vec<String>) {
             let current_name = format!("{prefix}::");
 
             for (sub_name, sub_flavor) in &flavor.sub_flavors {

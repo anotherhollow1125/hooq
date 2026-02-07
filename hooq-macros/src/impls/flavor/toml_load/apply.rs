@@ -4,15 +4,15 @@ use std::rc::Rc;
 use proc_macro2::TokenStream;
 use syn::{Expr, Path};
 
-use crate::impls::flavor::Flavor;
 use crate::impls::flavor::toml_load::{FlavorTable, HooqToml};
+use crate::impls::flavor::{FlavorNode, FlavorSettingField, FlavorSettings};
 use crate::impls::method::Method;
 
 pub fn update_flavors(
-    flavors: &mut HashMap<String, Flavor>,
+    flavors: &mut HashMap<String, FlavorNode>,
     hooq_toml: HooqToml,
 ) -> Result<(), String> {
-    update_flavor_inner(flavors, hooq_toml.flavors, &Flavor::default())?;
+    update_flavor_inner(flavors, hooq_toml.flavors, &FlavorSettings::default())?;
 
     Ok(())
 }
@@ -33,9 +33,9 @@ fn split_include_or_not_include(idents: Vec<String>) -> (Vec<String>, Vec<String
 }
 
 fn update_flavor_inner(
-    flavors: &mut HashMap<String, Flavor>,
+    flavors: &mut HashMap<String, FlavorNode>,
     flavor_tables: HashMap<String, FlavorTable>,
-    base_flavor: &Flavor,
+    base_flavor: &FlavorSettings,
 ) -> Result<(), String> {
     for (
         flavor_name,
@@ -48,7 +48,7 @@ fn update_flavor_inner(
             result_types,
             hook_in_macros,
             bindings,
-            sub_flavors,
+            sub_flavors: sub_flavors_field,
         },
     ) in flavor_tables
     {
@@ -73,9 +73,13 @@ fn update_flavor_inner(
         //
         // ただ分割機能は検討中であるためYAGNI原則に従い
         // 現在はこのような素直な実装としておく
-        let flavor = flavors
-            .entry(flavor_name)
-            .or_insert_with(|| base_flavor.clone());
+        let FlavorNode {
+            settings,
+            sub_flavors,
+        } = flavors.entry(flavor_name).or_insert_with(|| FlavorNode {
+            settings: base_flavor.prepare_inheritance(),
+            sub_flavors: Default::default(),
+        });
 
         let mut ignore_tail_expr_idents_setting = None;
 
@@ -84,13 +88,16 @@ fn update_flavor_inner(
             .map(|path| syn::parse_str::<Path>(&path))
             .collect::<syn::Result<Vec<_>>>()
             .map_err(|e| format!("failed to parse trait_uses: {e}"))?;
-        flavor.trait_uses = trait_uses;
+        FlavorSettingField::set(&settings.trait_uses, trait_uses);
 
         if let Some(method) = method {
             let method_stream = syn::parse_str::<TokenStream>(&method)
                 .map_err(|e| format!("failed to parse method: {e}"))?;
 
-            flavor.method = Method::try_from(method_stream).map_err(|e| e.to_string())?;
+            FlavorSettingField::set(
+                &settings.method,
+                Method::try_from(method_stream).map_err(|e| e.to_string())?,
+            );
         }
 
         if let Some(hook_targets) = hook_targets {
@@ -101,14 +108,14 @@ expected: "?", "return", "tail_expr""#,
                 )
             })?;
 
-            flavor.hook_targets = hook_target_switch;
+            FlavorSettingField::set(&settings.hook_targets, hook_target_switch);
         }
 
         if let Some(tail_expr_idents) = tail_expr_idents {
             let (tail_expr_idents, ignore_tail_expr_idents) =
                 split_include_or_not_include(tail_expr_idents);
 
-            flavor.tail_expr_idents = tail_expr_idents;
+            FlavorSettingField::set(&settings.tail_expr_idents, tail_expr_idents);
             ignore_tail_expr_idents_setting = match ignore_tail_expr_idents_setting {
                 Some(v) => Some([v, ignore_tail_expr_idents].concat()),
                 None if !ignore_tail_expr_idents.is_empty() => Some(ignore_tail_expr_idents),
@@ -124,15 +131,15 @@ expected: "?", "return", "tail_expr""#,
         }
 
         if let Some(ignore_tail_expr_idents) = ignore_tail_expr_idents_setting {
-            flavor.ignore_tail_expr_idents = ignore_tail_expr_idents;
+            FlavorSettingField::set(&settings.ignore_tail_expr_idents, ignore_tail_expr_idents);
         }
 
         if let Some(result_types) = result_types {
-            flavor.result_types = result_types;
+            FlavorSettingField::set(&settings.result_types, result_types);
         }
 
         if let Some(hook_in_macros) = hook_in_macros {
-            flavor.hook_in_macros = hook_in_macros;
+            FlavorSettingField::set(&settings.hook_in_macros, hook_in_macros);
         }
 
         let bindings = bindings
@@ -144,11 +151,12 @@ expected: "?", "return", "tail_expr""#,
             })
             .collect::<syn::Result<Vec<_>>>()
             .map_err(|e| format!("failed to parse bindings: {e}"))?;
-        flavor.bindings.extend(bindings);
+        let mut existing_bindings = settings.bindings.borrow().clone_inner();
+        existing_bindings.extend(bindings);
+        FlavorSettingField::set(&settings.bindings, existing_bindings);
 
-        if !sub_flavors.is_empty() {
-            let base_flavor = flavor.clone();
-            update_flavor_inner(&mut flavor.sub_flavors, sub_flavors, &base_flavor)?;
+        if !sub_flavors_field.is_empty() {
+            update_flavor_inner(sub_flavors, sub_flavors_field, settings)?;
         }
     }
 

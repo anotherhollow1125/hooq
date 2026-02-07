@@ -1,9 +1,10 @@
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use proc_macro2::TokenStream;
 use syn::parse_quote;
 
-use crate::impls::flavor::Flavor;
+use crate::impls::flavor::{FlavorNode, FlavorSettingField, FlavorSettings};
 use crate::impls::method::Method;
 use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
 
@@ -13,32 +14,39 @@ macro_rules! level_binding {
     };
 }
 
-pub fn log_flavor() -> Flavor {
+pub fn log_flavor() -> FlavorNode {
     let method: Method = log_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE);
 
-    Flavor {
-        method: method.clone(),
-        bindings: level_binding!(::log::Level::Error),
-        sub_flavors: [
-            ("error", level_binding!(::log::Level::Error)),
-            ("warn", level_binding!(::log::Level::Warn)),
-            ("info", level_binding!(::log::Level::Info)),
-            ("debug", level_binding!(::log::Level::Debug)),
-            ("trace", level_binding!(::log::Level::Trace)),
-        ]
-        .into_iter()
-        .map(|(s, bindings)| {
-            (
-                s.to_string(),
-                Flavor {
-                    method: method.clone(),
-                    bindings,
-                    ..Default::default()
-                },
-            )
-        })
-        .collect(),
+    let settings = FlavorSettings {
+        method: FlavorSettingField::new(method.clone()),
+        bindings: FlavorSettingField::new(level_binding!(::log::Level::Error)),
         ..Default::default()
+    };
+    let sub_flavors = [
+        ("error", level_binding!(::log::Level::Error)),
+        ("warn", level_binding!(::log::Level::Warn)),
+        ("info", level_binding!(::log::Level::Info)),
+        ("debug", level_binding!(::log::Level::Debug)),
+        ("trace", level_binding!(::log::Level::Trace)),
+    ]
+    .into_iter()
+    .map(|(s, bindings)| {
+        (
+            s.to_string(),
+            FlavorNode {
+                settings: FlavorSettings {
+                    bindings: FlavorSettingField::new(bindings),
+                    ..settings.prepare_inheritance()
+                },
+                sub_flavors: HashMap::new(),
+            },
+        )
+    })
+    .collect();
+
+    FlavorNode {
+        settings,
+        sub_flavors,
     }
 }
 

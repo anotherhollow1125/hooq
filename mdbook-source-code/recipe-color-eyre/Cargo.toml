@@ -23,5 +23,5 @@ tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
 [dev-dependencies]
 insta = "1.46.3"
-regex = "1.12.2"
+regex = "1.12.3"
 strip-ansi-escapes = "0.2.1"

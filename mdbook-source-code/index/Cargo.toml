@@ -15,4 +15,4 @@ hooq = { path = "../../hooq" }
 
 [dev-dependencies]
 insta = "1.46.3"
-regex = "1.12.2"
+regex = "1.12.3"

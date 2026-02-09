@@ -6,8 +6,8 @@ rust-version = { workspace = true }
 publish = false
 
 [dev-dependencies]
-anyhow = "1.0.100"
-clap = { version = "4.5.56", features = ["derive"] }
+anyhow = "1.0.101"
+clap = { version = "4.5.57", features = ["derive"] }
 env_logger = "0.11.8"
 hooq = { path = "../hooq", features = ["full"] }
 log = "0.4.29"

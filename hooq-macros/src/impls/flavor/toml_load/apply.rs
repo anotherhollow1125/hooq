@@ -83,12 +83,14 @@ fn update_flavor_inner(
 
         let mut ignore_tail_expr_idents_setting = None;
 
-        let trait_uses = trait_uses
-            .into_iter()
-            .map(|path| syn::parse_str::<Path>(&path))
-            .collect::<syn::Result<Vec<_>>>()
-            .map_err(|e| format!("failed to parse trait_uses: {e}"))?;
-        FlavorSettingField::set(&settings.trait_uses, trait_uses);
+        if let Some(trait_uses) = trait_uses {
+            let trait_uses = trait_uses
+                .into_iter()
+                .map(|path| syn::parse_str::<Path>(&path))
+                .collect::<syn::Result<Vec<_>>>()
+                .map_err(|e| format!("failed to parse trait_uses: {e}"))?;
+            FlavorSettingField::set(&settings.trait_uses, trait_uses);
+        }
 
         if let Some(method) = method {
             let method_stream = syn::parse_str::<TokenStream>(&method)
@@ -142,18 +144,20 @@ expected: "?", "return", "tail_expr""#,
             FlavorSettingField::set(&settings.hook_in_macros, hook_in_macros);
         }
 
-        let bindings = bindings
-            .into_iter()
-            .map(|(k, v)| {
-                let v = syn::parse_str::<Expr>(&v)?;
+        if let Some(bindings) = bindings {
+            let bindings = bindings
+                .into_iter()
+                .map(|(k, v)| {
+                    let v = syn::parse_str::<Expr>(&v)?;
 
-                Ok((k, Rc::new(v)))
-            })
-            .collect::<syn::Result<Vec<_>>>()
-            .map_err(|e| format!("failed to parse bindings: {e}"))?;
-        let mut existing_bindings = settings.bindings.borrow().clone_inner();
-        existing_bindings.extend(bindings);
-        FlavorSettingField::set(&settings.bindings, existing_bindings);
+                    Ok((k, Rc::new(v)))
+                })
+                .collect::<syn::Result<Vec<_>>>()
+                .map_err(|e| format!("failed to parse bindings: {e}"))?;
+            let mut existing_bindings = settings.bindings.borrow().clone_inner();
+            existing_bindings.extend(bindings);
+            FlavorSettingField::set(&settings.bindings, existing_bindings);
+        }
 
         if !sub_flavors_field.is_empty() {
             update_flavor_inner(sub_flavors, sub_flavors_field, settings)?;

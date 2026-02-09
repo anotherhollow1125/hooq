@@ -57,7 +57,7 @@ Expansion:
 
 Default configuration when using `#[hooq]`.
 
-configured as follows. (To keep the documentation consistent, this is excerpted directly from the source code; the same applies below.)
+It is configured as follows (to keep the documentation consistent, this is excerpted directly from the source code; the same applies below).
 
 ```rust
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:91:108}}
@@ -87,7 +87,7 @@ You can override via `hooq.toml`.
 
 Disables hooking; intended for conditional builds like `#[cfg_attr(feature = "...", hooq(empty))]`.
 
-configured as follows.
+It is configured as follows.
 
 ```rust
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/empty.rs:10:36}}
@@ -97,7 +97,7 @@ Not overridable.
 
 ## hook
 
-configured as follows. (Please ignore Japanese comments)
+It is configured as follows. (Please ignore Japanese comments)
 
 ```rust
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/hook.rs:9:29}}
@@ -125,7 +125,7 @@ Expansion:
 
 This flavor is intended to be used with the [anyhow crate](https://docs.rs/anyhow/latest/anyhow/).
 
-configured as follows.
+It is configured as follows.
 
 ```rust
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/anyhow.rs:9:37}}
@@ -151,7 +151,7 @@ Result:
 
 This flavor is intended to be used with the [eyre crate](https://docs.rs/eyre/latest/eyre/).
 
-configured as follows.
+It is configured as follows.
 
 ```rust
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:9:54}}
@@ -179,7 +179,7 @@ A `color_eyre` flavor is also provided that inserts `use ::color_eyre::eyre::Wra
 
 This flavor is intended to be used with the [log crate](https://docs.rs/log/latest/log/).
 
-configured as follows.
+It is configured as follows.
 
 ```rust
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:11:67}}
@@ -207,7 +207,7 @@ Result:
 
 This flavor is intended to be used with the [tracing crate](https://docs.rs/tracing/latest/tracing/).
 
-configured as follows.
+It is configured as follows.
 
 ```rust
 {{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:11:74}}

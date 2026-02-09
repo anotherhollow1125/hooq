@@ -1,14 +1,23 @@
+use std::collections::HashMap;
+
 use proc_macro2::TokenStream;
 use syn::parse_quote;
 
-use crate::impls::flavor::Flavor;
+use crate::impls::flavor::{FlavorNode, FlavorSettingField, FlavorSettings};
 use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
 
-pub fn anyhow_flavor() -> Flavor {
-    Flavor {
-        trait_uses: vec![parse_quote! { ::anyhow::Context }],
-        method: anyhow_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
+pub fn anyhow_flavor() -> FlavorNode {
+    let settings = FlavorSettings {
+        trait_uses: FlavorSettingField::new(vec![parse_quote! { ::anyhow::Context }]),
+        method: FlavorSettingField::new(
+            anyhow_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
+        ),
         ..Default::default()
+    };
+
+    FlavorNode {
+        settings,
+        sub_flavors: HashMap::new(),
     }
 }
 

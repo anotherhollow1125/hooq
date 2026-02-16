@@ -7,7 +7,7 @@ publish = false
 
 [dependencies]
 hooq = { path = "../../../../../hooq", features = ["tracing"] }
-macrotest = "1.2.0"
+macrotest = "1.2.1"
 test-helpers = { path = "../../../../../test-helpers" }
 tracing = "0.1.44"
 tracing-subscriber = "0.3.22"

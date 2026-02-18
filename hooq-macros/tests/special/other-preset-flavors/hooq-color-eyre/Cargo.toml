@@ -8,5 +8,5 @@ publish = false
 [dependencies]
 color-eyre = "0.6.5"
 hooq = { path = "../../../../../hooq", features = ["eyre"] }
-macrotest = "1.2.0"
+macrotest = "1.2.1"
 test-helpers = { path = "../../../../../test-helpers" }

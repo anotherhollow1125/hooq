@@ -14,5 +14,5 @@ categories.workspace = true
 hooq = { path = "../../hooq" }
 
 [dev-dependencies]
-macrotest = "1.2.0"
+macrotest = "1.2.1"
 test-helpers = { path = "../../test-helpers" }

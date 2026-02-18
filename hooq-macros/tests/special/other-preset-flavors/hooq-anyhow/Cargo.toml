@@ -8,5 +8,5 @@ publish = false
 [dependencies]
 anyhow = "1.0.101"
 hooq = { path = "../../../../../hooq", features = ["anyhow"] }
-macrotest = "1.2.0"
+macrotest = "1.2.1"
 test-helpers = { path = "../../../../../test-helpers" }

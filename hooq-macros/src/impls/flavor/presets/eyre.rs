@@ -1,28 +1,40 @@
+use std::collections::HashMap;
+
 use proc_macro2::TokenStream;
 use syn::parse_quote;
 
-use crate::impls::flavor::Flavor;
+use crate::impls::flavor::{FlavorNode, FlavorSettingField, FlavorSettings};
 use crate::impls::utils::unexpected_error_message::UNEXPECTED_ERROR_MESSAGE;
 
-pub fn eyre_flavor() -> Flavor {
-    Flavor {
-        trait_uses: vec![
+pub fn eyre_flavor() -> FlavorNode {
+    let settings = FlavorSettings {
+        trait_uses: FlavorSettingField::new(vec![
             parse_quote! { ::eyre::ContextCompat },
             parse_quote! { ::eyre::WrapErr },
-        ],
-        method: eyre_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
+        ]),
+        method: FlavorSettingField::new(eyre_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE)),
         ..Default::default()
+    };
+
+    FlavorNode {
+        settings,
+        sub_flavors: HashMap::new(),
     }
 }
 
-pub fn color_eyre_flavor() -> Flavor {
-    Flavor {
-        trait_uses: vec![
+pub fn color_eyre_flavor() -> FlavorNode {
+    let settings = FlavorSettings {
+        trait_uses: FlavorSettingField::new(vec![
             parse_quote! { ::color_eyre::eyre::ContextCompat },
             parse_quote! { ::color_eyre::eyre::WrapErr },
-        ],
-        method: eyre_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE),
+        ]),
+        method: FlavorSettingField::new(eyre_method().try_into().expect(UNEXPECTED_ERROR_MESSAGE)),
         ..Default::default()
+    };
+
+    FlavorNode {
+        settings,
+        sub_flavors: HashMap::new(),
     }
 }
 

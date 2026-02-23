@@ -29,11 +29,11 @@ proc-macro-crate = "3.4.0"
 proc-macro2 = { version = "1.0.106", features = ["span-locations"] }
 quote = "1.0.44"
 serde = { version = "1.0.228", features = ["derive"] }
-syn = { version = "2.0.116", features = ["full", "extra-traits", "fold"] }
-toml = "1.0.1"
+syn = { version = "2.0.117", features = ["full", "extra-traits", "fold"] }
+toml = "1.0.3"
 
 [dev-dependencies]
-anyhow = "1.0.101"
+anyhow = "1.0.102"
 futures = "0.3.32"
 hooq = { path = "../hooq" }
 insta = "1.46.3"
@@ -41,5 +41,5 @@ macrotest = "1.2.1"
 serde_json = "1.0.149"
 test-helpers = { path = "../test-helpers" }
 tokio = { version = "1.49.0", features = ["full"] }
-toml = "1.0.1"
+toml = "1.0.3"
 util_macros = { path = "tests/util_macros" }

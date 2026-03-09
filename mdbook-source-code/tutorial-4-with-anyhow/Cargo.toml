@@ -11,9 +11,9 @@ keywords.workspace = true
 categories.workspace = true
 
 [dependencies]
-anyhow = "1.0.101"
+anyhow = "1.0.102"
 hooq = { path = "../../hooq" }
-toml = "1.0.1"
+toml = "1.0.6"
 
 [dev-dependencies]
 insta = "1.46.3"

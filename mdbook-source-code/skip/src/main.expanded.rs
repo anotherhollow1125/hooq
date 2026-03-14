@@ -1,8 +1,8 @@
 #![feature(prelude_import)]
-#[macro_use]
-extern crate std;
 #[prelude_import]
 use std::prelude::rust_2024::*;
+#[macro_use]
+extern crate std;
 use hooq::hooq;
 fn func1() -> Result<(), String> {
     match fallible(fallible(())).inspect_err(|_| {})? {

@@ -1,7 +1,8 @@
 #![feature(prelude_import)]
-extern crate std;
 #[prelude_import]
 use std::prelude::rust_2024::*;
+#[macro_use]
+extern crate std;
 use hooq::hooq;
 mod my_error {
     pub trait MyHook {

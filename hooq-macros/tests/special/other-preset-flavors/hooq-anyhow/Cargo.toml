@@ -6,7 +6,7 @@ rust-version = { workspace = true }
 publish = false
 
 [dependencies]
-anyhow = "1.0.101"
+anyhow = "1.0.102"
 hooq = { path = "../../../../../hooq", features = ["anyhow"] }
 macrotest = "1.2.1"
 test-helpers = { path = "../../../../../test-helpers" }

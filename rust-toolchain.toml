@@ -1,5 +1,6 @@
 [toolchain]
 channel = "1.88.0" # MSRV
+components = ["clippy"]
 
 # CLI等で利用しているcargo fmtはnightlyで別指定
 # 管理がバラバラで申し訳ない

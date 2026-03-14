@@ -59,7 +59,7 @@ where
     fn my_inspect(self) -> Self {
         match self {
             Some(val) => {
-                println!("Inspecting value: {:?}", val);
+                println!("Inspecting value: {val:?}");
                 Some(val)
             }
             None => None,

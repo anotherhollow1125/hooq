@@ -37,7 +37,7 @@ impl ClosureInfo {
         }
 
         let anc_name = ancestor_function_name.unwrap_or_else(|| "<unknown>".to_string());
-        let name = format!("__closure_in_{}__", anc_name);
+        let name = format!("__closure_in_{anc_name}__");
 
         ClosureInfo { expr, name }
     }

@@ -271,7 +271,7 @@ impl Fold for TruncateStrFolder {
                     .into_iter()
                     .rev()
                     .collect();
-                format!("{}..{}", start, end)
+                format!("{start}..{end}")
             } else {
                 line.to_string()
             };

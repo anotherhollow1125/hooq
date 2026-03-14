@@ -16,7 +16,7 @@ fn load_host_and_port() -> Result<String, Box<dyn Error>> {
 fn main() -> Result<(), Box<dyn Error>> {
     let host_and_port = load_host_and_port()?;
 
-    println!("Server is running on: {}", host_and_port);
+    println!("Server is running on: {host_and_port}");
 
     // snip
 

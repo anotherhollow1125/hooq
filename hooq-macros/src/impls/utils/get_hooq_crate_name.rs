@@ -26,8 +26,7 @@ pub fn get_source_excerpt_helpers_name_space() -> Path {
     };
 
     syn::parse_str::<Path>(&format!(
-        "::{}{}",
-        crate_name, source_excerpt_helpers_name_space
+        "::{crate_name}{source_excerpt_helpers_name_space}",
     ))
     .unwrap()
 }

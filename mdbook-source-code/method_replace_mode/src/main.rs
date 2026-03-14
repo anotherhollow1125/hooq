@@ -9,7 +9,7 @@ where
     E: std::fmt::Debug,
 {
     if let Err(e) = &r {
-        println!("Error occurred: {:?}", e);
+        println!("Error occurred: {e:?}");
     }
 
     r

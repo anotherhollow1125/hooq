@@ -1,0 +1,6 @@
+[toolchain]
+channel = "1.88.0" # MSRV
+components = ["clippy"]
+
+# CIで利用しているcargo fmtは .github/workflows/rust.yml にて nightly で別指定
+# 管理がバラバラで申し訳ない

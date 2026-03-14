@@ -3,10 +3,10 @@ source: mdbook-source-code/index/tests/test.rs
 expression: "format!(\"{stdout}\")"
 ---
 #![feature(prelude_import)]
-#[macro_use]
-extern crate std;
 #[prelude_import]
 use std::prelude::rust_2024::*;
+#[macro_use]
+extern crate std;
 use std::error::Error;
 use hooq::hooq;
 fn load_host_and_port() -> Result<String, Box<dyn Error>> {

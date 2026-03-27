@@ -8,7 +8,7 @@ use syn::{
     Token, parse_quote,
 };
 
-use crate::impls::flavor::{Flavor, FlavorPath, FlavorStore};
+use crate::impls::flavor::{FlavorInstance, FlavorPath, FlavorStore};
 use crate::impls::inert_attr::InertAttribute;
 use crate::impls::inert_attr::context::HookTargetSwitch;
 use crate::impls::method::Method;
@@ -113,7 +113,7 @@ fn get_flavor_path(value: &Expr, setting_name: &str) -> syn::Result<FlavorPath> 
     }
 }
 
-fn get_flavor(span: Span, flavor_path: &FlavorPath) -> syn::Result<Flavor> {
+fn get_flavor(span: Span, flavor_path: &FlavorPath) -> syn::Result<FlavorInstance> {
     FlavorStore::with_hooq_toml()
         .map_err(|e| syn::Error::new(span, format!("failed to load hooq.toml: {e}")))?
         .get_flavor(flavor_path)
@@ -162,7 +162,7 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
             // flavor
             Meta::NameValue(MetaNameValue { path, value, .. }) if path == &hooq_flavor => {
                 let flavor_path: FlavorPath = get_flavor_path(value, "flavor")?;
-                let Flavor {
+                let FlavorInstance {
                     trait_uses: _,
                     method: flavor_method,
                     hook_targets: flavor_hook_targets,
@@ -171,7 +171,6 @@ pub fn extract_hooq_info_from_attrs(attrs: &mut Vec<Attribute>) -> syn::Result<I
                     result_types: flavor_result_types,
                     hook_in_macros: flavor_hook_in_macros,
                     bindings: flavor_bindings,
-                    sub_flavors: _,
                 } = get_flavor(path.span(), &flavor_path)?;
 
                 // override settings by the flavor settings

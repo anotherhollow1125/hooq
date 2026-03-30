@@ -13,7 +13,7 @@ categories.workspace = true
 [dependencies]
 anyhow = "1.0.102"
 hooq = { path = "../../hooq" }
-toml = "1.0.7"
+toml = "1.1.0"
 
 [dev-dependencies]
-insta = "1.46.3"
+insta = "1.47.1"

@@ -11,9 +11,9 @@ keywords.workspace = true
 categories.workspace = true
 
 [dependencies]
-env_logger = "0.11.9"
+env_logger = "0.11.10"
 hooq = { path = "../../hooq" }
 log = "0.4.29"
 
 [dev-dependencies]
-insta = "1.46.3"
+insta = "1.47.1"

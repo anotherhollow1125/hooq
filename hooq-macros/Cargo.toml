@@ -30,16 +30,16 @@ proc-macro2 = { version = "1.0.106", features = ["span-locations"] }
 quote = "1.0.45"
 serde = { version = "1.0.228", features = ["derive"] }
 syn = { version = "2.0.117", features = ["full", "extra-traits", "fold"] }
-toml = "1.0.7"
+toml = "1.1.0"
 
 [dev-dependencies]
 anyhow = "1.0.102"
 futures = "0.3.32"
 hooq = { path = "../hooq" }
-insta = "1.46.3"
+insta = "1.47.1"
 macrotest = "1.2.1"
 serde_json = "1.0.149"
 test-helpers = { path = "../test-helpers" }
 tokio = { version = "1.50.0", features = ["full"] }
-toml = "1.0.7"
+toml = "1.1.0"
 util_macros = { path = "tests/util_macros" }

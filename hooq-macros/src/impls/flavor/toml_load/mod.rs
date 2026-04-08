@@ -12,16 +12,14 @@ pub struct HooqToml {
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct FlavorTable {
-    #[serde(default)]
-    pub trait_uses: Vec<String>,
+    pub trait_uses: Option<Vec<String>>,
     pub method: Option<String>,
     pub hook_targets: Option<Vec<String>>,
     pub tail_expr_idents: Option<Vec<String>>,
     pub ignore_tail_expr_idents: Option<Vec<String>>,
     pub result_types: Option<Vec<String>>,
     pub hook_in_macros: Option<bool>,
-    #[serde(default)]
-    pub bindings: HashMap<String, String>,
+    pub bindings: Option<HashMap<String, String>>,
     #[serde(flatten)]
     pub sub_flavors: HashMap<String, FlavorTable>,
 }

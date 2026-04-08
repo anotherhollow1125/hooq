@@ -1,5 +1,10 @@
-use crate::impls::flavor::Flavor;
+use std::collections::HashMap;
 
-pub fn default_flavor() -> Flavor {
-    Flavor::default()
+use crate::impls::flavor::{FlavorNode, FlavorSettings};
+
+pub fn default_flavor() -> FlavorNode {
+    FlavorNode {
+        settings: FlavorSettings::default(),
+        sub_flavors: HashMap::new(),
+    }
 }

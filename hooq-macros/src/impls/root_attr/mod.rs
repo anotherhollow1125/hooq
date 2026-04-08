@@ -4,7 +4,7 @@ use std::rc::Rc;
 use proc_macro2::{Span, TokenStream};
 use syn::{Expr, Path};
 
-use crate::impls::flavor::{Flavor, FlavorPath, FlavorStore};
+use crate::impls::flavor::{FlavorInstance, FlavorPath, FlavorStore};
 use crate::impls::inert_attr::context::HookTargetSwitch;
 use crate::impls::method::Method;
 
@@ -63,7 +63,7 @@ impl RootContext {
         let flavor_store = FlavorStore::with_hooq_toml()
             .map_err(|e| syn::Error::new(span, format!("failed to load hooq.toml: {e}")))?;
 
-        let Flavor {
+        let FlavorInstance {
             trait_uses: trait_uses_of_flavor,
             method,
             hook_targets,
@@ -72,7 +72,6 @@ impl RootContext {
             result_types,
             hook_in_macros,
             bindings,
-            sub_flavors: _,
         } = flavor_store
             .get_flavor(&flavor)
             .map_err(|e| syn::Error::new(span, e))?;

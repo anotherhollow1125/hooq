@@ -66,13 +66,13 @@ hooq.tomlの例:
 次のような設定になっています。(ドキュメントの整合性を保つためソースコードから直接抜粋しています。以降同様)
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:32:50}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:91:108}}
 ```
 
 `default_method()` で設定しているメソッドは次の通りです。(コメントは気にしないでください。)
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:52:71}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:110:129}}
 ```
 
 使用例:
@@ -96,7 +96,7 @@ hooq.tomlの例:
 次のような設定になっています。
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/empty.rs:10:32}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/empty.rs:10:36}}
 ```
 
 特殊なフレーバーであるため **唯一上書き不可** としています。
@@ -106,7 +106,7 @@ hooq.tomlの例:
 hookフレーバーの設定は次の通りです。(コメント部分は気にしないでください。)
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/hook.rs:7:22}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/hook.rs:9:29}}
 ```
 
 
@@ -135,7 +135,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 次の設定になっています。
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/anyhow.rs:7:28}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/anyhow.rs:9:37}}
 ```
 
 [`.with_context(...)`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context) メソッドを利用するために、 `anyhow::Context` トレイトをuseしています。
@@ -162,7 +162,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 次の設定になっています。
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:7:42}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:9:54}}
 ```
 
 [`.wrap_err_with(...)`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with) メソッドを利用するために、 `eyre::WrapErr` トレイトおよび `eyre::ContextCompat` トレイトをuseしています。
@@ -190,7 +190,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 次の設定になっています。
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:10:59}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:11:67}}
 ```
 
 デフォルトでは [`log::Level::Error`](https://docs.rs/log/latest/log/enum.Level.html#variant.Error) レベルでログが出力されます。
@@ -218,7 +218,7 @@ hookフレーバーの設定は次の通りです。(コメント部分は気に
 次の設定になっています。
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:10:65}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:11:74}}
 ```
 
 デフォルトでは [`tracing::Level::ERROR`](https://docs.rs/tracing/latest/tracing/struct.Level.html#associatedconstant.ERROR) レベルでログが出力されます。

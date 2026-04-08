@@ -57,16 +57,16 @@ Expansion:
 
 Default configuration when using `#[hooq]`.
 
-It is configured as follows. (To keep the documentation consistent, this is excerpted directly from the source code; the same applies below.)
+It is configured as follows (to keep the documentation consistent, this is excerpted directly from the source code; the same applies below).
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:32:50}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:91:108}}
 ```
 
 Default method (Please ignore Japanese comments):
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:52:71}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/mod.rs:110:129}}
 ```
 
 Usage:
@@ -87,18 +87,20 @@ You can override via `hooq.toml`.
 
 Disables hooking; intended for conditional builds like `#[cfg_attr(feature = "...", hooq(empty))]`.
 
+It is configured as follows.
+
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/empty.rs:10:32}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/empty.rs:10:36}}
 ```
 
 Not overridable.
 
 ## hook
 
-(Please ignore Japanese comments)
+It is configured as follows. (Please ignore Japanese comments)
 
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/hook.rs:7:22}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/hook.rs:9:29}}
 ```
 
 Designed for user traits to implement a `hook` method. It is useful when you do not want to use `hooq.toml`.
@@ -123,8 +125,10 @@ Expansion:
 
 This flavor is intended to be used with the [anyhow crate](https://docs.rs/anyhow/latest/anyhow/).
 
+It is configured as follows.
+
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/anyhow.rs:7:28}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/anyhow.rs:9:37}}
 ```
 
 Imports `anyhow::Context` for [`.with_context(...)`](https://docs.rs/anyhow/latest/anyhow/trait.Context.html#tymethod.with_context).
@@ -147,8 +151,10 @@ Result:
 
 This flavor is intended to be used with the [eyre crate](https://docs.rs/eyre/latest/eyre/).
 
+It is configured as follows.
+
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:7:42}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/eyre.rs:9:54}}
 ```
 
 Imports `eyre::WrapErr` and `eyre::ContextCompat` for [`.wrap_err_with(...)`](https://docs.rs/eyre/latest/eyre/trait.WrapErr.html#tymethod.wrap_err_with).
@@ -173,8 +179,10 @@ A `color_eyre` flavor is also provided that inserts `use ::color_eyre::eyre::Wra
 
 This flavor is intended to be used with the [log crate](https://docs.rs/log/latest/log/).
 
+It is configured as follows.
+
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:10:59}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/log.rs:11:67}}
 ```
 
 By default, logs are emitted at [`log::Level::Error`](https://docs.rs/log/latest/log/enum.Level.html#variant.Error).
@@ -199,8 +207,10 @@ Result:
 
 This flavor is intended to be used with the [tracing crate](https://docs.rs/tracing/latest/tracing/).
 
+It is configured as follows.
+
 ```rust
-{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:10:65}}
+{{#rustdoc_include ../../../../../hooq-macros/src/impls/flavor/presets/tracing.rs:11:74}}
 ```
 
 By default, logs are emitted at [`tracing::Level::ERROR`](https://docs.rs/tracing/latest/tracing/struct.Level.html#associatedconstant.ERROR).

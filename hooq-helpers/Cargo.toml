@@ -17,4 +17,4 @@ documentation = { workspace = true }
 [dev-dependencies]
 anyhow = "1.0.102"
 hooq = { path = "../hooq" }
-toml = "1.0.7"
+toml = "1.1.2"

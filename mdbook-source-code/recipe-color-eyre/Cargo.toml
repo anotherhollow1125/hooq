@@ -22,6 +22,6 @@ tracing-error = "0.2.1"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
 [dev-dependencies]
-insta = "1.46.3"
+insta = "1.47.2"
 regex = "1.12.3"
 strip-ansi-escapes = "0.2.1"
